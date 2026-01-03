@@ -1,0 +1,2 @@
+yarn -s type-check
+yarn -s lint-staged
