@@ -17,6 +17,7 @@ export default defineConfig([
       reactRefresh.configs.vite,
       pluginQuery.configs['flat/recommended'],
     ],
+    ignores: ['shared/ui'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
