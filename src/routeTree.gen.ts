@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MeRouteImport } from './routes/me'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as Profile_nameRouteImport } from './routes/$profile_name'
@@ -17,6 +18,11 @@ import { Route as PProfile_nameRouteImport } from './routes/p/$profile_name'
 import { Route as Profile_nameSavedRouteImport } from './routes/$profile_name/saved'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
 
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/$profile_name': typeof Profile_nameRouteWithChildren
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
+  '/me': typeof MeRoute
   '/$profile_name/saved': typeof Profile_nameSavedRoute
   '/p/$profile_name': typeof PProfile_nameRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/$profile_name': typeof Profile_nameRouteWithChildren
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
+  '/me': typeof MeRoute
   '/$profile_name/saved': typeof Profile_nameSavedRoute
   '/p/$profile_name': typeof PProfile_nameRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/$profile_name': typeof Profile_nameRouteWithChildren
   '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
+  '/me': typeof MeRoute
   '/$profile_name/saved': typeof Profile_nameSavedRoute
   '/p/$profile_name': typeof PProfile_nameRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/$profile_name'
     | '/explore'
     | '/login'
+    | '/me'
     | '/$profile_name/saved'
     | '/p/$profile_name'
     | '/stories/$profile_name/$story_id'
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/$profile_name'
     | '/explore'
     | '/login'
+    | '/me'
     | '/$profile_name/saved'
     | '/p/$profile_name'
     | '/stories/$profile_name/$story_id'
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/$profile_name'
     | '/explore'
     | '/login'
+    | '/me'
     | '/$profile_name/saved'
     | '/p/$profile_name'
     | '/stories/$profile_name/$story_id'
@@ -117,12 +129,20 @@ export interface RootRouteChildren {
   Profile_nameRoute: typeof Profile_nameRouteWithChildren
   ExploreRoute: typeof ExploreRoute
   LoginRoute: typeof LoginRoute
+  MeRoute: typeof MeRoute
   PProfile_nameRoute: typeof PProfile_nameRoute
   StoriesProfile_nameStory_idRoute: typeof StoriesProfile_nameStory_idRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -184,7 +204,7 @@ const Profile_nameRouteChildren: Profile_nameRouteChildren = {
 }
 
 const Profile_nameRouteWithChildren = Profile_nameRoute._addFileChildren(
-  Profile_nameRouteChildren
+  Profile_nameRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -192,6 +212,7 @@ const rootRouteChildren: RootRouteChildren = {
   Profile_nameRoute: Profile_nameRouteWithChildren,
   ExploreRoute: ExploreRoute,
   LoginRoute: LoginRoute,
+  MeRoute: MeRoute,
   PProfile_nameRoute: PProfile_nameRoute,
   StoriesProfile_nameStory_idRoute: StoriesProfile_nameStory_idRoute,
 }
