@@ -3,7 +3,13 @@ import { useMatchRoute } from '@tanstack/react-router'
 import { SidebarNavButton } from './SidebarNavItem/SidebarNavButton'
 import { SidebarNavLink } from './SidebarNavItem/SidebarNavLink'
 
-export function MobileBottomNavigation() {
+interface MobileBottomNavigationProps {
+  onCreateClick: () => void
+}
+
+export function MobileBottomNavigation({
+  onCreateClick,
+}: MobileBottomNavigationProps) {
   const matchRoute = useMatchRoute()
 
   return (
@@ -11,6 +17,7 @@ export function MobileBottomNavigation() {
       <ul className="flex justify-around">
         {NAV_ITEMS.map((item) => {
           const isActive =
+            item.type === 'link' &&
             item.to &&
             Boolean(
               matchRoute({
@@ -18,21 +25,26 @@ export function MobileBottomNavigation() {
               })
             )
 
-          return item.to ? (
-            <SidebarNavLink
-              key={item.label}
-              {...item}
-              isActive={isActive}
-              to={item.to}
-            />
-          ) : (
-            <SidebarNavButton
-              key={item.label}
-              {...item}
-              isActive={isActive}
-              onClick={() => {}}
-            />
-          )
+          if (item.type === 'link') {
+            return (
+              <SidebarNavLink
+                key={item.label}
+                {...item}
+                isActive={isActive}
+                to={item.to}
+              />
+            )
+          } else {
+            const handleClick = onCreateClick
+            return (
+              <SidebarNavButton
+                key={item.label}
+                {...item}
+                isActive={isActive}
+                onClick={handleClick}
+              />
+            )
+          }
         })}
       </ul>
     </nav>

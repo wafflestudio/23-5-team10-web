@@ -151,24 +151,30 @@ function SidebarProvider({
   )
 }
 
-function Sidebar({
-  side = 'left',
-  variant = 'sidebar',
-  collapsible = 'offcanvas',
-  className,
-  children,
-  ...props
-}: React.ComponentProps<'div'> & {
+type SidebarProps = React.ComponentPropsWithoutRef<'div'> & {
   side?: 'left' | 'right'
   variant?: 'sidebar' | 'floating' | 'inset'
   collapsible?: 'offcanvas' | 'icon' | 'none'
-}) {
+}
+
+const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
+  {
+    side = 'left',
+    variant = 'sidebar',
+    collapsible = 'offcanvas',
+    className,
+    children,
+    ...props
+  },
+  ref
+) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
   if (collapsible === 'none') {
     return (
       <div
         data-slot="sidebar"
+        ref={ref}
         className={cn(
           'bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col',
           className
@@ -228,6 +234,7 @@ function Sidebar({
       />
       <div
         data-slot="sidebar-container"
+        ref={ref}
         className={cn(
           'fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
           side === 'left'
@@ -251,7 +258,7 @@ function Sidebar({
       </div>
     </div>
   )
-}
+})
 
 function SidebarTrigger({
   className,
