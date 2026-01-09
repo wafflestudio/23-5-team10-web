@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Button } from '@/shared/ui/button'
 import {
@@ -16,6 +16,9 @@ import {
   MAX_IMAGE_FILES,
   MAX_IMAGE_FILE_SIZE_BYTES,
 } from '@/features/create-post/constants'
+import { useImageCarousel } from '@/features/create-post/model/hooks/useImageCarousel'
+import { useLimitedFilesDrop } from '@/features/create-post/model/hooks/useLimitedFilesDrop'
+import { useObjectUrl } from '@/features/create-post/model/hooks/useObjectUrl'
 
 type CreateModalProps = {
   open: boolean
@@ -24,53 +27,45 @@ type CreateModalProps = {
 
 export function CreateModal({ open, onOpenChange }: CreateModalProps) {
   const [files, setFiles] = useState<File[]>([])
-  const [activeIndex, setActiveIndex] = useState(0)
+  const {
+    activeIndex,
+    canGoPrev,
+    canGoNext,
+    dots,
+    goNext,
+    goPrev,
+    reset: resetActiveIndex,
+  } = useImageCarousel(files.length)
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (!nextOpen) {
         setFiles([])
-        setActiveIndex(0)
+        resetActiveIndex()
       }
       onOpenChange(nextOpen)
     },
-    [onOpenChange]
+    [onOpenChange, resetActiveIndex]
   )
 
-  const handleDropFiles = useCallback((incomingFiles: File[]) => {
-    const limited = incomingFiles.slice(0, MAX_IMAGE_FILES)
-    const ignoredCount = incomingFiles.length - limited.length
-
-    setFiles(limited)
-    setActiveIndex(0)
-
-    if (ignoredCount > 0) {
+  const handleDropFiles = useLimitedFilesDrop({
+    maxFiles: MAX_IMAGE_FILES,
+    onAcceptedFiles: (limited) => {
+      setFiles(limited)
+      resetActiveIndex()
+    },
+    onIgnoredCount: (ignoredCount) => {
+      if (ignoredCount <= 0) return
       toast(
         `사진 ${ignoredCount}장이 업로드 되지 않았습니다.\n최대 ${MAX_IMAGE_FILES}개의 파일만 선택할 수 있습니다.`
       )
-    }
-  }, [])
+    },
+  })
 
   const activeFile = files[activeIndex]
-  const activePreviewUrl = useMemo(
-    () => (activeFile ? URL.createObjectURL(activeFile) : null),
-    [activeFile]
-  )
-
-  useEffect(() => {
-    return () => {
-      if (activePreviewUrl) URL.revokeObjectURL(activePreviewUrl)
-    }
-  }, [activePreviewUrl])
+  const activePreviewUrl = useObjectUrl(activeFile)
 
   const isUploaded = files.length > 0
-  const canGoPrev = activeIndex > 0
-  const canGoNext = activeIndex < files.length - 1
-
-  const dots = useMemo(
-    () => Array.from({ length: files.length }, (_, i) => i),
-    [files.length]
-  )
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -135,7 +130,7 @@ export function CreateModal({ open, onOpenChange }: CreateModalProps) {
                     disabled={!canGoPrev}
                     aria-label="이전 이미지"
                     className="absolute top-1/2 left-4 z-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/60 disabled:opacity-30"
-                    onClick={() => setActiveIndex((i) => Math.max(0, i - 1))}
+                    onClick={goPrev}
                   >
                     <ChevronLeft className="size-5 text-white" />
                   </Button>
@@ -147,9 +142,7 @@ export function CreateModal({ open, onOpenChange }: CreateModalProps) {
                     disabled={!canGoNext}
                     aria-label="다음 이미지"
                     className="absolute top-1/2 right-4 z-10 -translate-y-1/2 rounded-full bg-black/50 text-white hover:bg-black/60 disabled:opacity-30"
-                    onClick={() =>
-                      setActiveIndex((i) => Math.min(files.length - 1, i + 1))
-                    }
+                    onClick={goNext}
                   >
                     <ChevronRight className="size-5 text-white" />
                   </Button>
