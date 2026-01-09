@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
 import { MAX_CAPTION_LENGTH } from '@/features/create-post/constants'
+import { useCaption } from '@/features/create-post/model/hooks/useCaption'
 
 type PostDetailsPaneProps = {
   profileName: string
@@ -10,9 +10,9 @@ export function PostDetailsPane({
   profileName,
   profileImageUrl,
 }: PostDetailsPaneProps) {
-  const [caption, setCaption] = useState('')
-
-  const captionLength = useMemo(() => caption.length, [caption])
+  const { caption, setCaption, captionLength, maxLength } = useCaption({
+    maxLength: MAX_CAPTION_LENGTH,
+  })
 
   return (
     <aside className="flex h-full w-full flex-col border-l border-zinc-200 bg-white">
@@ -35,12 +35,12 @@ export function PostDetailsPane({
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           placeholder="문구 입력..."
-          maxLength={MAX_CAPTION_LENGTH}
+          maxLength={maxLength}
           className="min-h-0 flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-zinc-400"
         />
 
         <div className="mt-2 text-right text-xs text-zinc-400">
-          {captionLength}/{MAX_CAPTION_LENGTH}
+          {captionLength}/{maxLength}
         </div>
       </div>
     </aside>
