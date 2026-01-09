@@ -1,4 +1,9 @@
-import { Dialog, DialogContent } from '@/shared/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/shared/ui/dialog'
 
 type DiscardCreatePostDialogProps = {
   open: boolean
@@ -19,12 +24,12 @@ export function DiscardCreatePostDialog({
         className="z-60 w-[min(92vw,520px)] gap-0 overflow-hidden rounded-3xl bg-white p-0"
       >
         <div className="px-8 pt-10 pb-8 text-center">
-          <p className="text-2xl leading-tight font-semibold">
+          <DialogTitle className="text-2xl leading-tight font-semibold">
             게시물을 삭제하시겠어요?
-          </p>
-          <p className="mt-2 text-sm text-zinc-500">
+          </DialogTitle>
+          <DialogDescription className="mt-2 text-sm text-zinc-500">
             지금 나가면 수정 내용이 저장되지 않습니다.
-          </p>
+          </DialogDescription>
         </div>
 
         <div className="h-px w-full bg-zinc-200" />
