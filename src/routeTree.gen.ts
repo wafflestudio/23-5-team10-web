@@ -14,7 +14,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as Profile_nameRouteImport } from './routes/$profile_name'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PasswordResetRouteImport } from './routes/password/reset'
 import { Route as PProfile_nameRouteImport } from './routes/p/$profile_name'
+import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
 import { Route as Profile_nameSavedRouteImport } from './routes/$profile_name/saved'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
 
@@ -43,9 +45,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PasswordResetRoute = PasswordResetRouteImport.update({
+  id: '/password/reset',
+  path: '/password/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PProfile_nameRoute = PProfile_nameRouteImport.update({
   id: '/p/$profile_name',
   path: '/p/$profile_name',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
+  id: '/accounts/emailsignup',
+  path: '/accounts/emailsignup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Profile_nameSavedRoute = Profile_nameSavedRouteImport.update({
@@ -67,7 +79,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/$profile_name/saved': typeof Profile_nameSavedRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/p/$profile_name': typeof PProfile_nameRoute
+  '/password/reset': typeof PasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
 }
 export interface FileRoutesByTo {
@@ -77,7 +91,9 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/$profile_name/saved': typeof Profile_nameSavedRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/p/$profile_name': typeof PProfile_nameRoute
+  '/password/reset': typeof PasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
 }
 export interface FileRoutesById {
@@ -88,7 +104,9 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/me': typeof MeRoute
   '/$profile_name/saved': typeof Profile_nameSavedRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/p/$profile_name': typeof PProfile_nameRoute
+  '/password/reset': typeof PasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
 }
 export interface FileRouteTypes {
@@ -100,7 +118,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/me'
     | '/$profile_name/saved'
+    | '/accounts/emailsignup'
     | '/p/$profile_name'
+    | '/password/reset'
     | '/stories/$profile_name/$story_id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,7 +130,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/me'
     | '/$profile_name/saved'
+    | '/accounts/emailsignup'
     | '/p/$profile_name'
+    | '/password/reset'
     | '/stories/$profile_name/$story_id'
   id:
     | '__root__'
@@ -120,7 +142,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/me'
     | '/$profile_name/saved'
+    | '/accounts/emailsignup'
     | '/p/$profile_name'
+    | '/password/reset'
     | '/stories/$profile_name/$story_id'
   fileRoutesById: FileRoutesById
 }
@@ -130,7 +154,9 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   LoginRoute: typeof LoginRoute
   MeRoute: typeof MeRoute
+  AccountsEmailsignupRoute: typeof AccountsEmailsignupRoute
   PProfile_nameRoute: typeof PProfile_nameRoute
+  PasswordResetRoute: typeof PasswordResetRoute
   StoriesProfile_nameStory_idRoute: typeof StoriesProfile_nameStory_idRoute
 }
 
@@ -171,11 +197,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/password/reset': {
+      id: '/password/reset'
+      path: '/password/reset'
+      fullPath: '/password/reset'
+      preLoaderRoute: typeof PasswordResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/p/$profile_name': {
       id: '/p/$profile_name'
       path: '/p/$profile_name'
       fullPath: '/p/$profile_name'
       preLoaderRoute: typeof PProfile_nameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup': {
+      id: '/accounts/emailsignup'
+      path: '/accounts/emailsignup'
+      fullPath: '/accounts/emailsignup'
+      preLoaderRoute: typeof AccountsEmailsignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$profile_name/saved': {
@@ -204,7 +244,7 @@ const Profile_nameRouteChildren: Profile_nameRouteChildren = {
 }
 
 const Profile_nameRouteWithChildren = Profile_nameRoute._addFileChildren(
-  Profile_nameRouteChildren,
+  Profile_nameRouteChildren
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -213,7 +253,9 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   LoginRoute: LoginRoute,
   MeRoute: MeRoute,
+  AccountsEmailsignupRoute: AccountsEmailsignupRoute,
   PProfile_nameRoute: PProfile_nameRoute,
+  PasswordResetRoute: PasswordResetRoute,
   StoriesProfile_nameStory_idRoute: StoriesProfile_nameStory_idRoute,
 }
 export const routeTree = rootRouteImport
