@@ -1,3 +1,9 @@
+import { NavigationShell } from '@/widgets/navigation-sidebar/ui/NavigationShell'
+
 export const HomePage = () => {
-  return <div>HomePage</div>
+  return (
+    <div>
+      <NavigationShell />
+    </div>
+  )
 }

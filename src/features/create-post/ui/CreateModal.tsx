@@ -15,6 +15,7 @@ import { useObjectUrl } from '@/features/create-post/model/hooks/useObjectUrl'
 import { CreateModalHeader } from '@/features/create-post/ui/CreateModalHeader'
 import { EmptyDropzoneState } from '@/features/create-post/ui/EmptyDropzoneState'
 import { PreviewPane } from '@/features/create-post/ui/PreviewPane'
+import { PostDetailsPane } from '@/features/create-post/ui/PostDetailsPane'
 
 type CreateModalProps = {
   open: boolean
@@ -23,6 +24,7 @@ type CreateModalProps = {
 
 export function CreateModal({ open, onOpenChange }: CreateModalProps) {
   const [files, setFiles] = useState<File[]>([])
+  const [step, setStep] = useState<'select' | 'details'>('select')
   const {
     activeIndex,
     canGoPrev,
@@ -37,6 +39,7 @@ export function CreateModal({ open, onOpenChange }: CreateModalProps) {
     (nextOpen: boolean) => {
       if (!nextOpen) {
         setFiles([])
+        setStep('select')
         resetActiveIndex()
       }
       onOpenChange(nextOpen)
@@ -48,6 +51,7 @@ export function CreateModal({ open, onOpenChange }: CreateModalProps) {
     maxFiles: MAX_IMAGE_FILES,
     onAcceptedFiles: (limited) => {
       setFiles(limited)
+      setStep('select')
       resetActiveIndex()
     },
     onIgnoredCount: (ignoredCount) => {
@@ -62,27 +66,60 @@ export function CreateModal({ open, onOpenChange }: CreateModalProps) {
   const activePreviewUrl = useObjectUrl(activeFile)
 
   const isUploaded = files.length > 0
+  const isDetails = isUploaded && step === 'details'
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="flex aspect-square flex-col gap-0 overflow-hidden rounded-4xl bg-white p-0 sm:max-w-xl"
+        className={[
+          'flex flex-col gap-0 overflow-hidden rounded-4xl bg-white p-0 transition-[max-width] duration-300',
+          isDetails
+            ? 'sm:h-[min(80vh,560px)] sm:max-w-4xl'
+            : 'aspect-square sm:h-[min(80vh,560px)] sm:max-w-xl',
+        ].join(' ')}
       >
-        <CreateModalHeader isUploaded={isUploaded} />
+        <CreateModalHeader
+          isUploaded={isUploaded}
+          step={step}
+          onBack={() => setStep('select')}
+          onNext={() => setStep('details')}
+          onShare={() => toast('공유하기')}
+        />
         <div className="h-px w-full bg-zinc-200" />
 
         {isUploaded ? (
-          <PreviewPane
-            activePreviewUrl={activePreviewUrl}
-            filesCount={files.length}
-            activeIndex={activeIndex}
-            canGoPrev={canGoPrev}
-            canGoNext={canGoNext}
-            dots={dots}
-            goPrev={goPrev}
-            goNext={goNext}
-          />
+          isDetails ? (
+            <div className="flex min-h-0 flex-1 flex-col sm:flex-row">
+              <div className="flex min-h-0 flex-1 sm:w-[560px] sm:shrink-0">
+                <PreviewPane
+                  activePreviewUrl={activePreviewUrl}
+                  filesCount={files.length}
+                  activeIndex={activeIndex}
+                  canGoPrev={canGoPrev}
+                  canGoNext={canGoNext}
+                  dots={dots}
+                  goPrev={goPrev}
+                  goNext={goNext}
+                />
+              </div>
+
+              <div className="min-h-0 flex-1 sm:w-[340px] sm:shrink-0">
+                <PostDetailsPane profileName="user1" />
+              </div>
+            </div>
+          ) : (
+            <PreviewPane
+              activePreviewUrl={activePreviewUrl}
+              filesCount={files.length}
+              activeIndex={activeIndex}
+              canGoPrev={canGoPrev}
+              canGoNext={canGoNext}
+              dots={dots}
+              goPrev={goPrev}
+              goNext={goNext}
+            />
+          )
         ) : (
           <Dropzone
             accept={CREATE_POST_IMAGE_ACCEPT}
