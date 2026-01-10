@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import instagramLogo from '../../assets/instagram-logo.svg'
-import LoginFooter from '../../components/auth/LoginFooter'
+import instagramLogo from '@/assets/instagram-logo.svg'
+import LoginFooter from '@/components/auth/LoginFooter'
 
 export const Route = createFileRoute('/accounts/emailsignup')({
   component: EmailSignupPage,
