@@ -9,50 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MeRouteImport } from './routes/me'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as Profile_nameRouteImport } from './routes/$profile_name'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as PasswordResetRouteImport } from './routes/password/reset'
-import { Route as PProfile_nameRouteImport } from './routes/p/$profile_name'
 import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
-import { Route as Profile_nameSavedRouteImport } from './routes/$profile_name/saved'
+import { Route as AppExploreRouteImport } from './routes/_app/explore'
+import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
+import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile_name/index'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
+import { Route as AppPProfile_nameRouteImport } from './routes/_app/p/$profile_name'
+import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
 
-const MeRoute = MeRouteImport.update({
-  id: '/me',
-  path: '/me',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreRoute = ExploreRouteImport.update({
-  id: '/explore',
-  path: '/explore',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Profile_nameRoute = Profile_nameRouteImport.update({
-  id: '/$profile_name',
-  path: '/$profile_name',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
 const PasswordResetRoute = PasswordResetRouteImport.update({
   id: '/password/reset',
   path: '/password/reset',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PProfile_nameRoute = PProfile_nameRouteImport.update({
-  id: '/p/$profile_name',
-  path: '/p/$profile_name',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
@@ -60,10 +45,20 @@ const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
   path: '/accounts/emailsignup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Profile_nameSavedRoute = Profile_nameSavedRouteImport.update({
-  id: '/saved',
-  path: '/saved',
-  getParentRoute: () => Profile_nameRoute,
+const AppExploreRoute = AppExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfile_nameRoute = AppProfile_nameRouteImport.update({
+  id: '/$profile_name',
+  path: '/$profile_name',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfile_nameIndexRoute = AppProfile_nameIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppProfile_nameRoute,
 } as any)
 const StoriesProfile_nameStory_idRoute =
   StoriesProfile_nameStory_idRouteImport.update({
@@ -71,104 +66,103 @@ const StoriesProfile_nameStory_idRoute =
     path: '/stories/$profile_name/$story_id',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AppPProfile_nameRoute = AppPProfile_nameRouteImport.update({
+  id: '/p/$profile_name',
+  path: '/p/$profile_name',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => AppProfile_nameRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/$profile_name': typeof Profile_nameRouteWithChildren
-  '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
-  '/me': typeof MeRoute
-  '/$profile_name/saved': typeof Profile_nameSavedRoute
+  '/$profile_name': typeof AppProfile_nameRouteWithChildren
+  '/explore': typeof AppExploreRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/p/$profile_name': typeof PProfile_nameRoute
   '/password/reset': typeof PasswordResetRoute
+  '/': typeof AppIndexRoute
+  '/$profile_name/saved': typeof AppProfile_nameSavedRoute
+  '/p/$profile_name': typeof AppPProfile_nameRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
+  '/$profile_name/': typeof AppProfile_nameIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/$profile_name': typeof Profile_nameRouteWithChildren
-  '/explore': typeof ExploreRoute
   '/login': typeof LoginRoute
-  '/me': typeof MeRoute
-  '/$profile_name/saved': typeof Profile_nameSavedRoute
+  '/explore': typeof AppExploreRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/p/$profile_name': typeof PProfile_nameRoute
   '/password/reset': typeof PasswordResetRoute
+  '/': typeof AppIndexRoute
+  '/$profile_name/saved': typeof AppProfile_nameSavedRoute
+  '/p/$profile_name': typeof AppPProfile_nameRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
+  '/$profile_name': typeof AppProfile_nameIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/$profile_name': typeof Profile_nameRouteWithChildren
-  '/explore': typeof ExploreRoute
+  '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/me': typeof MeRoute
-  '/$profile_name/saved': typeof Profile_nameSavedRoute
+  '/_app/$profile_name': typeof AppProfile_nameRouteWithChildren
+  '/_app/explore': typeof AppExploreRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/p/$profile_name': typeof PProfile_nameRoute
   '/password/reset': typeof PasswordResetRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
+  '/_app/p/$profile_name': typeof AppPProfile_nameRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
+  '/_app/$profile_name/': typeof AppProfile_nameIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
+    | '/login'
     | '/$profile_name'
     | '/explore'
-    | '/login'
-    | '/me'
-    | '/$profile_name/saved'
     | '/accounts/emailsignup'
-    | '/p/$profile_name'
     | '/password/reset'
+    | '/'
+    | '/$profile_name/saved'
+    | '/p/$profile_name'
     | '/stories/$profile_name/$story_id'
+    | '/$profile_name/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/$profile_name'
-    | '/explore'
     | '/login'
-    | '/me'
-    | '/$profile_name/saved'
+    | '/explore'
     | '/accounts/emailsignup'
-    | '/p/$profile_name'
     | '/password/reset'
+    | '/'
+    | '/$profile_name/saved'
+    | '/p/$profile_name'
     | '/stories/$profile_name/$story_id'
+    | '/$profile_name'
   id:
     | '__root__'
-    | '/'
-    | '/$profile_name'
-    | '/explore'
+    | '/_app'
     | '/login'
-    | '/me'
-    | '/$profile_name/saved'
+    | '/_app/$profile_name'
+    | '/_app/explore'
     | '/accounts/emailsignup'
-    | '/p/$profile_name'
     | '/password/reset'
+    | '/_app/'
+    | '/_app/$profile_name/saved'
+    | '/_app/p/$profile_name'
     | '/stories/$profile_name/$story_id'
+    | '/_app/$profile_name/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  Profile_nameRoute: typeof Profile_nameRouteWithChildren
-  ExploreRoute: typeof ExploreRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
-  MeRoute: typeof MeRoute
   AccountsEmailsignupRoute: typeof AccountsEmailsignupRoute
-  PProfile_nameRoute: typeof PProfile_nameRoute
   PasswordResetRoute: typeof PasswordResetRoute
   StoriesProfile_nameStory_idRoute: typeof StoriesProfile_nameStory_idRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/me': {
-      id: '/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof MeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -176,39 +170,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore': {
-      id: '/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof ExploreRouteImport
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$profile_name': {
-      id: '/$profile_name'
-      path: '/$profile_name'
-      fullPath: '/$profile_name'
-      preLoaderRoute: typeof Profile_nameRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/password/reset': {
       id: '/password/reset'
       path: '/password/reset'
       fullPath: '/password/reset'
       preLoaderRoute: typeof PasswordResetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/p/$profile_name': {
-      id: '/p/$profile_name'
-      path: '/p/$profile_name'
-      fullPath: '/p/$profile_name'
-      preLoaderRoute: typeof PProfile_nameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accounts/emailsignup': {
@@ -218,12 +198,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsEmailsignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$profile_name/saved': {
-      id: '/$profile_name/saved'
-      path: '/saved'
-      fullPath: '/$profile_name/saved'
-      preLoaderRoute: typeof Profile_nameSavedRouteImport
-      parentRoute: typeof Profile_nameRoute
+    '/_app/explore': {
+      id: '/_app/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof AppExploreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$profile_name': {
+      id: '/_app/$profile_name'
+      path: '/$profile_name'
+      fullPath: '/$profile_name'
+      preLoaderRoute: typeof AppProfile_nameRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$profile_name/': {
+      id: '/_app/$profile_name/'
+      path: '/'
+      fullPath: '/$profile_name/'
+      preLoaderRoute: typeof AppProfile_nameIndexRouteImport
+      parentRoute: typeof AppProfile_nameRoute
     }
     '/stories/$profile_name/$story_id': {
       id: '/stories/$profile_name/$story_id'
@@ -232,29 +226,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesProfile_nameStory_idRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/p/$profile_name': {
+      id: '/_app/p/$profile_name'
+      path: '/p/$profile_name'
+      fullPath: '/p/$profile_name'
+      preLoaderRoute: typeof AppPProfile_nameRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$profile_name/saved': {
+      id: '/_app/$profile_name/saved'
+      path: '/saved'
+      fullPath: '/$profile_name/saved'
+      preLoaderRoute: typeof AppProfile_nameSavedRouteImport
+      parentRoute: typeof AppProfile_nameRoute
+    }
   }
 }
 
-interface Profile_nameRouteChildren {
-  Profile_nameSavedRoute: typeof Profile_nameSavedRoute
+interface AppProfile_nameRouteChildren {
+  AppProfile_nameSavedRoute: typeof AppProfile_nameSavedRoute
+  AppProfile_nameIndexRoute: typeof AppProfile_nameIndexRoute
 }
 
-const Profile_nameRouteChildren: Profile_nameRouteChildren = {
-  Profile_nameSavedRoute: Profile_nameSavedRoute,
+const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
+  AppProfile_nameSavedRoute: AppProfile_nameSavedRoute,
+  AppProfile_nameIndexRoute: AppProfile_nameIndexRoute,
 }
 
-const Profile_nameRouteWithChildren = Profile_nameRoute._addFileChildren(
-  Profile_nameRouteChildren
+const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
+  AppProfile_nameRouteChildren,
 )
 
+interface AppRouteChildren {
+  AppProfile_nameRoute: typeof AppProfile_nameRouteWithChildren
+  AppExploreRoute: typeof AppExploreRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppPProfile_nameRoute: typeof AppPProfile_nameRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppProfile_nameRoute: AppProfile_nameRouteWithChildren,
+  AppExploreRoute: AppExploreRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppPProfile_nameRoute: AppPProfile_nameRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  Profile_nameRoute: Profile_nameRouteWithChildren,
-  ExploreRoute: ExploreRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
-  MeRoute: MeRoute,
   AccountsEmailsignupRoute: AccountsEmailsignupRoute,
-  PProfile_nameRoute: PProfile_nameRoute,
   PasswordResetRoute: PasswordResetRoute,
   StoriesProfile_nameStory_idRoute: StoriesProfile_nameStory_idRoute,
 }
