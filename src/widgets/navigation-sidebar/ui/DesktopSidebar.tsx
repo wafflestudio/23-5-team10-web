@@ -1,5 +1,4 @@
 import instagramLogo from '@/assets/instagram-logo.svg'
-import { useMatchRoute } from '@tanstack/react-router'
 import {
   Sidebar,
   SidebarContent,
@@ -7,10 +6,11 @@ import {
   SidebarMenu,
 } from '@/shared/ui/sidebar'
 import { NAV_ITEMS } from '../model/navItems'
+import { useNavController } from '../model/useNavController'
 import { SidebarNavLink } from './SidebarNavItem/SidebarNavLink'
 import { SidebarNavButton } from './SidebarNavItem/SidebarNavButton'
 import { cn } from '@/shared/lib/utils'
-import { useCallback, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { SearchDrawer } from '@/features/search/ui/SearchDrawer'
 
 interface NavigationSidebarProps {
@@ -18,15 +18,11 @@ interface NavigationSidebarProps {
 }
 
 export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
-  const matchRoute = useMatchRoute()
   const sidebarRef = useRef<HTMLDivElement | null>(null)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const { uiState, setSearchOpen, getIsItemActive, handleItemClick } =
+    useNavController({ onCreateClick })
 
-  const toggleSearch = useCallback(() => {
-    setIsSearchOpen((prev) => !prev)
-  }, [])
-
-  const isCompact = isSearchOpen
+  const isCompact = uiState.isSearchOpen
 
   const baseSidebarClass = 'border-r border-gray-300 h-full'
   const fullSidebarClass = 'w-64 px-4'
@@ -35,8 +31,8 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
   return (
     <>
       <SearchDrawer
-        open={isSearchOpen}
-        onOpenChange={setIsSearchOpen}
+        open={uiState.isSearchOpen}
+        onOpenChange={setSearchOpen}
         anchorRef={sidebarRef}
       />
       <div className="h-full">
@@ -70,14 +66,7 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
           <SidebarContent className={cn(isCompact && 'px-4', 'max-xl:px-4')}>
             <SidebarMenu className="gap-1">
               {NAV_ITEMS.map((item) => {
-                const isActive =
-                  item.type === 'link' &&
-                  Boolean(
-                    item.to &&
-                    matchRoute({
-                      to: item.to,
-                    })
-                  )
+                const isActive = getIsItemActive(item)
 
                 if (item.type === 'link') {
                   return (
@@ -86,14 +75,13 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
                       label={item.label}
                       icon={item.icon}
                       isActive={isActive}
-                      to={item.to}
                       isCompact={isCompact}
+                      to={item.to}
                     />
                   )
                 }
 
-                const handleClick =
-                  item.action === 'search' ? toggleSearch : onCreateClick
+                const handleClick = () => handleItemClick(item)
 
                 return (
                   <SidebarNavButton

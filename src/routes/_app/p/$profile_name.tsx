@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/$profile_name/saved')({
+export const Route = createFileRoute('/_app/p/$profile_name')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return <div>Saved stories for "/$profile_name"!</div>
+  return <div>Hello "/p/$profile_name"!</div>
 }
