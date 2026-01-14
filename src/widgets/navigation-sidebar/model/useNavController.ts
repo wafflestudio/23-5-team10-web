@@ -3,6 +3,9 @@ import { useActionState, useCallback } from 'react'
 
 import type { NavigationSidebarItem } from './navItems'
 import { MOCK_PROFILE_NAME } from './navItems'
+import { useEffect } from 'react'
+import { useSidebar } from '@/shared/ui/sidebar'
+import { useXlBreakpoint } from '@/shared/lib/hooks/useXlBreakpoint'
 
 type NavAction =
   | { type: 'search_toggle' }
@@ -27,6 +30,8 @@ type UseNavControllerArgs = {
 export function useNavController({ onCreateClick }: UseNavControllerArgs) {
   const matchRoute = useMatchRoute()
   const navigate = useNavigate()
+  const isBelowXl = useXlBreakpoint()
+  const { setOpen } = useSidebar()
 
   const [uiState, dispatchNavAction] = useActionState<NavUiState, NavAction>(
     (prev, action) => {
@@ -50,6 +55,14 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
     },
     INITIAL_NAV_UI_STATE
   )
+
+  useEffect(() => {
+    if (isBelowXl || uiState.isSearchOpen) {
+      setOpen(false)
+    } else {
+      setOpen(true)
+    }
+  }, [isBelowXl, uiState.isSearchOpen, setOpen])
 
   const isMyProfileRouteActive =
     Boolean(
