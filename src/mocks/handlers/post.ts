@@ -1,6 +1,18 @@
-// 해당 엔티티에 필요한 데이터를 나중에 여기서 가져옴
-// import { mockData } from '../db/entity.db';
+import { http, HttpResponse } from 'msw'
+import { posts } from '../db/post.db'
 
 export const postHandlers = [
-  // 여기에 http.get, http.post 등을 추가
+  http.get('/api/v1/posts/:postId', ({ params }) => {
+    const { postId } = params
+    const post = posts.find((p) => p.id === postId)
+
+    if (!post) {
+      return new HttpResponse(null, { status: 404 })
+    }
+
+    return HttpResponse.json({
+      success: true,
+      data: post,
+    })
+  }),
 ]
