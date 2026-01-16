@@ -1,6 +1,7 @@
 import { cn } from '@/shared/lib/utils'
 import type { CSSProperties, RefObject } from 'react'
 import { useLayoutEffect, useMemo, useState } from 'react'
+import { Input } from '@/shared/ui/input'
 
 type SearchDrawerProps = {
   open: boolean
@@ -50,7 +51,7 @@ export function SearchDrawer({
     <>
       <div
         className={cn(
-          'fixed inset-y-0 right-0 z-40 bg-transparent',
+          'fixed inset-y-0 right-0 z-40',
           open ? 'pointer-events-auto' : 'pointer-events-none'
         )}
         style={anchoredStyle}
@@ -65,13 +66,14 @@ export function SearchDrawer({
       >
         <aside
           className={cn(
-            'bg-background h-full w-[24rem] border-r transition-transform duration-300 ease-out',
+            'h-full w-[24rem] rounded-r-2xl bg-white shadow-2xl transition-transform duration-300 ease-out',
             open ? 'translate-x-0' : '-translate-x-full'
           )}
         >
-          <div className="p-6">
+          <div className="flex flex-col gap-6 p-6">
             <h2 className="text-2xl font-bold">검색</h2>
-            <div className="mt-6 h-64 rounded-lg border border-dashed" />
+            <Input className="rounded-lg border-none bg-gray-100 focus-visible:ring-0" />
+            <h3 className="text-md font-semibold">최근 검색 항목</h3>
           </div>
         </aside>
       </div>
