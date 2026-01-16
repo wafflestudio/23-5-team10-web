@@ -1,7 +1,8 @@
 import { cn } from '@/shared/lib/utils'
 import type { CSSProperties, RefObject } from 'react'
-import { useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Input } from '@/shared/ui/input'
+import { useDebounce } from '@/shared/lib/hooks/useDebounce'
 
 type SearchDrawerProps = {
   open: boolean
@@ -18,6 +19,8 @@ export function SearchDrawer({
 }: SearchDrawerProps) {
   const close = () => onOpenChange(false)
   const [anchorRightPx, setAnchorRightPx] = useState(DEFAULT_ANCHOR_RIGHT_PX)
+  const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   useLayoutEffect(() => {
     const el = anchorRef?.current
@@ -47,6 +50,13 @@ export function SearchDrawer({
     [anchorRightPx]
   )
 
+  useEffect(() => {
+    // TODO: API 연결
+    if (debouncedSearchTerm) {
+      console.log(debouncedSearchTerm)
+    }
+  }, [debouncedSearchTerm])
+
   return (
     <>
       <div
@@ -66,13 +76,18 @@ export function SearchDrawer({
       >
         <aside
           className={cn(
-            'h-full w-[24rem] rounded-r-2xl bg-white shadow-2xl transition-transform duration-300 ease-out',
-            open ? 'translate-x-0' : '-translate-x-full'
+            'h-full w-[24rem] rounded-r-2xl bg-white transition-transform duration-300 ease-out',
+            open ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
           )}
         >
           <div className="flex flex-col gap-6 p-6">
             <h2 className="text-2xl font-bold">검색</h2>
-            <Input className="rounded-lg border-none bg-gray-100 focus-visible:ring-0" />
+            <Input
+              className="rounded-lg border-none bg-gray-100 focus-visible:ring-0"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="검색"
+            />
             <h3 className="text-md font-semibold">최근 검색 항목</h3>
           </div>
         </aside>
