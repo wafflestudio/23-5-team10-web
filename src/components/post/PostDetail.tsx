@@ -22,6 +22,8 @@ export default function PostDetail() {
   const [postData, setPostData] = useState<PostData | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showHeart, setShowHeart] = useState(false)
+  const [randomRotate, setRandomRotate] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
     fetch(`/api/v1/posts/${postId}`)
@@ -42,8 +44,17 @@ export default function PostDetail() {
   }
 
   const handleDoubleLike = () => {
+    if (isAnimating) return
+
+    setIsAnimating(true)
+    const rotate = Math.floor(Math.random() * 61) - 30
+    setRandomRotate(rotate)
     setShowHeart(true)
-    setTimeout(() => setShowHeart(false), 800)
+
+    // 기울기 유지(0.4s) + 정방향 회전(0.3s) = 총 0.7초 후 사라짐 시작
+    setTimeout(() => {
+      setShowHeart(false)
+    }, 700)
   }
 
   return (
@@ -95,13 +106,22 @@ export default function PostDetail() {
             {showHeart && (
               <motion.div
                 key="rising-heart"
-                initial={{ scale: 0, opacity: 1, y: 0 }}
-                animate={{ scale: [0, 1.2, 1], y: -20 }}
-                exit={{ y: -600 }}
-                transition={{
-                  duration: 0.8,
-                  ease: [0.45, 0, 0.55, 1],
+                initial={{ scale: 0, opacity: 1, y: 0, rotate: randomRotate }}
+                animate={{
+                  scale: [0, 1.2, 1],
+                  y: -20,
+                  rotate: [randomRotate, randomRotate, 0],
                 }}
+                exit={{
+                  y: -700,
+                  transition: { duration: 0.2, ease: 'circIn' },
+                }}
+                transition={{
+                  duration: 0.7,
+                  times: [0, 0.57, 1], // 0.4s 지점까지 기울기 유지, 이후 0.3s 동안 회전 완료
+                  ease: 'easeInOut',
+                }}
+                onAnimationComplete={() => setIsAnimating(false)}
                 className="pointer-events-none absolute z-[20] flex items-center justify-center"
               >
                 <Heart
