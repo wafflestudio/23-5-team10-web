@@ -18,7 +18,20 @@ export function FollowListModal({
 }: FollowListModalProps) {
   const title = type === 'followers' ? '팔로워' : '팔로잉'
 
-  const users: FollowUser[] = []
+  const users: FollowUser[] = [
+    {
+      userId: 5,
+      nickname: 'celebrity',
+      profileImageUrl: 'https://picsum.photos/200/200',
+      isFollowing: true,
+    },
+    {
+      userId: 6,
+      nickname: 'user',
+      profileImageUrl: 'https://picsum.photos/200/200',
+      isFollowing: true,
+    },
+  ]
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

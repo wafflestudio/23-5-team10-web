@@ -3,6 +3,7 @@ import { FollowButton } from './FollowButton'
 import { type FollowListType } from './FollowListModal'
 
 type User = {
+  userId: number
   nickname: string
   profileImageUrl?: string | null
   isFollowing?: boolean
@@ -43,12 +44,13 @@ export function FollowListItem({ user, type }: FollowListItemProps) {
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-gray-900">
-          {user.nickname}
+          {user.userId}
         </p>
+        <p className="truncate text-sm text-gray-500"> {user.nickname} </p>
       </div>
 
       <div className="shrink-0">
-        {type === 'followers' ? (
+        {type === 'following' ? (
           <FollowButton
             defaultIsFollowing={user.isFollowing ?? false}
             onToggle={handleFollowToggle}
