@@ -1,14 +1,28 @@
-import type { FileRouteTypes } from '@/routeTree.gen'
 import { Compass, House, Plus, Search, UserCircle } from 'lucide-react'
 import type { ComponentType } from 'react'
 
-type NavigationSidebarItem = {
-  type: 'link' | 'button'
+type BaseNavigationSidebarItem = {
   label: string
   icon: ComponentType<{ className?: string }>
-  to?: FileRouteTypes['to']
-  action?: 'search' | 'create'
 }
+
+export const MOCK_PROFILE_NAME = 'me'
+
+export type NavigationSidebarLinkTo = '/' | '/explore'
+
+export type NavigationSidebarLinkItem = BaseNavigationSidebarItem & {
+  type: 'link'
+  to: NavigationSidebarLinkTo
+}
+
+export type NavigationSidebarButtonItem = BaseNavigationSidebarItem & {
+  type: 'button'
+  action: 'search' | 'create' | 'profile'
+}
+
+export type NavigationSidebarItem =
+  | NavigationSidebarLinkItem
+  | NavigationSidebarButtonItem
 
 export const NAV_ITEMS: NavigationSidebarItem[] = [
   {
@@ -38,7 +52,7 @@ export const NAV_ITEMS: NavigationSidebarItem[] = [
   {
     label: '프로필',
     icon: UserCircle,
-    to: '/me',
-    type: 'link',
+    type: 'button',
+    action: 'profile',
   },
 ]

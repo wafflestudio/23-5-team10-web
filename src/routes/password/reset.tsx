@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Lock } from 'lucide-react'
-import instagramLogo from '../../assets/instagram-logo.svg'
-import LoginFooter from '../../components/auth/LoginFooter'
+import instagramLogo from '@/assets/instagram-logo.svg'
+import LoginFooter from '@/components/auth/LoginFooter'
 
 export const Route = createFileRoute('/password/reset')({
   component: PasswordResetPage,
@@ -47,7 +47,7 @@ function PasswordResetPage() {
         <div className="flex min-h-full items-center justify-center p-4">
           <div className="flex w-full max-w-[388px] flex-col items-center border border-gray-300 bg-white">
             <div className="flex flex-col items-center p-11 pt-8 pb-4 text-center">
-              <div className="mb-4 flex h-[96px] w-[96px] items-center justify-center rounded-full border-[2px] border-black">
+              <div className="mb-4 flex h-[96px] w-[96px] items-center justify-center rounded-full border-2 border-black">
                 <Lock size={48} strokeWidth={1.2} />
               </div>
 

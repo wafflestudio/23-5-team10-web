@@ -1,9 +1,9 @@
-import { NavigationShell } from '@/widgets/navigation-sidebar/ui/NavigationShell'
+import { StoriesCarousel } from '@/widgets/stories'
 
 export const HomePage = () => {
   return (
-    <div>
-      <NavigationShell />
+    <div className="flex flex-1 overflow-x-hidden p-10">
+      <StoriesCarousel />
     </div>
   )
 }
