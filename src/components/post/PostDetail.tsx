@@ -43,7 +43,7 @@ export default function PostDetail() {
 
   const handleDoubleLike = () => {
     setShowHeart(true)
-    setTimeout(() => setShowHeart(false), 1000)
+    setTimeout(() => setShowHeart(false), 1200)
   }
 
   return (
@@ -51,6 +51,14 @@ export default function PostDetail() {
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60"
       onClick={handleClose}
     >
+      <svg width="0" height="0" className="absolute">
+        <linearGradient id="heart-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FF3040" />
+          <stop offset="50%" stopColor="#D300C5" />
+          <stop offset="100%" stopColor="#FF7A00" />
+        </linearGradient>
+      </svg>
+
       <button
         onClick={handleClose}
         className="absolute top-6 right-6 z-[110] text-white"
@@ -86,12 +94,17 @@ export default function PostDetail() {
           <AnimatePresence>
             {showHeart && (
               <motion.div
+                key="big-heart"
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1.2, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                className="pointer-events-none absolute z-[20]"
+                animate={{ scale: [0, 1.2, 1], opacity: 1 }}
+                exit={{ scale: 1.5, opacity: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="pointer-events-none absolute z-[20] flex items-center justify-center"
               >
-                <Heart className="h-24 w-24 fill-white text-white shadow-2xl" />
+                <Heart
+                  className="h-32 w-32 drop-shadow-lg"
+                  style={{ fill: 'url(#heart-gradient)', stroke: 'none' }}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -117,17 +130,6 @@ export default function PostDetail() {
             >
               <ChevronRight className="h-5 w-5 text-black" strokeWidth={3} />
             </button>
-          )}
-
-          {images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
-              {images.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-white' : 'bg-white/50'}`}
-                />
-              ))}
-            </div>
           )}
         </div>
 
