@@ -43,7 +43,7 @@ export default function PostDetail() {
 
   const handleDoubleLike = () => {
     setShowHeart(true)
-    setTimeout(() => setShowHeart(false), 1200)
+    setTimeout(() => setShowHeart(false), 800)
   }
 
   return (
@@ -94,15 +94,18 @@ export default function PostDetail() {
           <AnimatePresence>
             {showHeart && (
               <motion.div
-                key="big-heart"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: [0, 1.2, 1], opacity: 1 }}
-                exit={{ scale: 1.5, opacity: 0 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                key="rising-heart"
+                initial={{ scale: 0, opacity: 1, y: 0 }}
+                animate={{ scale: [0, 1.2, 1], y: -20 }}
+                exit={{ y: -600 }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.45, 0, 0.55, 1],
+                }}
                 className="pointer-events-none absolute z-[20] flex items-center justify-center"
               >
                 <Heart
-                  className="h-32 w-32 drop-shadow-lg"
+                  className="h-32 w-32 drop-shadow-2xl"
                   style={{ fill: 'url(#heart-gradient)', stroke: 'none' }}
                 />
               </motion.div>
