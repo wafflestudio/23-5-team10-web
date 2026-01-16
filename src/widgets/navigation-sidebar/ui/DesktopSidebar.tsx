@@ -33,7 +33,7 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
       <Sidebar
         ref={sidebarRef}
         collapsible="icon"
-        className="border-r border-gray-300"
+        className="border-r border-gray-300 px-4"
       >
         <SidebarHeader className="pt-8 pb-4">
           <div className="flex items-center justify-center">
