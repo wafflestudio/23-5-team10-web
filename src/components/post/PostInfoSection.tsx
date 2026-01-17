@@ -56,7 +56,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
           setHasMore(false)
         }
       } catch (error) {
-        console.error('댓글 로딩 실패:', error)
+        console.error(error)
       } finally {
         isFetching.current = false
       }
@@ -65,7 +65,6 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
   )
 
   useEffect(() => {
-    // 마운트 시 최초 1회 로드
     if (data?.id) {
       fetchComments(1)
     }
@@ -105,7 +104,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
 
   return (
     <div className="flex h-full flex-col bg-white">
-      <div className="flex shrink-0 items-center justify-between border-b border-gray-200 p-4">
+      <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3">
           <img
             src={data?.userImage || ''}
@@ -121,74 +120,72 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         </button>
       </div>
 
-      <div className="scrollbar-hide flex-1 overflow-y-auto">
+      <div className="scrollbar-hide flex-1 overflow-y-auto px-3 py-2">
         <style
           dangerouslySetInnerHTML={{
             __html: `.scrollbar-hide::-webkit-scrollbar { display: none; }`,
           }}
         />
-        <div className="sticky top-0 z-10 border-b border-gray-100 bg-white p-4">
-          <div className="flex gap-3">
-            <img
-              src={data?.userImage || ''}
-              className="h-8 w-8 shrink-0 rounded-full object-cover"
-              alt=""
-            />
-            <div className="text-sm text-black">
-              <span className="mr-2 font-semibold">{data?.username}</span>
-              <span className="whitespace-pre-wrap">{data?.caption}</span>
-              <div className="mt-2 text-xs text-gray-500">
-                {data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
-              </div>
+
+        <div className="mb-2 flex gap-3 px-1 py-3">
+          <img
+            src={data?.userImage || ''}
+            className="h-8 w-8 shrink-0 rounded-full object-cover"
+            alt=""
+          />
+          <div className="text-sm text-black">
+            <span className="mr-2 font-semibold">{data?.username}</span>
+            <span className="whitespace-pre-wrap">{data?.caption}</span>
+            <div className="mt-2 text-xs font-semibold text-gray-500">
+              {data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
             </div>
           </div>
         </div>
 
-        <div className="p-4 pb-0">
-          <div className="flex flex-col">
-            {comments
-              .filter((c) => c.parentId === null)
-              .map((comment) => (
-                <div key={comment.id} className="mb-2">
-                  <CommentItem
-                    comment={comment}
-                    isLiked={!!likedComments[comment.id]}
-                    onDoubleClick={handleDoubleClick}
-                    onHeartClick={handleHeartClick}
-                  />
-                  {comments.some((r) => r.parentId === comment.id) && (
-                    <div className="ml-11">
-                      <button
-                        onClick={() =>
-                          setShowReplies((p) => ({
-                            ...p,
-                            [comment.id]: !p[comment.id],
-                          }))
-                        }
-                        className="flex items-center gap-2 py-2 text-xs font-semibold text-gray-500"
-                      >
-                        <div className="h-[1px] w-6 bg-gray-300" />
-                        {showReplies[comment.id] ? '답글 숨기기' : '답글 보기'}
-                      </button>
-                      {showReplies[comment.id] &&
-                        comments
-                          .filter((r) => r.parentId === comment.id)
-                          .map((r) => (
-                            <CommentItem
-                              key={r.id}
-                              comment={r}
-                              isReply
-                              isLiked={!!likedComments[r.id]}
-                              onDoubleClick={handleDoubleClick}
-                              onHeartClick={handleHeartClick}
-                            />
-                          ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            <div ref={observerTarget} className="h-10 w-full" />
-          </div>
+        <div className="flex flex-col">
+          {comments
+            .filter((c) => c.parentId === null)
+            .map((comment) => (
+              <div key={comment.id} className="mb-1">
+                <CommentItem
+                  comment={comment}
+                  isLiked={!!likedComments[comment.id]}
+                  onDoubleClick={handleDoubleClick}
+                  onHeartClick={handleHeartClick}
+                />
+
+                {comments.some((r) => r.parentId === comment.id) && (
+                  <div className="ml-12">
+                    <button
+                      onClick={() =>
+                        setShowReplies((p) => ({
+                          ...p,
+                          [comment.id]: !p[comment.id],
+                        }))
+                      }
+                      className="flex items-center gap-2 py-2 text-xs font-semibold text-gray-500"
+                    >
+                      <div className="h-[1px] w-6 bg-gray-300" />
+                      {showReplies[comment.id] ? '답글 숨기기' : '답글 보기'}
+                    </button>
+                    {showReplies[comment.id] &&
+                      comments
+                        .filter((r) => r.parentId === comment.id)
+                        .map((r) => (
+                          <CommentItem
+                            key={r.id}
+                            comment={r}
+                            isReply
+                            isLiked={!!likedComments[r.id]}
+                            onDoubleClick={handleDoubleClick}
+                            onHeartClick={handleHeartClick}
+                          />
+                        ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          <div ref={observerTarget} className="h-1" />
         </div>
       </div>
 
