@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as PasswordResetRouteImport } from './routes/password/reset'
 import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
+import { Route as AppTestRouteImport } from './routes/_app/test'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
 import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile_name/index'
@@ -44,6 +45,11 @@ const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
   id: '/accounts/emailsignup',
   path: '/accounts/emailsignup',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppTestRoute = AppTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppExploreRoute = AppExploreRouteImport.update({
   id: '/explore',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/explore': typeof AppExploreRoute
+  '/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/': typeof AppIndexRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/explore': typeof AppExploreRoute
+  '/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/': typeof AppIndexRoute
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_app/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/_app/explore': typeof AppExploreRoute
+  '/_app/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/_app/': typeof AppIndexRoute
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/$profile_name'
     | '/explore'
+    | '/test'
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/'
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/explore'
+    | '/test'
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_app/$profile_name'
     | '/_app/explore'
+    | '/_app/test'
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/_app/'
@@ -197,6 +209,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/accounts/emailsignup'
       preLoaderRoute: typeof AccountsEmailsignupRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/test': {
+      id: '/_app/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof AppTestRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/explore': {
       id: '/_app/explore'
@@ -254,12 +273,13 @@ const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
 }
 
 const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren,
+  AppProfile_nameRouteChildren
 )
 
 interface AppRouteChildren {
   AppProfile_nameRoute: typeof AppProfile_nameRouteWithChildren
   AppExploreRoute: typeof AppExploreRoute
+  AppTestRoute: typeof AppTestRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPProfile_nameRoute: typeof AppPProfile_nameRoute
 }
@@ -267,6 +287,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppProfile_nameRoute: AppProfile_nameRouteWithChildren,
   AppExploreRoute: AppExploreRoute,
+  AppTestRoute: AppTestRoute,
   AppIndexRoute: AppIndexRoute,
   AppPProfile_nameRoute: AppPProfile_nameRoute,
 }
