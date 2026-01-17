@@ -1,4 +1,4 @@
 import { postHandlers } from './handlers/post'
-import { testHandlers } from './handlers/test'
+import { commentHandlers } from './handlers/comment'
 
-export const handlers = [...postHandlers, ...testHandlers]
+export const handlers = [...postHandlers, ...commentHandlers]
