@@ -3,6 +3,7 @@ import { MoreHorizontal } from 'lucide-react'
 import type { PostData } from './PostDetail'
 import PostMenuModal from './PostMenuModal'
 import CommentItem from './CommentItem'
+import PostActionSection from './PostActionSection'
 import { formatRelativeTime } from '../../utils/date.ts'
 
 interface Comment {
@@ -188,6 +189,16 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
           <div ref={observerTarget} className="h-1" />
         </div>
       </div>
+
+      <PostActionSection
+        likeCount={data?.likeCount || 0}
+        createdAt={data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
+        isLiked={false}
+        isBookmarked={false}
+        onLikeClick={() => {}}
+        onBookmarkClick={() => {}}
+        onCommentSubmit={() => {}}
+      />
 
       {isModalOpen && <PostMenuModal onClose={() => setIsModalOpen(false)} />}
     </div>
