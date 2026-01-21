@@ -20,6 +20,7 @@ export function SidebarNavItemBase({
       <span
         className={cn(
           isCompact ? 'sr-only' : 'max-xl:sr-only',
+          'group-data-[collapsible=icon]:sr-only',
           isActive && 'font-semibold'
         )}
       >

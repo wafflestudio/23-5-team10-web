@@ -33,20 +33,20 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
       <Sidebar
         ref={sidebarRef}
         collapsible="icon"
-        className="border-r border-gray-300 px-4"
+        className="border-r border-gray-300"
       >
-        <SidebarHeader className="pt-8 pb-4">
+        <SidebarHeader className="px-4 pt-8 pb-4">
           <div className="flex items-center justify-center">
             <img
               src={instagramLogo}
               alt="Instagram"
-              className="h-12 group-data-[collapsible=icon]:size-10"
+              className="h-12 group-data-[collapsible=icon]:size-12"
             />
           </div>
         </SidebarHeader>
 
         <SidebarContent>
-          <SidebarMenu className="gap-1">
+          <SidebarMenu className="gap-1 px-4">
             {NAV_ITEMS.map((item) => {
               const isActive = getIsItemActive(item)
 
