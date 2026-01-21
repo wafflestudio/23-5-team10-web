@@ -57,12 +57,12 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
   )
 
   useEffect(() => {
-    if (isBelowXl || uiState.isSearchOpen) {
+    if (isBelowXl) {
       setOpen(false)
     } else {
       setOpen(true)
     }
-  }, [isBelowXl, uiState.isSearchOpen, setOpen])
+  }, [isBelowXl, setOpen])
 
   const isMyProfileRouteActive =
     Boolean(
