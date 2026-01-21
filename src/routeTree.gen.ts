@@ -273,7 +273,7 @@ const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
 }
 
 const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren
+  AppProfile_nameRouteChildren,
 )
 
 interface AppRouteChildren {
