@@ -31,7 +31,7 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
   const matchRoute = useMatchRoute()
   const navigate = useNavigate()
   const isBelowXl = useXlBreakpoint()
-  const { setOpen } = useSidebar()
+  const { setOpen, setLockGapWidth } = useSidebar()
 
   const [uiState, dispatchNavAction] = useActionState<NavUiState, NavAction>(
     (prev, action) => {
@@ -57,12 +57,21 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
   )
 
   useEffect(() => {
+    if (uiState.isSearchOpen) {
+      setOpen(false)
+      return
+    }
+
     if (isBelowXl) {
       setOpen(false)
     } else {
       setOpen(true)
     }
-  }, [isBelowXl, setOpen])
+  }, [uiState.isSearchOpen, isBelowXl, setOpen])
+
+  useEffect(() => {
+    setLockGapWidth(uiState.isSearchOpen)
+  }, [uiState.isSearchOpen, setLockGapWidth])
 
   const isMyProfileRouteActive =
     Boolean(
