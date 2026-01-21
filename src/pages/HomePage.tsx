@@ -1,9 +1,14 @@
 import { StoriesCarousel } from '@/widgets/stories'
+import { HomeFeedSection } from '@/widgets/home/HomeFeedSection'
 
 export const HomePage = () => {
   return (
-    <div className="flex flex-1 overflow-x-hidden p-10">
-      <StoriesCarousel />
+    <div className="flex flex-1 flex-col gap-6 overflow-x-hidden px-20 py-10 2xl:px-52">
+      <div className="mr-8 shrink-0">
+        <StoriesCarousel />
+      </div>
+
+      <HomeFeedSection />
     </div>
   )
 }

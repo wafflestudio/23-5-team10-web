@@ -35,11 +35,19 @@ const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed'
   open: boolean
-  setOpen: (open: boolean) => void
+  setOpen: (open: boolean | ((open: boolean) => boolean)) => void
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  /**
+   * When true, keeps the desktop layout gap width as if the sidebar
+   * were expanded, even if the sidebar itself is visually collapsed.
+   * This is used so that opening overlays like the search drawer
+   * don't cause the main page content to grow wider.
+   */
+  lockGapWidth: boolean
+  setLockGapWidth: (lock: boolean) => void
 }
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
@@ -68,6 +76,7 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
+  const [lockGapWidth, setLockGapWidth] = React.useState(false)
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -122,8 +131,20 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      lockGapWidth,
+      setLockGapWidth,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+      lockGapWidth,
+      setLockGapWidth,
+    ]
   )
 
   return (
@@ -168,7 +189,8 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
   },
   ref
 ) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const { isMobile, state, openMobile, setOpenMobile, lockGapWidth } =
+    useSidebar()
 
   if (collapsible === 'none') {
     return (
@@ -227,9 +249,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(function Sidebar(
           'relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear',
           'group-data-[collapsible=offcanvas]:w-0',
           'group-data-[side=right]:rotate-180',
-          variant === 'floating' || variant === 'inset'
-            ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)'
+          !lockGapWidth &&
+            (variant === 'floating' || variant === 'inset'
+              ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
+              : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)')
         )}
       />
       <div
