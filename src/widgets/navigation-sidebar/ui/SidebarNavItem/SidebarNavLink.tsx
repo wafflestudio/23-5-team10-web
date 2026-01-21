@@ -9,12 +9,13 @@ import type { NavigationSidebarLinkItem } from '../../model/navItems'
 
 type SidebarNavLinkProps = SidebarNavItemBaseProps & {
   to: NavigationSidebarLinkItem['to']
+  onClick?: () => void
 }
 
 const COMPACT_NAV_ITEM_CLASS_NAME = 'w-12 justify-center gap-0 px-0'
 
 export function SidebarNavLink(props: SidebarNavLinkProps) {
-  const { to, label, icon, isActive, isCompact } = props
+  const { to, label, icon, isActive, isCompact, onClick } = props
 
   return (
     <SidebarMenuItem>
@@ -27,7 +28,7 @@ export function SidebarNavLink(props: SidebarNavLinkProps) {
           isCompact && COMPACT_NAV_ITEM_CLASS_NAME
         )}
       >
-        <Link to={to}>
+        <Link to={to} onClick={onClick}>
           <SidebarNavItemBase
             label={label}
             icon={icon}

@@ -119,6 +119,12 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
     [dispatchNavAction]
   )
 
+  const closeSearchIfOpen = useCallback(() => {
+    if (uiState.isSearchOpen) {
+      dispatchNavAction({ type: 'search_set', open: false })
+    }
+  }, [dispatchNavAction, uiState.isSearchOpen])
+
   const setSearchOpen = useCallback(
     (open: boolean) => dispatchNavAction({ type: 'search_set', open }),
     [dispatchNavAction]
@@ -129,5 +135,6 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
     setSearchOpen,
     getIsItemActive,
     handleItemClick,
+    closeSearchIfOpen,
   }
 }

@@ -1,6 +1,13 @@
 import { cn } from '@/shared/lib/utils'
 import type { CSSProperties, RefObject } from 'react'
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Input } from '@/shared/ui/input'
 import { useDebounce } from '@/shared/lib/hooks/useDebounce'
 
@@ -17,10 +24,12 @@ export function SearchDrawer({
   onOpenChange,
   anchorRef,
 }: SearchDrawerProps) {
-  const close = () => onOpenChange(false)
+  const close = useCallback(() => onOpenChange(false), [onOpenChange])
   const [anchorRightPx, setAnchorRightPx] = useState(DEFAULT_ANCHOR_RIGHT_PX)
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const drawerRef = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
     const el = anchorRef?.current
@@ -51,6 +60,36 @@ export function SearchDrawer({
   )
 
   useEffect(() => {
+    if (!open) return
+
+    const container = containerRef.current
+    if (!container) return
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null
+      if (!target) return
+
+      const drawerEl = drawerRef.current
+      const anchorEl = anchorRef?.current ?? null
+
+      const isInsideDrawer = drawerEl?.contains(target)
+      const isInsideAnchor = anchorEl?.contains(target)
+
+      if (isInsideDrawer || isInsideAnchor) {
+        return
+      }
+
+      close()
+    }
+
+    container.addEventListener('pointerdown', handlePointerDown)
+
+    return () => {
+      container.removeEventListener('pointerdown', handlePointerDown)
+    }
+  }, [anchorRef, close, open])
+
+  useEffect(() => {
     // TODO: API 연결
     if (debouncedSearchTerm) {
       console.log(debouncedSearchTerm)
@@ -60,21 +99,15 @@ export function SearchDrawer({
   return (
     <>
       <div
+        ref={containerRef}
         className={cn(
-          'fixed inset-y-0 right-0 z-40',
-          open ? 'pointer-events-auto' : 'pointer-events-none'
-        )}
-        style={anchoredStyle}
-        onClick={close}
-      />
-      <div
-        className={cn(
-          'fixed inset-y-0 right-0 z-50 overflow-hidden',
+          'fixed inset-y-0 right-0 z-40 overflow-hidden',
           open ? 'pointer-events-auto' : 'pointer-events-none'
         )}
         style={anchoredStyle}
       >
         <aside
+          ref={drawerRef}
           className={cn(
             'h-full w-[24rem] rounded-r-2xl bg-white transition-transform duration-300 ease-out',
             open ? 'translate-x-0 shadow-2xl' : '-translate-x-full'

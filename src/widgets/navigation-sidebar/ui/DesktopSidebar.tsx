@@ -19,8 +19,13 @@ interface NavigationSidebarProps {
 export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
   const sidebarRef = useRef<HTMLDivElement | null>(null)
 
-  const { uiState, setSearchOpen, getIsItemActive, handleItemClick } =
-    useNavController({ onCreateClick })
+  const {
+    uiState,
+    setSearchOpen,
+    getIsItemActive,
+    handleItemClick,
+    closeSearchIfOpen,
+  } = useNavController({ onCreateClick })
 
   return (
     <>
@@ -56,6 +61,7 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
                     key={item.label}
                     {...item}
                     isActive={isActive}
+                    onClick={closeSearchIfOpen}
                   />
                 )
               }
@@ -65,7 +71,12 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
                   key={item.label}
                   {...item}
                   isActive={isActive}
-                  onClick={() => handleItemClick(item)}
+                  onClick={() => {
+                    if (item.action === 'profile') {
+                      closeSearchIfOpen()
+                    }
+                    handleItemClick(item)
+                  }}
                 />
               )
             })}
