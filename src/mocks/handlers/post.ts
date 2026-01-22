@@ -15,4 +15,35 @@ export const postHandlers = [
       data: post,
     })
   }),
+  http.get('*/api/v1/posts/bookmarks', () => {
+    const bookmarkedPostIds = ['1', '3', '5', '7', '9']
+    const bookmarkedPosts = posts
+      .filter((p) => bookmarkedPostIds.includes(p.id))
+      .map((p, index) => ({
+        id: Number(p.id),
+        userId: 1,
+        nickname: p.username,
+        profileImageUrl: p.userImage,
+        content: p.caption,
+        albumId: null,
+        images: p.images.map((url, imgIndex) => ({
+          id: Number(p.id) * 100 + imgIndex,
+          url,
+          orderIndex: imgIndex,
+        })),
+        likeCount: p.likeCount,
+        commentCount: p.commentCount,
+        createdAt: p.createdAt,
+        updatedAt: p.createdAt,
+        liked: index % 2 === 0,
+        bookmarked: true,
+      }))
+
+    return HttpResponse.json({
+      code: '200',
+      message: '요청에 성공하였습니다.',
+      data: bookmarkedPosts,
+      success: true,
+    })
+  }),
 ]

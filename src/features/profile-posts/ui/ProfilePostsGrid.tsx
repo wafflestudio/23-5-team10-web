@@ -20,6 +20,7 @@ export function ProfilePostsGrid({ className, items }: ProfilePostsGridProps) {
       {items.map((item) => (
         <ProfilePostTile
           key={item.id}
+          postId={item.id}
           imageSrc={item.imageSrc}
           likeCount={item.likeCount}
           commentCount={item.commentCount}
