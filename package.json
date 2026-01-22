@@ -14,7 +14,7 @@
     "prepare": "husky",
     "commit": "cz",
     "test": "vitest",
-    "test:ci": "vitest run"
+    "test:ci": "vitest run --reporter=verbose --silent"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
