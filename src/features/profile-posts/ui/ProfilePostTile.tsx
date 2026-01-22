@@ -1,11 +1,13 @@
 import { Heart, MessageCircle } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useNavigate, useLocation } from '@tanstack/react-router'
 
 import { cn } from '@/shared/lib/utils'
 import { ImageFallback } from '@/shared/ui/image-fallback'
 
 type ProfilePostTileProps = {
   className?: string
+  postId: string
   imageSrc?: string
   likeCount: number
   commentCount: number
@@ -13,15 +15,29 @@ type ProfilePostTileProps = {
 
 export function ProfilePostTile({
   className,
+  postId,
   imageSrc,
   likeCount,
   commentCount,
 }: ProfilePostTileProps) {
   const [isImageError, setIsImageError] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const countsLabel = useMemo(() => {
     return `좋아요 ${likeCount}개, 댓글 ${commentCount}개`
   }, [commentCount, likeCount])
+
+  const handleClick = () => {
+    navigate({
+      to: '/p/$post_id',
+      params: { post_id: postId },
+      search: {
+        returnToPath: location.pathname,
+        returnToSearch: location.search,
+      },
+    })
+  }
 
   return (
     <button
@@ -31,6 +47,7 @@ export function ProfilePostTile({
         className
       )}
       aria-label={countsLabel}
+      onClick={handleClick}
     >
       {imageSrc && !isImageError ? (
         <img
