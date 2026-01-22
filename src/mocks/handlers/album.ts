@@ -18,7 +18,7 @@ type AlbumActionResponse = {
 }
 
 export const albumHandlers = [
-  http.post('/api/v1/albums', async ({ request }) => {
+  http.post('*/api/v1/albums', async ({ request }) => {
     const json = await request.json().catch(() => null)
 
     const result = (
@@ -55,7 +55,47 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.post('/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
+  http.get('*/api/v1/albums/my', () => {
+    const albumSummaries = albums.map((album) => {
+      const postsInAlbum = Object.entries(postAlbumMap)
+        .filter(([, mappedAlbumId]) => mappedAlbumId === album.id)
+        .map(([postIdKey]) => Number(postIdKey))
+
+      const postCount = postsInAlbum.length
+
+      let thumbnailImageUrl = ''
+
+      if (postCount > 0) {
+        const firstPostId = postsInAlbum[0]
+        const post = posts.find((p) => p.id === String(firstPostId))
+
+        if (post) {
+          const postWithImages = post as Post & { images?: string[] }
+
+          thumbnailImageUrl = Array.isArray(postWithImages.images)
+            ? postWithImages.images[0]
+            : postWithImages.imageUrl
+        }
+      }
+
+      return {
+        albumId: album.id,
+        title: album.title,
+        thumbnailImageUrl,
+        postCount,
+      }
+    })
+
+    const body: MyAlbumsResponse = {
+      code: '200',
+      message: '내 앨범 목록 조회 성공',
+      data: albumSummaries,
+      success: true,
+    }
+
+    return HttpResponse.json(body, { status: 200 })
+  }),
+  http.post('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
 
@@ -91,7 +131,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.get('/api/v1/albums/:albumId', ({ params }) => {
+  http.get('*/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -153,7 +193,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.delete('/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
+  http.delete('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
 
@@ -189,7 +229,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.delete('/api/v1/albums/:albumId', ({ params }) => {
+  http.delete('*/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -232,7 +272,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.patch('/api/v1/albums/:albumId', async ({ params, request }) => {
+  http.patch('*/api/v1/albums/:albumId', async ({ params, request }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -284,46 +324,6 @@ export const albumHandlers = [
     const body: AlbumActionResponse = {
       code: '200',
       message: '앨범 제목을 수정했습니다.',
-      success: true,
-    }
-
-    return HttpResponse.json(body, { status: 200 })
-  }),
-  http.get('/api/v1/albums/my', () => {
-    const albumSummaries = albums.map((album) => {
-      const postsInAlbum = Object.entries(postAlbumMap)
-        .filter(([, mappedAlbumId]) => mappedAlbumId === album.id)
-        .map(([postIdKey]) => Number(postIdKey))
-
-      const postCount = postsInAlbum.length
-
-      let thumbnailImageUrl = ''
-
-      if (postCount > 0) {
-        const firstPostId = postsInAlbum[0]
-        const post = posts.find((p) => p.id === String(firstPostId))
-
-        if (post) {
-          const postWithImages = post as Post & { images?: string[] }
-
-          thumbnailImageUrl = Array.isArray(postWithImages.images)
-            ? postWithImages.images[0]
-            : postWithImages.imageUrl
-        }
-      }
-
-      return {
-        albumId: album.id,
-        title: album.title,
-        thumbnailImageUrl,
-        postCount,
-      }
-    })
-
-    const body: MyAlbumsResponse = {
-      code: '200',
-      message: '내 앨범 목록 조회 성공',
-      data: albumSummaries,
       success: true,
     }
 
