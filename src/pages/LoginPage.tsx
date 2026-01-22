@@ -5,19 +5,17 @@ import LoginFooter from '../components/auth/LoginFooter'
 import LoginVisual from '../components/auth/LoginVisual'
 import LocationSelectView from '../components/auth/LocationSelectView'
 import CitySelectView from '../components/auth/CitySelectView'
+import LiteDownloadView from '../components/auth/LiteDownloadView'
 
 const LoginPage = () => {
-  const [view, setView] = useState<'login' | 'location' | 'city'>('login')
+  const [view, setView] = useState<'login' | 'location' | 'city' | 'lite'>(
+    'login'
+  )
   const [selectedCountry, setSelectedCountry] = useState('')
-
-  const handleCountrySelect = (country: string) => {
-    setSelectedCountry(country)
-    setView('city')
-  }
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-white">
-      <main className="flex w-full flex-grow justify-center">
+      <main className="flex w-full flex-grow items-start justify-center">
         {view === 'login' && (
           <div className="flex w-full max-w-[935px] flex-row items-center justify-center gap-8 px-4 pt-32">
             <LoginVisual />
@@ -31,7 +29,10 @@ const LoginPage = () => {
         {view === 'location' && (
           <LocationSelectView
             onBack={() => setView('login')}
-            onSelect={handleCountrySelect}
+            onSelect={(country) => {
+              setSelectedCountry(country)
+              setView('city')
+            }}
           />
         )}
 
@@ -41,8 +42,15 @@ const LoginPage = () => {
             onBack={() => setView('location')}
           />
         )}
+
+        {view === 'lite' && (
+          <LiteDownloadView onBack={() => setView('login')} />
+        )}
       </main>
-      <LoginFooter onLocationClick={() => setView('location')} />
+      <LoginFooter
+        onLocationClick={() => setView('location')}
+        onLiteClick={() => setView('lite')}
+      />
     </div>
   )
 }
