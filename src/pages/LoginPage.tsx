@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import LoginCard from '../components/auth/LoginCard'
 import SignupCard from '../components/auth/SignupCard'
 import LoginFooter from '../components/auth/LoginFooter'
@@ -12,12 +13,13 @@ const LoginPage = () => {
     'login'
   )
   const [selectedCountry, setSelectedCountry] = useState('')
+  const navigate = useNavigate()
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-white">
       <main className="flex w-full flex-grow items-start justify-center">
         {view === 'login' && (
-          <div className="flex w-full max-w-[935px] flex-row items-center justify-center gap-8 px-4 pt-32">
+          <div className="flex w-full max-w-[935px] flex-row items-center justify-center gap-8 px-4 pt-12">
             <LoginVisual />
             <div className="flex w-full max-w-[350px] flex-col gap-2">
               <LoginCard />
@@ -28,7 +30,8 @@ const LoginPage = () => {
 
         {view === 'location' && (
           <LocationSelectView
-            onBack={() => setView('login')}
+            onLoginClick={() => setView('login')}
+            onSignupClick={() => navigate({ to: '/accounts/emailsignup' })}
             onSelect={(country) => {
               setSelectedCountry(country)
               setView('city')
@@ -39,7 +42,8 @@ const LoginPage = () => {
         {view === 'city' && (
           <CitySelectView
             country={selectedCountry}
-            onBack={() => setView('location')}
+            onLoginClick={() => setView('login')}
+            onSignupClick={() => navigate({ to: '/accounts/emailsignup' })}
           />
         )}
 
