@@ -31,7 +31,7 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
   const matchRoute = useMatchRoute()
   const navigate = useNavigate()
   const isBelowXl = useXlBreakpoint()
-  const { setOpen } = useSidebar()
+  const { setOpen, setLockGapWidth } = useSidebar()
 
   const [uiState, dispatchNavAction] = useActionState<NavUiState, NavAction>(
     (prev, action) => {
@@ -57,12 +57,21 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
   )
 
   useEffect(() => {
-    if (isBelowXl || uiState.isSearchOpen) {
+    if (uiState.isSearchOpen) {
+      setOpen(false)
+      return
+    }
+
+    if (isBelowXl) {
       setOpen(false)
     } else {
       setOpen(true)
     }
-  }, [isBelowXl, uiState.isSearchOpen, setOpen])
+  }, [uiState.isSearchOpen, isBelowXl, setOpen])
+
+  useEffect(() => {
+    setLockGapWidth(uiState.isSearchOpen)
+  }, [uiState.isSearchOpen, setLockGapWidth])
 
   const isMyProfileRouteActive =
     Boolean(
@@ -119,6 +128,12 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
     [dispatchNavAction]
   )
 
+  const closeSearchIfOpen = useCallback(() => {
+    if (uiState.isSearchOpen) {
+      dispatchNavAction({ type: 'search_set', open: false })
+    }
+  }, [dispatchNavAction, uiState.isSearchOpen])
+
   const setSearchOpen = useCallback(
     (open: boolean) => dispatchNavAction({ type: 'search_set', open }),
     [dispatchNavAction]
@@ -129,5 +144,6 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
     setSearchOpen,
     getIsItemActive,
     handleItemClick,
+    closeSearchIfOpen,
   }
 }

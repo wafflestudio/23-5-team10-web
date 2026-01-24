@@ -14,11 +14,12 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as PasswordResetRouteImport } from './routes/password/reset'
 import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
+import { Route as AppTestRouteImport } from './routes/_app/test'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
 import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile_name/index'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
-import { Route as AppPProfile_nameRouteImport } from './routes/_app/p/$profile_name'
+import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
 
 const LoginRoute = LoginRouteImport.update({
@@ -45,6 +46,11 @@ const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
   path: '/accounts/emailsignup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppTestRoute = AppTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppExploreRoute = AppExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -66,9 +72,9 @@ const StoriesProfile_nameStory_idRoute =
     path: '/stories/$profile_name/$story_id',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AppPProfile_nameRoute = AppPProfile_nameRouteImport.update({
-  id: '/p/$profile_name',
-  path: '/p/$profile_name',
+const AppPPost_idRoute = AppPPost_idRouteImport.update({
+  id: '/p/$post_id',
+  path: '/p/$post_id',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
@@ -81,22 +87,24 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/explore': typeof AppExploreRoute
+  '/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/': typeof AppIndexRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
-  '/p/$profile_name': typeof AppPProfile_nameRoute
+  '/p/$post_id': typeof AppPPost_idRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/$profile_name/': typeof AppProfile_nameIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/explore': typeof AppExploreRoute
+  '/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/': typeof AppIndexRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
-  '/p/$profile_name': typeof AppPProfile_nameRoute
+  '/p/$post_id': typeof AppPPost_idRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/$profile_name': typeof AppProfile_nameIndexRoute
 }
@@ -106,11 +114,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_app/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/_app/explore': typeof AppExploreRoute
+  '/_app/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
-  '/_app/p/$profile_name': typeof AppPProfile_nameRoute
+  '/_app/p/$post_id': typeof AppPPost_idRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/_app/$profile_name/': typeof AppProfile_nameIndexRoute
 }
@@ -120,22 +129,24 @@ export interface FileRouteTypes {
     | '/login'
     | '/$profile_name'
     | '/explore'
+    | '/test'
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/'
     | '/$profile_name/saved'
-    | '/p/$profile_name'
+    | '/p/$post_id'
     | '/stories/$profile_name/$story_id'
     | '/$profile_name/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/explore'
+    | '/test'
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/'
     | '/$profile_name/saved'
-    | '/p/$profile_name'
+    | '/p/$post_id'
     | '/stories/$profile_name/$story_id'
     | '/$profile_name'
   id:
@@ -144,11 +155,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/_app/$profile_name'
     | '/_app/explore'
+    | '/_app/test'
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/_app/'
     | '/_app/$profile_name/saved'
-    | '/_app/p/$profile_name'
+    | '/_app/p/$post_id'
     | '/stories/$profile_name/$story_id'
     | '/_app/$profile_name/'
   fileRoutesById: FileRoutesById
@@ -198,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsEmailsignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/test': {
+      id: '/_app/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof AppTestRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/explore': {
       id: '/_app/explore'
       path: '/explore'
@@ -226,11 +245,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoriesProfile_nameStory_idRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/p/$profile_name': {
-      id: '/_app/p/$profile_name'
-      path: '/p/$profile_name'
-      fullPath: '/p/$profile_name'
-      preLoaderRoute: typeof AppPProfile_nameRouteImport
+    '/_app/p/$post_id': {
+      id: '/_app/p/$post_id'
+      path: '/p/$post_id'
+      fullPath: '/p/$post_id'
+      preLoaderRoute: typeof AppPPost_idRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/$profile_name/saved': {
@@ -254,21 +273,23 @@ const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
 }
 
 const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren,
+  AppProfile_nameRouteChildren
 )
 
 interface AppRouteChildren {
   AppProfile_nameRoute: typeof AppProfile_nameRouteWithChildren
   AppExploreRoute: typeof AppExploreRoute
+  AppTestRoute: typeof AppTestRoute
   AppIndexRoute: typeof AppIndexRoute
-  AppPProfile_nameRoute: typeof AppPProfile_nameRoute
+  AppPPost_idRoute: typeof AppPPost_idRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppProfile_nameRoute: AppProfile_nameRouteWithChildren,
   AppExploreRoute: AppExploreRoute,
+  AppTestRoute: AppTestRoute,
   AppIndexRoute: AppIndexRoute,
-  AppPProfile_nameRoute: AppPProfile_nameRoute,
+  AppPPost_idRoute: AppPPost_idRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

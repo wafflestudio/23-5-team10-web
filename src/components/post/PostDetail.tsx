@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from '@tanstack/react-router'
+import { useParams, useLocation, useNavigate } from '@tanstack/react-router'
 import { X, ChevronLeft, ChevronRight, Heart } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PostInfoSection from './PostInfoSection'
@@ -16,7 +16,8 @@ export interface PostData {
 }
 
 export default function PostDetail() {
-  const { profile_name: postId } = useParams({ from: '/_app/p/$profile_name' })
+  const { post_id: postId } = useParams({ from: '/_app/p/$post_id' })
+  const location = useLocation()
   const navigate = useNavigate()
 
   const [postData, setPostData] = useState<PostData | null>(null)
@@ -34,7 +35,19 @@ export default function PostDetail() {
   }, [postId])
 
   const images = postData?.images || []
-  const handleClose = () => navigate({ to: '..' })
+  const handleClose = () => {
+    const returnToPath = location.search.returnToPath
+    const returnToSearch = location.search.returnToSearch
+
+    if (returnToPath) {
+      navigate({
+        to: returnToPath,
+        search: returnToSearch,
+      })
+    } else {
+      navigate({ to: '/' })
+    }
+  }
 
   const moveSlide = (step: number) => {
     if (images.length === 0) return
@@ -59,7 +72,7 @@ export default function PostDetail() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/60"
       onClick={handleClose}
     >
       <svg width="0" height="0" className="absolute">
@@ -72,7 +85,7 @@ export default function PostDetail() {
 
       <button
         onClick={handleClose}
-        className="absolute top-6 right-6 z-[110] text-white"
+        className="absolute top-6 right-6 z-110 text-white"
       >
         <X className="h-10 w-10" />
       </button>
@@ -91,7 +104,7 @@ export default function PostDetail() {
             {images.map((img, idx) => (
               <div
                 key={idx}
-                className="flex h-full min-w-full flex-shrink-0 items-center justify-center"
+                className="flex h-full min-w-full shrink-0 items-center justify-center"
               >
                 <img
                   src={img}
@@ -122,7 +135,7 @@ export default function PostDetail() {
                   ease: 'easeInOut',
                 }}
                 onAnimationComplete={() => setIsAnimating(false)}
-                className="pointer-events-none absolute z-[20] flex items-center justify-center"
+                className="pointer-events-none absolute z-20 flex items-center justify-center"
               >
                 <Heart
                   className="h-32 w-32 drop-shadow-2xl"
