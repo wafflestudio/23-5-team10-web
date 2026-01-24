@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { MAX_CAPTION_LENGTH } from '@/features/create-post/constants'
 import { useCaption } from '@/features/create-post/model/hooks/useCaption'
+import { AlbumSelectDropdown } from '@/features/create-post/ui/AlbumSelectDropdown'
 
 type PostDetailsPaneProps = {
   profileName: string
@@ -13,6 +15,7 @@ export function PostDetailsPane({
   const { caption, setCaption, captionLength, maxLength } = useCaption({
     maxLength: MAX_CAPTION_LENGTH,
   })
+  const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
 
   return (
     <aside className="flex h-full w-full flex-col border-l border-zinc-200 bg-white">
@@ -31,6 +34,13 @@ export function PostDetailsPane({
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+        <div className="mb-4">
+          <AlbumSelectDropdown
+            selectedAlbumId={selectedAlbumId}
+            onSelect={setSelectedAlbumId}
+          />
+        </div>
+
         <textarea
           value={caption}
           onChange={(e) => setCaption(e.target.value)}

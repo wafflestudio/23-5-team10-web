@@ -1,6 +1,13 @@
-// 해당 엔티티에 필요한 데이터를 나중에 여기서 가져옴
-// import { mockData } from '../db/entity.db';
+import { http, HttpResponse } from 'msw'
+import { comments } from '../db/comment.db'
 
 export const commentHandlers = [
-  // 여기에 http.get, http.post 등을 추가
+  http.get('/api/v1/posts/:postId/comments', () => {
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '댓글 목록 조회 성공',
+      data: comments,
+      success: true,
+    })
+  }),
 ]

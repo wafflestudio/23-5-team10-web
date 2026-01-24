@@ -16,7 +16,7 @@ export interface PostData {
 }
 
 export default function PostDetail() {
-  const { profile_name: postId } = useParams({ from: '/_app/p/$profile_name' })
+  const { post_id: postId } = useParams({ from: '/_app/p/$post_id' })
   const navigate = useNavigate()
 
   const [postData, setPostData] = useState<PostData | null>(null)

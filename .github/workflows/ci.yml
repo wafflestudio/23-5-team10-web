@@ -30,9 +30,13 @@ jobs:
         run: yarn type-check
 
       - name: Run tests (Vitest)
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: yarn test:ci
 
       - name: Build project
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: yarn build
 
       - name: Comment on PR (CI Result)
