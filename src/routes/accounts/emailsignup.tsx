@@ -105,7 +105,6 @@ function EmailSignupPage() {
   }
 
   const validateUsername = () => {
-    // 사용자 이름 중복 확인 API 필요 (추후 수정 필요) - 일단 지금은 그냥 확인 없이 pass
     if (
       formData.username.length === 0 &&
       (formData.contact || formData.password || formData.name)
@@ -210,7 +209,10 @@ function EmailSignupPage() {
       </main>
 
       <footer className="shrink-0 bg-white py-8">
-        <LoginFooter />
+        <LoginFooter
+          onLocationClick={() => navigate({ to: '/explore/locations' })}
+          onLiteClick={() => navigate({ to: '/web/lite' })}
+        />
       </footer>
     </div>
   )

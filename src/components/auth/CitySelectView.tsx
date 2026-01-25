@@ -6,12 +6,14 @@ interface CitySelectViewProps {
   country: string
   onLoginClick: () => void
   onSignupClick: () => void
+  onBack: () => void
 }
 
 const CitySelectView = ({
   country,
   onLoginClick,
   onSignupClick,
+  onBack,
 }: CitySelectViewProps) => {
   return (
     <div className="flex w-full flex-col items-center">
@@ -21,7 +23,7 @@ const CitySelectView = ({
             src={instagramLogo}
             alt="Instagram"
             className="w-[103px] cursor-pointer"
-            onClick={onLoginClick}
+            onClick={onBack}
           />
           <div className="flex items-center gap-4">
             <button

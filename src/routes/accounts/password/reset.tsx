@@ -4,7 +4,7 @@ import { Lock } from 'lucide-react'
 import instagramLogo from '@/assets/instagram-logo.svg'
 import LoginFooter from '@/components/auth/LoginFooter'
 
-export const Route = createFileRoute('/password/reset')({
+export const Route = createFileRoute('/accounts/password/reset')({
   component: PasswordResetPage,
 })
 
@@ -130,7 +130,10 @@ function PasswordResetPage() {
         </div>
 
         <footer className="bg-white pb-8">
-          <LoginFooter />
+          <LoginFooter
+            onLocationClick={() => navigate({ to: '/explore/locations' })}
+            onLiteClick={() => navigate({ to: '/web/lite' })}
+          />
         </footer>
       </main>
     </div>

@@ -12,15 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as PasswordResetRouteImport } from './routes/password/reset'
+import { Route as WebLiteRouteImport } from './routes/web/lite'
 import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
 import { Route as AppTestRouteImport } from './routes/_app/test'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
+import { Route as ExploreLocationsIndexRouteImport } from './routes/explore/locations/index'
 import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile_name/index'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
+import { Route as AccountsPasswordResetRouteImport } from './routes/accounts/password/reset'
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
+import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -36,9 +39,9 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const PasswordResetRoute = PasswordResetRouteImport.update({
-  id: '/password/reset',
-  path: '/password/reset',
+const WebLiteRoute = WebLiteRouteImport.update({
+  id: '/web/lite',
+  path: '/web/lite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
@@ -61,6 +64,11 @@ const AppProfile_nameRoute = AppProfile_nameRouteImport.update({
   path: '/$profile_name',
   getParentRoute: () => AppRoute,
 } as any)
+const ExploreLocationsIndexRoute = ExploreLocationsIndexRouteImport.update({
+  id: '/explore/locations/',
+  path: '/explore/locations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppProfile_nameIndexRoute = AppProfile_nameIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -72,6 +80,11 @@ const StoriesProfile_nameStory_idRoute =
     path: '/stories/$profile_name/$story_id',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AccountsPasswordResetRoute = AccountsPasswordResetRouteImport.update({
+  id: '/accounts/password/reset',
+  path: '/accounts/password/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppPPost_idRoute = AppPPost_idRouteImport.update({
   id: '/p/$post_id',
   path: '/p/$post_id',
@@ -82,6 +95,12 @@ const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
   path: '/saved',
   getParentRoute: () => AppProfile_nameRoute,
 } as any)
+const ExploreLocationsCountryCodeCountryNameRoute =
+  ExploreLocationsCountryCodeCountryNameRouteImport.update({
+    id: '/explore/locations/$countryCode/$countryName',
+    path: '/explore/locations/$countryCode/$countryName',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
@@ -89,24 +108,30 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/password/reset': typeof PasswordResetRoute
+  '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
+  '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/$profile_name/': typeof AppProfile_nameIndexRoute
+  '/explore/locations': typeof ExploreLocationsIndexRoute
+  '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/password/reset': typeof PasswordResetRoute
+  '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
+  '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/$profile_name': typeof AppProfile_nameIndexRoute
+  '/explore/locations': typeof ExploreLocationsIndexRoute
+  '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,12 +141,15 @@ export interface FileRoutesById {
   '/_app/explore': typeof AppExploreRoute
   '/_app/test': typeof AppTestRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/password/reset': typeof PasswordResetRoute
+  '/web/lite': typeof WebLiteRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/_app/p/$post_id': typeof AppPPost_idRoute
+  '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/_app/$profile_name/': typeof AppProfile_nameIndexRoute
+  '/explore/locations/': typeof ExploreLocationsIndexRoute
+  '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,24 +159,30 @@ export interface FileRouteTypes {
     | '/explore'
     | '/test'
     | '/accounts/emailsignup'
-    | '/password/reset'
+    | '/web/lite'
     | '/'
     | '/$profile_name/saved'
     | '/p/$post_id'
+    | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
     | '/$profile_name/'
+    | '/explore/locations'
+    | '/explore/locations/$countryCode/$countryName'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/explore'
     | '/test'
     | '/accounts/emailsignup'
-    | '/password/reset'
+    | '/web/lite'
     | '/'
     | '/$profile_name/saved'
     | '/p/$post_id'
+    | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
     | '/$profile_name'
+    | '/explore/locations'
+    | '/explore/locations/$countryCode/$countryName'
   id:
     | '__root__'
     | '/_app'
@@ -157,20 +191,26 @@ export interface FileRouteTypes {
     | '/_app/explore'
     | '/_app/test'
     | '/accounts/emailsignup'
-    | '/password/reset'
+    | '/web/lite'
     | '/_app/'
     | '/_app/$profile_name/saved'
     | '/_app/p/$post_id'
+    | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
     | '/_app/$profile_name/'
+    | '/explore/locations/'
+    | '/explore/locations/$countryCode/$countryName'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   AccountsEmailsignupRoute: typeof AccountsEmailsignupRoute
-  PasswordResetRoute: typeof PasswordResetRoute
+  WebLiteRoute: typeof WebLiteRoute
+  AccountsPasswordResetRoute: typeof AccountsPasswordResetRoute
   StoriesProfile_nameStory_idRoute: typeof StoriesProfile_nameStory_idRoute
+  ExploreLocationsIndexRoute: typeof ExploreLocationsIndexRoute
+  ExploreLocationsCountryCodeCountryNameRoute: typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -196,11 +236,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/password/reset': {
-      id: '/password/reset'
-      path: '/password/reset'
-      fullPath: '/password/reset'
-      preLoaderRoute: typeof PasswordResetRouteImport
+    '/web/lite': {
+      id: '/web/lite'
+      path: '/web/lite'
+      fullPath: '/web/lite'
+      preLoaderRoute: typeof WebLiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accounts/emailsignup': {
@@ -231,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfile_nameRouteImport
       parentRoute: typeof AppRoute
     }
+    '/explore/locations/': {
+      id: '/explore/locations/'
+      path: '/explore/locations'
+      fullPath: '/explore/locations'
+      preLoaderRoute: typeof ExploreLocationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/$profile_name/': {
       id: '/_app/$profile_name/'
       path: '/'
@@ -243,6 +290,13 @@ declare module '@tanstack/react-router' {
       path: '/stories/$profile_name/$story_id'
       fullPath: '/stories/$profile_name/$story_id'
       preLoaderRoute: typeof StoriesProfile_nameStory_idRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/password/reset': {
+      id: '/accounts/password/reset'
+      path: '/accounts/password/reset'
+      fullPath: '/accounts/password/reset'
+      preLoaderRoute: typeof AccountsPasswordResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/p/$post_id': {
@@ -258,6 +312,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$profile_name/saved'
       preLoaderRoute: typeof AppProfile_nameSavedRouteImport
       parentRoute: typeof AppProfile_nameRoute
+    }
+    '/explore/locations/$countryCode/$countryName': {
+      id: '/explore/locations/$countryCode/$countryName'
+      path: '/explore/locations/$countryCode/$countryName'
+      fullPath: '/explore/locations/$countryCode/$countryName'
+      preLoaderRoute: typeof ExploreLocationsCountryCodeCountryNameRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -298,8 +359,12 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   AccountsEmailsignupRoute: AccountsEmailsignupRoute,
-  PasswordResetRoute: PasswordResetRoute,
+  WebLiteRoute: WebLiteRoute,
+  AccountsPasswordResetRoute: AccountsPasswordResetRoute,
   StoriesProfile_nameStory_idRoute: StoriesProfile_nameStory_idRoute,
+  ExploreLocationsIndexRoute: ExploreLocationsIndexRoute,
+  ExploreLocationsCountryCodeCountryNameRoute:
+    ExploreLocationsCountryCodeCountryNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
