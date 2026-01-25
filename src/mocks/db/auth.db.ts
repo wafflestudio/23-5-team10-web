@@ -6,8 +6,8 @@ export interface MockAuth {
 
 export const authUsers: MockAuth[] = [
   {
-    loginId: 'admin@gmail.com',
-    password: 'admin',
+    loginId: 'admin123@gmail.com',
+    password: 'admin123',
     userId: 1,
   },
   {

@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { authUsers } from '../db/auth.db'
 
 export const authHandlers = [
-  http.post('/api/v1/auth/login', async ({ request }) => {
+  http.post('*/api/v1/auth/login', async ({ request }) => {
     const body = (await request.json()) as Record<string, string>
     const { loginId, password } = body
 
