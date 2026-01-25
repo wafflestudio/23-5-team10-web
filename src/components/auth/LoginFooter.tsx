@@ -38,7 +38,6 @@ const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
   useEffect(() => {
     const handleClose = (e: MouseEvent | WheelEvent | TouchEvent) => {
       if (!isLangOpen) return
-
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target as Node)
@@ -63,7 +62,7 @@ const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
   }, [isLangOpen])
 
   return (
-    <footer className="flex flex-col items-center gap-4 px-4 py-10 text-xs tracking-tighter text-[#737373]">
+    <footer className="flex w-full flex-col items-center gap-4 px-4 py-10 text-xs tracking-tighter text-[#737373]">
       <div className="flex max-w-[1000px] flex-wrap justify-center gap-x-4 gap-y-2 text-center">
         {footerLinks.map((link) => (
           <a

@@ -1,5 +1,6 @@
 import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router'
 import CitySelectView from '@/components/auth/CitySelectView'
+import LoginFooter from '@/components/auth/LoginFooter'
 import { useSmartBack } from '@/hooks/useSmartBack'
 
 export const Route = createFileRoute(
@@ -16,11 +17,19 @@ function CityPage() {
   const handleBack = useSmartBack()
 
   return (
-    <CitySelectView
-      country={countryName}
-      onBack={handleBack}
-      onLoginClick={() => navigate({ to: '/login' })}
-      onSignupClick={() => navigate({ to: '/accounts/emailsignup' })}
-    />
+    <div className="flex min-h-screen w-full flex-col bg-white">
+      <main className="flex-grow">
+        <CitySelectView
+          country={countryName}
+          onBack={handleBack}
+          onLoginClick={() => navigate({ to: '/login' })}
+          onSignupClick={() => navigate({ to: '/accounts/emailsignup' })}
+        />
+      </main>
+      <LoginFooter
+        onLocationClick={() => navigate({ to: '/explore/locations' })}
+        onLiteClick={() => navigate({ to: '/web/lite' })}
+      />
+    </div>
   )
 }

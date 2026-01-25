@@ -6,6 +6,10 @@ interface LiteDownloadViewProps {
 }
 
 const LiteDownloadView = ({ onBack }: LiteDownloadViewProps) => {
+  const playStoreUrl =
+    'https://play.google.com/store/apps/details?id=com.instagram.lite&referrer=ig_mid%3D912D7CA9-53A1-4209-ABFD-35A421C9F971%26utm_campaign%3DIGLiteCarbonSideload%26utm_content%3Dlo%26utm_source%3Dinstagramweb%26utm_medium%3Dbadge'
+  const apkFileName = 'instagram_lite_v494.0.0.7.107.apk'
+
   return (
     <div className="flex w-full flex-col items-center justify-center px-4 pt-40 text-center tracking-tighter">
       <img
@@ -24,7 +28,11 @@ const LiteDownloadView = ({ onBack }: LiteDownloadViewProps) => {
       </p>
 
       <div className="flex w-full flex-col items-center">
-        <button className="mb-[7px] flex w-full max-w-[130px] items-center justify-center gap-2 rounded-[8px] bg-[#4a5df9] py-3 text-[13px] font-semibold tracking-tighter text-white transition-opacity hover:opacity-90">
+        <a
+          href={`/${apkFileName}`}
+          download={apkFileName}
+          className="mb-[7px] flex w-full max-w-[130px] items-center justify-center gap-2 rounded-[8px] bg-[#4a5df9] py-3 text-[13px] font-semibold tracking-tighter text-white transition-opacity hover:opacity-90"
+        >
           <svg
             width="15"
             height="15"
@@ -40,16 +48,21 @@ const LiteDownloadView = ({ onBack }: LiteDownloadViewProps) => {
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
           APK 다운로드
-        </button>
+        </a>
       </div>
 
-      <div className="cursor-pointer">
+      <a
+        href={playStoreUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block transition-opacity hover:opacity-80"
+      >
         <img
           src={googlePlayBadge}
           alt="Google Play"
           className="h-12 object-contain"
         />
-      </div>
+      </a>
     </div>
   )
 }

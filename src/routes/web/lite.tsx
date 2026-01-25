@@ -1,5 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import LiteDownloadView from '@/components/auth/LiteDownloadView'
+import LoginFooter from '@/components/auth/LoginFooter'
 import { useSmartBack } from '@/hooks/useSmartBack'
 
 export const Route = createFileRoute('/web/lite')({
@@ -7,7 +8,18 @@ export const Route = createFileRoute('/web/lite')({
 })
 
 function LitePage() {
+  const navigate = useNavigate()
   const handleBack = useSmartBack()
 
-  return <LiteDownloadView onBack={handleBack} />
+  return (
+    <div className="flex min-h-screen w-full flex-col bg-white">
+      <main className="flex-grow">
+        <LiteDownloadView onBack={handleBack} />
+      </main>
+      <LoginFooter
+        onLocationClick={() => navigate({ to: '/explore/locations' })}
+        onLiteClick={() => navigate({ to: '/web/lite' })}
+      />
+    </div>
+  )
 }
