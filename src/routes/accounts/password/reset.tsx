@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Lock } from 'lucide-react'
+import { Lock, MessageCircle } from 'lucide-react'
 import instagramLogo from '@/assets/instagram-logo.svg'
 import LoginFooter from '@/components/auth/LoginFooter'
 
@@ -18,7 +18,7 @@ function PasswordResetPage() {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-white">
-      <nav className="fixed top-0 left-0 z-50 flex h-[60px] w-full items-center justify-center border-b border-gray-300 bg-white px-4">
+      <div className="fixed top-0 left-0 z-50 flex h-[60px] w-full justify-center border-b border-gray-300 bg-white px-4">
         <div className="flex w-full max-w-[935px] items-center justify-between">
           <img
             src={instagramLogo}
@@ -26,22 +26,22 @@ function PasswordResetPage() {
             className="w-[103px] cursor-pointer"
             onClick={() => navigate({ to: '/login' })}
           />
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => navigate({ to: '/login' })}
-              className="rounded bg-[#0095f6] px-4 py-1.5 text-sm font-semibold text-white"
+              className="rounded-[8px] bg-[#4a5df9] px-4 py-1.5 text-sm font-semibold text-white"
             >
               로그인
             </button>
             <button
               onClick={() => navigate({ to: '/accounts/emailsignup' })}
-              className="text-sm font-semibold text-[#0095f6]"
+              className="text-sm font-semibold text-[#4a5df9]"
             >
               가입하기
             </button>
           </div>
         </div>
-      </nav>
+      </div>
 
       <main className="flex-1 overflow-y-auto pt-[60px]">
         <div className="flex min-h-full items-center justify-center p-4">
@@ -88,7 +88,7 @@ function PasswordResetPage() {
                 <button
                   disabled={!isButtonActive}
                   className={`h-[32px] w-full rounded text-sm font-semibold text-white transition-colors ${
-                    isButtonActive ? 'bg-[#0095f6]' : 'bg-[#b2dffc]'
+                    isButtonActive ? 'bg-[#4a5df9]' : 'bg-[#b2dffc]'
                   }`}
                 >
                   로그인 링크 보내기
@@ -99,7 +99,7 @@ function PasswordResetPage() {
                 href="https://help.instagram.com/1068717813216421"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mb-8 text-xs font-semibold text-[#0095f6] hover:underline"
+                className="mb-8 text-xs font-semibold text-[#4a5df9] hover:underline"
               >
                 비밀번호를 재설정할 수 없나요?
               </a>
@@ -111,6 +111,14 @@ function PasswordResetPage() {
                 </span>
                 <div className="h-px flex-1 bg-gray-300"></div>
               </div>
+
+              <button
+                type="button"
+                className="mb-6 flex w-full items-center justify-center gap-2 rounded bg-[#FEE500] py-2 text-[14px] font-semibold text-[#191919] transition-opacity hover:opacity-90"
+              >
+                <MessageCircle className="h-4 w-4 fill-[#191919] stroke-none" />
+                카카오톡으로 로그인
+              </button>
 
               <button
                 onClick={() => navigate({ to: '/accounts/emailsignup' })}
