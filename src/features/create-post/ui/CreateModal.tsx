@@ -71,10 +71,10 @@ function CreateModalInner({
         <DialogContent
           showCloseButton={false}
           className={[
-            'flex flex-col gap-0 overflow-hidden rounded-4xl bg-white p-0 transition-[max-width] duration-300',
+            'flex flex-col gap-0 overflow-hidden rounded-4xl bg-white p-0 transition-[width,max-width] duration-300 sm:h-auto sm:max-w-[calc(100vw-2rem)]',
             isDetails
-              ? 'sm:h-[min(80vh,560px)] sm:max-w-4xl'
-              : 'aspect-square sm:h-[min(80vh,560px)] sm:max-w-xl',
+              ? 'sm:w-[calc(80vh-51px+340px)] sm:max-w-[849px]'
+              : 'sm:w-[calc(80vh-51px)] sm:max-w-[509px]',
           ].join(' ')}
         >
           <CreateModalHeader
@@ -89,7 +89,7 @@ function CreateModalInner({
           {isUploaded ? (
             isDetails ? (
               <div className="flex min-h-0 flex-1 flex-col sm:flex-row">
-                <div className="flex min-h-0 flex-1 sm:w-[560px] sm:shrink-0">
+                <div className="flex aspect-square w-full sm:h-[calc(80vh-51px)] sm:max-h-[509px] sm:w-[calc(80vh-51px)] sm:max-w-[509px] sm:flex-none">
                   <PreviewPane
                     activePreviewUrl={activePreviewUrl}
                     filesCount={files.length}
@@ -107,26 +107,30 @@ function CreateModalInner({
                 </div>
               </div>
             ) : (
-              <PreviewPane
-                activePreviewUrl={activePreviewUrl}
-                filesCount={files.length}
-                activeIndex={carousel.activeIndex}
-                canGoPrev={carousel.canGoPrev}
-                canGoNext={carousel.canGoNext}
-                dots={carousel.dots}
-                goPrev={carousel.goPrev}
-                goNext={carousel.goNext}
-              />
+              <div className="flex aspect-square w-full sm:h-[calc(80vh-51px)] sm:max-h-[509px] sm:w-[calc(80vh-51px)] sm:max-w-[509px]">
+                <PreviewPane
+                  activePreviewUrl={activePreviewUrl}
+                  filesCount={files.length}
+                  activeIndex={carousel.activeIndex}
+                  canGoPrev={carousel.canGoPrev}
+                  canGoNext={carousel.canGoNext}
+                  dots={carousel.dots}
+                  goPrev={carousel.goPrev}
+                  goNext={carousel.goNext}
+                />
+              </div>
             )
           ) : (
-            <Dropzone
-              accept={CREATE_POST_IMAGE_ACCEPT}
-              multiple
-              maxSizeBytes={MAX_IMAGE_FILE_SIZE_BYTES}
-              onDropFiles={handleDropFiles}
-            >
-              {(api) => <EmptyDropzoneState {...api} />}
-            </Dropzone>
+            <div className="flex aspect-square w-full sm:h-[calc(80vh-51px)] sm:max-h-[509px] sm:w-[calc(80vh-51px)] sm:max-w-[509px]">
+              <Dropzone
+                accept={CREATE_POST_IMAGE_ACCEPT}
+                multiple
+                maxSizeBytes={MAX_IMAGE_FILE_SIZE_BYTES}
+                onDropFiles={handleDropFiles}
+              >
+                {(api) => <EmptyDropzoneState {...api} />}
+              </Dropzone>
+            </div>
           )}
         </DialogContent>
       </Dialog>
