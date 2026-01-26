@@ -5,19 +5,21 @@ import { SearchDrawer } from '@/features/search/ui/SearchDrawer'
 import { useNavController } from '../model/useNavController'
 
 interface MobileBottomNavigationProps {
-  onCreateClick: () => void
+  onCreatePostClick: () => void
+  onCreateStoryClick: () => void
 }
 
 export function MobileBottomNavigation({
-  onCreateClick,
+  onCreatePostClick,
+  onCreateStoryClick,
 }: MobileBottomNavigationProps) {
   const { uiState, setSearchOpen, getIsItemActive, handleItemClick } =
-    useNavController({ onCreateClick })
+    useNavController({ onCreatePostClick, onCreateStoryClick })
 
   return (
     <>
       <SearchDrawer open={uiState.isSearchOpen} onOpenChange={setSearchOpen} />
-      <nav className="bg-background fixed inset-x-0 bottom-0 z-50 border-t border-gray-300">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-300 bg-white">
         <ul className="flex justify-around">
           {NAV_ITEMS.map((item) => {
             const isActive = getIsItemActive(item)

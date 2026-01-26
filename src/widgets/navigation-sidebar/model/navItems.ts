@@ -1,4 +1,11 @@
-import { Compass, House, Plus, Search, UserCircle } from 'lucide-react'
+import {
+  CirclePlus,
+  Compass,
+  House,
+  Search,
+  SquarePlus,
+  UserCircle,
+} from 'lucide-react'
 import type { ComponentType } from 'react'
 
 type BaseNavigationSidebarItem = {
@@ -17,7 +24,7 @@ export type NavigationSidebarLinkItem = BaseNavigationSidebarItem & {
 
 export type NavigationSidebarButtonItem = BaseNavigationSidebarItem & {
   type: 'button'
-  action: 'search' | 'create' | 'profile'
+  action: 'search' | 'createPost' | 'createStory' | 'profile'
 }
 
 export type NavigationSidebarItem =
@@ -44,10 +51,16 @@ export const NAV_ITEMS: NavigationSidebarItem[] = [
     type: 'link',
   },
   {
-    label: '만들기',
-    icon: Plus,
+    label: '게시글 업로드',
+    icon: SquarePlus,
     type: 'button',
-    action: 'create',
+    action: 'createPost',
+  },
+  {
+    label: '스토리 업로드',
+    icon: CirclePlus,
+    type: 'button',
+    action: 'createStory',
   },
   {
     label: '프로필',
