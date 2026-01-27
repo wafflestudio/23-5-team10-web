@@ -105,7 +105,6 @@ function EmailSignupPage() {
   }
 
   const validateUsername = () => {
-    // 사용자 이름 중복 확인 API 필요 (추후 수정 필요) - 일단 지금은 그냥 확인 없이 pass
     if (
       formData.username.length === 0 &&
       (formData.contact || formData.password || formData.name)
@@ -129,8 +128,8 @@ function EmailSignupPage() {
   const isButtonActive = isFormFilled && hasNoError
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-x-hidden overflow-y-auto bg-white">
-      <main className="flex flex-1 flex-col items-center justify-center p-4 py-10">
+    <div className="flex min-h-screen w-full flex-col bg-white">
+      <main className="flex flex-grow flex-col items-center justify-center p-4 py-10">
         <div className="mb-2.5 flex w-full max-w-[350px] flex-col items-center border border-gray-300 bg-white p-10 pb-6 shadow-sm">
           <img src={instagramLogo} alt="Instagram" className="mb-3 w-[175px]" />
           <h2 className="mb-5 text-center text-[17px] leading-5 font-semibold text-gray-500">
