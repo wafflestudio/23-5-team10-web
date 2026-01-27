@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import LoginCard from '../components/auth/LoginCard'
 import SignupCard from '../components/auth/SignupCard'
-import LoginFooter from '../components/auth/LoginFooter'
+import { AppFooter } from '@/shared/ui/app-footer'
 import LoginVisual from '../components/auth/LoginVisual'
 import LocationSelectView from '../components/auth/LocationSelectView'
 import CitySelectView from '../components/auth/CitySelectView'
@@ -51,7 +51,7 @@ const LoginPage = () => {
           <LiteDownloadView onBack={() => setView('login')} />
         )}
       </main>
-      <LoginFooter
+      <AppFooter
         onLocationClick={() => setView('location')}
         onLiteClick={() => setView('lite')}
       />

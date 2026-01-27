@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Lock } from 'lucide-react'
 import instagramLogo from '@/assets/instagram-logo.svg'
-import LoginFooter from '@/components/auth/LoginFooter'
+import { AppFooter } from '@/shared/ui/app-footer'
 
 export const Route = createFileRoute('/password/reset')({
   component: PasswordResetPage,
@@ -130,7 +130,7 @@ function PasswordResetPage() {
         </div>
 
         <footer className="bg-white pb-8">
-          <LoginFooter />
+          <AppFooter />
         </footer>
       </main>
     </div>
