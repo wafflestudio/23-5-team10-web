@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import LoginCard from '../components/auth/LoginCard'
 import SignupCard from '../components/auth/SignupCard'
-import LoginFooter from '../shared/ui/app-footer'
+import { AppFooter } from '@/shared/ui/app-footer'
 import LoginVisual from '../components/auth/LoginVisual'
 
 const LoginPage = () => {
@@ -18,7 +18,8 @@ const LoginPage = () => {
           </div>
         </div>
       </main>
-      <LoginFooter
+
+      <AppFooter
         onLocationClick={() => navigate({ to: '/explore/locations' })}
         onLiteClick={() => navigate({ to: '/web/lite' })}
       />

@@ -2,7 +2,7 @@ import { Bookmark, Grid3X3 } from 'lucide-react'
 
 import { cn } from '@/shared/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { ProfileContentContainer } from '@/widgets/profile-layout'
+import { ContentContainer } from '@/widgets/profile-layout'
 
 export const PROFILE_ROUTE_TAB_VALUE = {
   POSTS: 'posts',
@@ -40,7 +40,7 @@ export function ProfileRouteTabs({
 
   return (
     <div className={cn('w-full', className)}>
-      <ProfileContentContainer>
+      <ContentContainer>
         <Tabs
           value={value}
           onValueChange={handleValueChange}
@@ -64,7 +64,7 @@ export function ProfileRouteTabs({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-      </ProfileContentContainer>
+      </ContentContainer>
     </div>
   )
 }

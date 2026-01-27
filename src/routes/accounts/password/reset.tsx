@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Lock, MessageCircle } from 'lucide-react'
 import instagramLogo from '@/assets/instagram-logo.svg'
-import LoginFooter from '@/shared/ui/app-footer'
+import { AppFooter } from '@/shared/ui/app-footer'
 import { instance } from '@/shared/api/ky'
 
 export const Route = createFileRoute('/accounts/password/reset')({
@@ -78,12 +78,10 @@ function PasswordResetPage() {
 
       <main className="flex-1 overflow-y-auto pt-[60px]">
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="flex w-full max-w-[388px] flex-col items-center border border-gray-300 bg-white">
+          <div className="flex w-full max-w-[388px] flex-col items-center border border-gray-300 bg-white shadow-sm">
             <div className="flex flex-col items-center p-11 pt-8 pb-4 text-center">
               <div className="mb-4 flex h-[96px] w-[96px] items-center justify-center rounded-full border-2 border-black">
-                <div className="flex items-center justify-center">
-                  <Lock size={48} strokeWidth={1.2} />
-                </div>
+                <Lock size={48} strokeWidth={1.2} />
               </div>
 
               <h2 className="mb-4 text-base font-semibold text-gray-900">
@@ -180,10 +178,7 @@ function PasswordResetPage() {
         </div>
 
         <footer className="bg-white pb-8">
-          <LoginFooter
-            onLocationClick={() => navigate({ to: '/explore/locations' })}
-            onLiteClick={() => navigate({ to: '/web/lite' })}
-          />
+          <AppFooter />
         </footer>
       </main>
 

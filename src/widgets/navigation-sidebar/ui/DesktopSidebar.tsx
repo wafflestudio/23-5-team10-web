@@ -13,10 +13,14 @@ import { useRef } from 'react'
 import { SearchDrawer } from '@/features/search/ui/SearchDrawer'
 
 interface NavigationSidebarProps {
-  onCreateClick: () => void
+  onCreatePostClick: () => void
+  onCreateStoryClick: () => void
 }
 
-export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
+export function NavigationSidebar({
+  onCreatePostClick,
+  onCreateStoryClick,
+}: NavigationSidebarProps) {
   const sidebarRef = useRef<HTMLDivElement | null>(null)
 
   const {
@@ -25,7 +29,7 @@ export function NavigationSidebar({ onCreateClick }: NavigationSidebarProps) {
     getIsItemActive,
     handleItemClick,
     closeSearchIfOpen,
-  } = useNavController({ onCreateClick })
+  } = useNavController({ onCreatePostClick, onCreateStoryClick })
 
   return (
     <>

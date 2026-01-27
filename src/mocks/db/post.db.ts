@@ -290,4 +290,32 @@ export const posts = [
     likeCount: 120,
     commentCount: 8,
   },
+  {
+    id: '21',
+    images: [
+      'https://picsum.photos/id/70/800/800',
+      'https://picsum.photos/id/71/800/800',
+      'https://picsum.photos/id/72/800/800',
+    ],
+    caption: '여러 장의 사진 테스트입니다.',
+    username: 'test_user21',
+    userImage: 'https://picsum.photos/id/84/50/50',
+    createdAt: '2024-03-20T10:00:00Z',
+    likeCount: 120,
+    commentCount: 8,
+  },
+  {
+    id: '22',
+    images: [
+      'https://picsum.photos/id/73/800/800',
+      'https://picsum.photos/id/74/800/800',
+      'https://picsum.photos/id/75/800/800',
+    ],
+    caption: '여러 장의 사진 테스트입니다.',
+    username: 'test_user22',
+    userImage: 'https://picsum.photos/id/85/50/50',
+    createdAt: '2024-03-20T10:00:00Z',
+    likeCount: 120,
+    commentCount: 8,
+  },
 ]

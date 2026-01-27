@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import instagramLogo from '@/assets/instagram-logo.svg'
-import LoginFooter from '@/shared/ui/app-footer'
+import { AppFooter } from '@/shared/ui/app-footer'
 
 export const Route = createFileRoute('/accounts/emailsignup')({
   component: EmailSignupPage,
@@ -208,10 +208,9 @@ function EmailSignupPage() {
         </div>
       </main>
 
-      <LoginFooter
-        onLocationClick={() => navigate({ to: '/explore/locations' })}
-        onLiteClick={() => navigate({ to: '/web/lite' })}
-      />
+      <footer className="shrink-0 bg-white py-8">
+        <AppFooter />
+      </footer>
     </div>
   )
 }

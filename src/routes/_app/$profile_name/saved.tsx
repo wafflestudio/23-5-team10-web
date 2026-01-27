@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { ProfileContentContainer } from '@/widgets/profile-layout'
+import { ContentContainer } from '@/widgets/profile-layout'
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
 import { useBookmarkedPostsQuery } from '@/entities/post/model/hooks/useBookmarkedPostsQuery'
 import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePostsGrid'
@@ -21,15 +21,15 @@ function RouteComponent() {
 
   if (isLoading) {
     return (
-      <ProfileContentContainer className="py-6">
+      <ContentContainer className="py-6">
         <div>Loading...</div>
-      </ProfileContentContainer>
+      </ContentContainer>
     )
   }
 
   return (
-    <ProfileContentContainer className="py-6">
+    <ContentContainer className="py-6">
       <ProfilePostsGrid items={items} />
-    </ProfileContentContainer>
+    </ContentContainer>
   )
 }
