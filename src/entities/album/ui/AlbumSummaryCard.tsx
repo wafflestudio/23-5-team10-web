@@ -6,10 +6,19 @@ import LazyImage from '@/shared/ui/lazyImage'
 type AlbumSummaryCardProps = {
   album: AlbumSummary
   className?: string
+  onClick?: (albumId: number) => void
 }
 
-export function AlbumSummaryCard({ album, className }: AlbumSummaryCardProps) {
+export function AlbumSummaryCard({
+  album,
+  className,
+  onClick,
+}: AlbumSummaryCardProps) {
   const { title, thumbnailImageUrl, postCount } = album
+
+  const handleClick = () => {
+    onClick?.(album.albumId)
+  }
 
   return (
     <Card
@@ -17,6 +26,9 @@ export function AlbumSummaryCard({ album, className }: AlbumSummaryCardProps) {
         'w-[260px] cursor-pointer gap-0 overflow-hidden rounded-2xl border-none py-0 shadow-md',
         className
       )}
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
     >
       <CardHeader className="flex items-start gap-2 px-4 py-3">
         <CardTitle className="text-base font-semibold">{title}</CardTitle>
