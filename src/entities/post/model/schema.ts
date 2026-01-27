@@ -6,7 +6,7 @@ export const PostImageSchema = z.object({
   orderIndex: z.number(),
 })
 
-export const BookmarkedPostSchema = z.object({
+export const PostListItemSchema = z.object({
   id: z.number(),
   userId: z.number(),
   nickname: z.string(),

@@ -1,39 +1,39 @@
 import { useState, useEffect, useRef } from 'react'
 
-interface LoginFooterProps {
+type AppFooterProps = {
   onLocationClick?: () => void
   onLiteClick?: () => void
 }
 
-const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
+const FOOTER_LINKS = [
+  { name: 'Meta', url: 'https://about.meta.com/' },
+  { name: '소개', url: 'https://about.instagram.com/' },
+  { name: '블로그', url: 'https://about.instagram.com/blog/' },
+  { name: '채용 정보', url: 'https://about.instagram.com/about-us/careers' },
+  { name: '도움말', url: 'https://help.instagram.com/' },
+  { name: 'API', url: 'https://developers.facebook.com/docs/instagram' },
+  { name: '개인정보처리방침', url: 'https://privacycenter.instagram.com/' },
+  { name: '약관', url: 'https://help.instagram.com/581066165581870' },
+  { name: '위치', url: '#' },
+  { name: 'Instagram Lite', url: '#' },
+  { name: 'Meta AI', url: 'https://www.meta.ai/' },
+  { name: 'Threads', url: 'https://www.threads.net/' },
+  {
+    name: '연락처 업로드 & 비사용자',
+    url: 'https://www.facebook.com/help/instagram/261704639352628',
+  },
+  {
+    name: 'Meta Verified',
+    url: 'https://about.meta.com/technologies/meta-verified/',
+  },
+]
+
+const LANGUAGES = ['한국어']
+
+export function AppFooter({ onLocationClick, onLiteClick }: AppFooterProps) {
   const [isLangOpen, setIsLangOpen] = useState(false)
   const [currentLang, setCurrentLang] = useState('한국어')
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  const footerLinks = [
-    { name: 'Meta', url: 'https://about.meta.com/' },
-    { name: '소개', url: 'https://about.instagram.com/' },
-    { name: '블로그', url: 'https://about.instagram.com/blog/' },
-    { name: '채용 정보', url: 'https://about.instagram.com/about-us/careers' },
-    { name: '도움말', url: 'https://help.instagram.com/' },
-    { name: 'API', url: 'https://developers.facebook.com/docs/instagram' },
-    { name: '개인정보처리방침', url: 'https://privacycenter.instagram.com/' },
-    { name: '약관', url: 'https://help.instagram.com/581066165581870' },
-    { name: '위치', url: '#' },
-    { name: 'Instagram Lite', url: '#' },
-    { name: 'Meta AI', url: 'https://www.meta.ai/' },
-    { name: 'Threads', url: 'https://www.threads.net/' },
-    {
-      name: '연락처 업로드 & 비사용자',
-      url: 'https://www.facebook.com/help/instagram/261704639352628',
-    },
-    {
-      name: 'Meta Verified',
-      url: 'https://about.meta.com/technologies/meta-verified/',
-    },
-  ]
-
-  const languages = ['한국어']
 
   useEffect(() => {
     const handleClose = (e: MouseEvent | WheelEvent | TouchEvent) => {
@@ -65,7 +65,7 @@ const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
   return (
     <footer className="flex flex-col items-center gap-4 px-4 py-10 text-xs tracking-tighter text-[#737373]">
       <div className="flex max-w-[1000px] flex-wrap justify-center gap-x-4 gap-y-2 text-center">
-        {footerLinks.map((link) => (
+        {FOOTER_LINKS.map((link) => (
           <a
             key={link.name}
             href={link.url}
@@ -100,7 +100,8 @@ const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
           className="relative flex items-center justify-start"
           ref={dropdownRef}
         >
-          <div
+          <button
+            type="button"
             onClick={() => setIsLangOpen(!isLangOpen)}
             className="flex cursor-pointer items-center gap-1 transition-colors hover:text-black"
           >
@@ -110,26 +111,26 @@ const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
             >
               ⌵
             </span>
-          </div>
+          </button>
 
           {isLangOpen && (
             <div className="absolute bottom-full left-0 z-50 mb-2 w-[132px] overflow-hidden rounded-[3px] border border-gray-300 bg-white shadow-md">
-              {languages.map((lang) => (
-                <div
+              {LANGUAGES.map((lang) => (
+                <button
                   key={lang}
-                  className={`cursor-pointer px-3 py-1.5 text-left text-[12px] transition-colors ${
+                  type="button"
+                  className={`w-full cursor-pointer px-3 py-1.5 text-left text-[12px] transition-colors ${
                     currentLang === lang
                       ? 'bg-[#737373] text-white'
                       : 'text-black hover:bg-[#737373] hover:text-white'
                   }`}
-                  onClick={(e) => {
-                    e.stopPropagation()
+                  onClick={() => {
                     setCurrentLang(lang)
                     setIsLangOpen(false)
                   }}
                 >
                   {lang}
-                </div>
+                </button>
               ))}
             </div>
           )}
@@ -139,5 +140,3 @@ const LoginFooter = ({ onLocationClick, onLiteClick }: LoginFooterProps) => {
     </footer>
   )
 }
-
-export default LoginFooter
