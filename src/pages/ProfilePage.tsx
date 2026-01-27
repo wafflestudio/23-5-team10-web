@@ -17,6 +17,13 @@ export function ProfilePage() {
   const matchRoute = useMatchRoute()
   const { profile_name } = useParams({ from: '/_app/$profile_name' })
 
+  const isAlbumsTabSelected = Boolean(
+    matchRoute({
+      to: '/$profile_name/albums',
+      params: { profile_name },
+    })
+  )
+
   const isSavedTabSelected = Boolean(
     matchRoute({
       to: '/$profile_name/saved',
@@ -26,12 +33,22 @@ export function ProfilePage() {
 
   const activeTabValue: ProfileRouteTabValue = isSavedTabSelected
     ? PROFILE_ROUTE_TAB_VALUE.SAVED
-    : PROFILE_ROUTE_TAB_VALUE.POSTS
+    : isAlbumsTabSelected
+      ? PROFILE_ROUTE_TAB_VALUE.ALBUMS
+      : PROFILE_ROUTE_TAB_VALUE.POSTS
 
   const handleTabChange = (nextTab: ProfileRouteTabValue) => {
     if (nextTab === PROFILE_ROUTE_TAB_VALUE.POSTS) {
       navigate({
         to: '/$profile_name',
+        params: { profile_name },
+      })
+      return
+    }
+
+    if (nextTab === PROFILE_ROUTE_TAB_VALUE.ALBUMS) {
+      navigate({
+        to: '/$profile_name/albums',
         params: { profile_name },
       })
       return

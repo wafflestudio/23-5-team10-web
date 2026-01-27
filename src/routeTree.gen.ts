@@ -21,6 +21,7 @@ import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
+import { Route as AppProfile_nameAlbumsRouteImport } from './routes/_app/$profile_name/albums'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -82,6 +83,11 @@ const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
   path: '/saved',
   getParentRoute: () => AppProfile_nameRoute,
 } as any)
+const AppProfile_nameAlbumsRoute = AppProfile_nameAlbumsRouteImport.update({
+  id: '/albums',
+  path: '/albums',
+  getParentRoute: () => AppProfile_nameRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/': typeof AppIndexRoute
+  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/': typeof AppIndexRoute
+  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/password/reset': typeof PasswordResetRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/_app/p/$post_id': typeof AppPPost_idRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/'
+    | '/$profile_name/albums'
     | '/$profile_name/saved'
     | '/p/$post_id'
     | '/stories/$profile_name/$story_id'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/'
+    | '/$profile_name/albums'
     | '/$profile_name/saved'
     | '/p/$post_id'
     | '/stories/$profile_name/$story_id'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/password/reset'
     | '/_app/'
+    | '/_app/$profile_name/albums'
     | '/_app/$profile_name/saved'
     | '/_app/p/$post_id'
     | '/stories/$profile_name/$story_id'
@@ -259,21 +271,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfile_nameSavedRouteImport
       parentRoute: typeof AppProfile_nameRoute
     }
+    '/_app/$profile_name/albums': {
+      id: '/_app/$profile_name/albums'
+      path: '/albums'
+      fullPath: '/$profile_name/albums'
+      preLoaderRoute: typeof AppProfile_nameAlbumsRouteImport
+      parentRoute: typeof AppProfile_nameRoute
+    }
   }
 }
 
 interface AppProfile_nameRouteChildren {
+  AppProfile_nameAlbumsRoute: typeof AppProfile_nameAlbumsRoute
   AppProfile_nameSavedRoute: typeof AppProfile_nameSavedRoute
   AppProfile_nameIndexRoute: typeof AppProfile_nameIndexRoute
 }
 
 const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
+  AppProfile_nameAlbumsRoute: AppProfile_nameAlbumsRoute,
   AppProfile_nameSavedRoute: AppProfile_nameSavedRoute,
   AppProfile_nameIndexRoute: AppProfile_nameIndexRoute,
 }
 
 const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren
+  AppProfile_nameRouteChildren,
 )
 
 interface AppRouteChildren {
