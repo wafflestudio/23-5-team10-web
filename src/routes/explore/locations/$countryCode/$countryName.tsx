@@ -1,6 +1,6 @@
 import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router'
 import CitySelectView from '@/components/auth/CitySelectView'
-import LoginFooter from '@/shared/ui/app-footer'
+import { AppFooter } from '@/shared/ui/app-footer'
 import { useSmartBack } from '@/hooks/useSmartBack'
 
 export const Route = createFileRoute(
@@ -26,7 +26,7 @@ function CityPage() {
           onSignupClick={() => navigate({ to: '/accounts/emailsignup' })}
         />
       </main>
-      <LoginFooter
+      <AppFooter
         onLocationClick={() => navigate({ to: '/explore/locations' })}
         onLiteClick={() => navigate({ to: '/web/lite' })}
       />
