@@ -331,6 +331,7 @@ declare module '@tanstack/react-router' {
       fullPath: '/$profile_name/albums'
       preLoaderRoute: typeof AppProfile_nameAlbumsRouteImport
       parentRoute: typeof AppProfile_nameRoute
+    }
     '/explore/locations/$countryCode/$countryName': {
       id: '/explore/locations/$countryCode/$countryName'
       path: '/explore/locations/$countryCode/$countryName'
@@ -354,7 +355,7 @@ const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
 }
 
 const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren,
+  AppProfile_nameRouteChildren
 )
 
 interface AppRouteChildren {
