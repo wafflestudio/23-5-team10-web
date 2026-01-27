@@ -154,7 +154,7 @@ const LoginCard = () => {
       </button>
 
       <button
-        onClick={() => navigate({ to: '/password/reset' })}
+        onClick={() => navigate({ to: '/accounts/password/reset' })}
         className="mt-6 cursor-pointer text-xs text-[#00376b] hover:underline"
       >
         비밀번호를 잊으셨나요?

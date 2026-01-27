@@ -13,7 +13,6 @@ export const authHandlers = [
         {
           code: 'USER404',
           message: '사용자를 찾을 수 없습니다.',
-          data: null,
           success: false,
         },
         { status: 404 }
@@ -25,7 +24,6 @@ export const authHandlers = [
         {
           code: 'AUTH401',
           message: '비밀번호가 일치하지 않습니다.',
-          data: null,
           success: false,
         },
         { status: 401 }
@@ -39,6 +37,36 @@ export const authHandlers = [
         data: {
           accessToken: `mock-access-token-${authInfo.userId}`,
           refreshToken: 'mock-refresh-token',
+        },
+        success: true,
+      },
+      { status: 200 }
+    )
+  }),
+
+  http.post('*/api/v1/auth/check-account', async ({ request }) => {
+    const body = (await request.json()) as { identity: string }
+    const { identity } = body
+
+    const user = authUsers.find((u) => u.loginId === identity)
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          code: 'USER404',
+          message: '계정을 찾을 수 없습니다.',
+          success: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    return HttpResponse.json(
+      {
+        code: 'COMMON200',
+        message: '성공입니다.',
+        data: {
+          sentEmail: user.loginId,
         },
         success: true,
       },

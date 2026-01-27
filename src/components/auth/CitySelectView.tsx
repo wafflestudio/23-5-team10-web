@@ -6,13 +6,17 @@ interface CitySelectViewProps {
   country: string
   onLoginClick: () => void
   onSignupClick: () => void
+  onBack: () => void
 }
 
 const CitySelectView = ({
   country,
   onLoginClick,
   onSignupClick,
+  onBack,
 }: CitySelectViewProps) => {
+  const displayCountry = country === 'south-korea' ? 'South Korea' : country
+
   return (
     <div className="flex w-full flex-col items-center">
       <div className="fixed top-0 left-0 z-50 flex h-[60px] w-full justify-center border-b border-gray-300 bg-white px-4">
@@ -21,7 +25,7 @@ const CitySelectView = ({
             src={instagramLogo}
             alt="Instagram"
             className="w-[103px] cursor-pointer"
-            onClick={onLoginClick}
+            onClick={onBack}
           />
           <div className="flex items-center gap-4">
             <button
@@ -41,30 +45,32 @@ const CitySelectView = ({
       </div>
 
       <div className="mt-32 mb-12 flex w-11/24 flex-col">
-        <div className="mb-10 flex items-center gap-2">
+        <div className="mb-[53px] flex items-center gap-2">
           <img
             src={pinIcon}
             alt="Location"
             className="h-4 w-4 object-contain"
           />
           <span className="text-[16px] leading-none font-bold text-black">
-            {country}
+            {displayCountry}
           </span>
         </div>
+
         <div className="mb-5 text-left">
-          <span className="text-[12px] font-bold text-[#737373] uppercase">
-            {country}의 도시
+          <span className="text-[14px] font-bold text-[#737373] uppercase">
+            {displayCountry}의 도시
           </span>
         </div>
+
         <div className="flex flex-col rounded-[3px] border border-gray-300 bg-white shadow-sm">
           <div className="p-8">
-            <div className="grid grid-cols-4 gap-x-8 gap-y-5">
+            <div className="columns-4 gap-x-8">
               {CITIES.map((city, index) => (
                 <div
                   key={`${city}-${index}`}
-                  className="cursor-pointer truncate text-[14px] text-black active:text-[#4a5df9]"
+                  className="mb-1 min-h-[1.25rem] cursor-pointer break-inside-avoid truncate text-[14px] text-black active:text-[#4a5df9]"
                 >
-                  {city}
+                  {city || '\u00A0'}
                 </div>
               ))}
             </div>
