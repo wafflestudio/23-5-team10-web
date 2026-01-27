@@ -23,6 +23,7 @@ import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/storie
 import { Route as AccountsPasswordResetRouteImport } from './routes/accounts/password/reset'
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
+import { Route as AppProfile_nameAlbumsRouteImport } from './routes/_app/$profile_name/albums'
 import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
 const LoginRoute = LoginRouteImport.update({
@@ -95,6 +96,11 @@ const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
   path: '/saved',
   getParentRoute: () => AppProfile_nameRoute,
 } as any)
+const AppProfile_nameAlbumsRoute = AppProfile_nameAlbumsRouteImport.update({
+  id: '/albums',
+  path: '/albums',
+  getParentRoute: () => AppProfile_nameRoute,
+} as any)
 const ExploreLocationsCountryCodeCountryNameRoute =
   ExploreLocationsCountryCodeCountryNameRouteImport.update({
     id: '/explore/locations/$countryCode/$countryName',
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
+  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
   '/accounts/password/reset': typeof AccountsPasswordResetRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
+  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
   '/accounts/password/reset': typeof AccountsPasswordResetRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/accounts/emailsignup': typeof AccountsEmailsignupRoute
   '/web/lite': typeof WebLiteRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/_app/p/$post_id': typeof AppPPost_idRoute
   '/accounts/password/reset': typeof AccountsPasswordResetRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/web/lite'
     | '/'
+    | '/$profile_name/albums'
     | '/$profile_name/saved'
     | '/p/$post_id'
     | '/accounts/password/reset'
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/web/lite'
     | '/'
+    | '/$profile_name/albums'
     | '/$profile_name/saved'
     | '/p/$post_id'
     | '/accounts/password/reset'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/web/lite'
     | '/_app/'
+    | '/_app/$profile_name/albums'
     | '/_app/$profile_name/saved'
     | '/_app/p/$post_id'
     | '/accounts/password/reset'
@@ -313,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfile_nameSavedRouteImport
       parentRoute: typeof AppProfile_nameRoute
     }
+    '/_app/$profile_name/albums': {
+      id: '/_app/$profile_name/albums'
+      path: '/albums'
+      fullPath: '/$profile_name/albums'
+      preLoaderRoute: typeof AppProfile_nameAlbumsRouteImport
+      parentRoute: typeof AppProfile_nameRoute
+    }
     '/explore/locations/$countryCode/$countryName': {
       id: '/explore/locations/$countryCode/$countryName'
       path: '/explore/locations/$countryCode/$countryName'
@@ -324,11 +343,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppProfile_nameRouteChildren {
+  AppProfile_nameAlbumsRoute: typeof AppProfile_nameAlbumsRoute
   AppProfile_nameSavedRoute: typeof AppProfile_nameSavedRoute
   AppProfile_nameIndexRoute: typeof AppProfile_nameIndexRoute
 }
 
 const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
+  AppProfile_nameAlbumsRoute: AppProfile_nameAlbumsRoute,
   AppProfile_nameSavedRoute: AppProfile_nameSavedRoute,
   AppProfile_nameIndexRoute: AppProfile_nameIndexRoute,
 }

@@ -1,4 +1,4 @@
-import { Bookmark, Grid3X3 } from 'lucide-react'
+import { Bookmark, Grid3X3, Images } from 'lucide-react'
 
 import { cn } from '@/shared/lib/utils'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
@@ -6,6 +6,7 @@ import { ContentContainer } from '@/widgets/profile-layout'
 
 export const PROFILE_ROUTE_TAB_VALUE = {
   POSTS: 'posts',
+  ALBUMS: 'albums',
   SAVED: 'saved',
 } as const
 
@@ -24,6 +25,7 @@ const TAB_TRIGGER_CLASSNAME =
 function isProfileRouteTabValue(value: string): value is ProfileRouteTabValue {
   return (
     value === PROFILE_ROUTE_TAB_VALUE.POSTS ||
+    value === PROFILE_ROUTE_TAB_VALUE.ALBUMS ||
     value === PROFILE_ROUTE_TAB_VALUE.SAVED
   )
 }
@@ -53,6 +55,14 @@ export function ProfileRouteTabs({
             >
               <Grid3X3 aria-hidden="true" />
               <span className="sr-only">게시물</span>
+            </TabsTrigger>
+
+            <TabsTrigger
+              value={PROFILE_ROUTE_TAB_VALUE.ALBUMS}
+              className={TAB_TRIGGER_CLASSNAME}
+            >
+              <Images aria-hidden="true" />
+              <span className="sr-only">앨범</span>
             </TabsTrigger>
 
             <TabsTrigger

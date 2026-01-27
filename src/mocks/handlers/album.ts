@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 
-import { albums, nextAlbumId, postAlbumMap } from '../db/album.db'
+import { albums, nextAlbumId } from '../db/album.db'
+import { postAlbumMap } from '../db/postRelations.db'
 import type { Post } from '../db/post.db'
 import { posts } from '../db/post.db'
 import {

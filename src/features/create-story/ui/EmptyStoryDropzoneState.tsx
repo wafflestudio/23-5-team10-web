@@ -39,7 +39,7 @@ export function EmptyStoryDropzoneState({
 
       <Button
         type="button"
-        variant="outline"
+        className="bg-gray-200"
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()

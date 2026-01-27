@@ -22,10 +22,6 @@ export function FeedList({ items }: { items: FeedItem[] }) {
               },
             })
           }
-          onToggleLike={(postId, liked) => console.log('like', postId, liked)}
-          onToggleBookmark={(postId, bookmarked) =>
-            console.log('bookmark', postId, bookmarked)
-          }
         />
       ))}
     </div>
