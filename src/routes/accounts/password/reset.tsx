@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Lock, MessageCircle } from 'lucide-react'
 import instagramLogo from '@/assets/instagram-logo.svg'
-import LoginFooter from '@/components/auth/LoginFooter'
+import LoginFooter from '@/shared/ui/app-footer'
 import { instance } from '@/shared/api/ky'
 
 export const Route = createFileRoute('/accounts/password/reset')({

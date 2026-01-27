@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import LocationSelectView from '@/components/auth/LocationSelectView'
-import LoginFooter from '@/components/auth/LoginFooter'
+import LoginFooter from '@/shared/ui/app-footer'
 import { useSmartBack } from '@/hooks/useSmartBack'
 
 export const Route = createFileRoute('/explore/locations/')({
