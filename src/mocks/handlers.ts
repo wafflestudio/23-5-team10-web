@@ -5,6 +5,7 @@ import { feedHandlers } from './handlers/feed'
 import { followHandlers } from './handlers/follow'
 import { testHandlers } from './handlers/test'
 import { authHandlers } from './handlers/auth'
+import { imageHandlers } from './handlers/images'
 
 export const handlers = [
   ...authHandlers,
@@ -13,5 +14,6 @@ export const handlers = [
   ...albumHandlers,
   ...feedHandlers,
   ...followHandlers,
+  ...imageHandlers,
   ...testHandlers,
 ]
