@@ -61,7 +61,7 @@ function CreateStoryModalInner({
       <Dialog open onOpenChange={handleDialogOpenChange}>
         <DialogContent
           showCloseButton={false}
-          className="flex flex-col gap-0 overflow-hidden rounded-4xl bg-white p-0 transition-[width,max-width] duration-300 sm:h-auto sm:w-[calc((80vh-51px)*9/16)] sm:max-w-[286px] sm:max-w-[calc(100vw-2rem)]"
+          className="flex max-h-[calc(100dvh-2rem)] flex-col gap-0 overflow-hidden rounded-4xl bg-white p-0 transition-[width,max-width] duration-300 sm:w-[calc((80vh-51px)*9/16)] sm:max-w-[calc(100vw-2rem)]"
         >
           <StoryModalHeader
             isUploaded={isUploaded}
@@ -70,28 +70,24 @@ function CreateStoryModalInner({
           />
           <div className="h-px w-full bg-zinc-200" />
 
-          {isUploaded ? (
-            <div
-              className="flex w-full sm:h-[calc(80vh-51px)] sm:max-h-[509px]"
-              style={{ aspectRatio: '9/16' }}
-            >
-              <StoryPreviewPane previewUrl={previewUrl} />
+          <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+            <div className="relative aspect-9/16 max-h-full min-h-0 w-full max-w-full">
+              {isUploaded ? (
+                <StoryPreviewPane previewUrl={previewUrl} />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <Dropzone
+                    accept={CREATE_STORY_IMAGE_ACCEPT}
+                    multiple={false}
+                    maxSizeBytes={MAX_STORY_IMAGE_FILE_SIZE_BYTES}
+                    onDropFiles={handleDropFiles}
+                  >
+                    {(api) => <EmptyStoryDropzoneState {...api} />}
+                  </Dropzone>
+                </div>
+              )}
             </div>
-          ) : (
-            <div
-              className="flex w-full sm:h-[calc(80vh-51px)] sm:max-h-[509px]"
-              style={{ aspectRatio: '9/16' }}
-            >
-              <Dropzone
-                accept={CREATE_STORY_IMAGE_ACCEPT}
-                multiple={false}
-                maxSizeBytes={MAX_STORY_IMAGE_FILE_SIZE_BYTES}
-                onDropFiles={handleDropFiles}
-              >
-                {(api) => <EmptyStoryDropzoneState {...api} />}
-              </Dropzone>
-            </div>
-          )}
+          </div>
         </DialogContent>
       </Dialog>
 

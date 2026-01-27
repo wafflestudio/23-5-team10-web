@@ -1,10 +1,16 @@
+import { cn } from '@/shared/lib/utils'
+
 type StoryPreviewPaneProps = {
   previewUrl: string | null | undefined
+  className?: string
 }
 
-export function StoryPreviewPane({ previewUrl }: StoryPreviewPaneProps) {
+export function StoryPreviewPane({
+  previewUrl,
+  className,
+}: StoryPreviewPaneProps) {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className={cn('flex h-full w-full flex-col', className)}>
       <div
         className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-neutral-900"
         onDragOver={(e) => {
