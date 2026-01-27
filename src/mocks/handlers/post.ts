@@ -102,6 +102,82 @@ export const postHandlers = [
       { status: 200 }
     )
   }),
+  http.post('*/api/v1/posts/:postId/bookmark', ({ params }) => {
+    const postId = Number(params.postId)
+
+    if (!Number.isInteger(postId)) {
+      return HttpResponse.json(
+        {
+          code: '400',
+          message: '유효하지 않은 경로 파라미터입니다.',
+          success: false,
+        },
+        { status: 400 }
+      )
+    }
+
+    const post = posts.find((p) => Number(p.id) === postId)
+
+    if (!post) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '게시글을 찾을 수 없습니다.',
+          success: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    bookmarkedPostIds.add(postId)
+
+    return HttpResponse.json(
+      {
+        code: '200',
+        message: '게시글을 북마크했습니다.',
+        success: true,
+      },
+      { status: 200 }
+    )
+  }),
+  http.delete('*/api/v1/posts/:postId/bookmark', ({ params }) => {
+    const postId = Number(params.postId)
+
+    if (!Number.isInteger(postId)) {
+      return HttpResponse.json(
+        {
+          code: '400',
+          message: '유효하지 않은 경로 파라미터입니다.',
+          success: false,
+        },
+        { status: 400 }
+      )
+    }
+
+    const post = posts.find((p) => Number(p.id) === postId)
+
+    if (!post) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '게시글을 찾을 수 없습니다.',
+          success: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    bookmarkedPostIds.delete(postId)
+
+    return HttpResponse.json(
+      {
+        code: '200',
+        message: '게시글 북마크를 취소했습니다.',
+        success: true,
+      },
+      { status: 200 }
+    )
+  }),
   http.get('*/api/v1/posts/bookmarks', () => {
     const bookmarkedPosts = posts
       .filter((p) => bookmarkedPostIds.has(Number(p.id)))
