@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { posts } from '../db/post.db'
+import { bookmarkedPostIds, likedPostIds } from '../db/postRelations.db'
 import {
   FeedItemSchema,
   FeedPageSchema,
@@ -18,9 +19,11 @@ export const feedHandlers = [
     const end = start + size
     const pageItems = allPosts.slice(start, end)
 
-    const items = pageItems.map((p) =>
-      FeedItemSchema.parse({
-        postId: Number(p.id),
+    const items = pageItems.map((p) => {
+      const postId = Number(p.id)
+
+      return FeedItemSchema.parse({
+        postId,
         author: {
           userId: 1,
           nickname: p.username,
@@ -30,10 +33,10 @@ export const feedHandlers = [
         likeCount: p.likeCount,
         commentCount: p.commentCount,
         createdAt: p.createdAt,
-        liked: false,
-        bookmarked: false,
+        liked: likedPostIds.has(postId),
+        bookmarked: bookmarkedPostIds.has(postId),
       })
-    )
+    })
 
     const totalElements = allPosts.length
     const totalPages = Math.max(1, Math.ceil(totalElements / size))
