@@ -131,7 +131,7 @@ export default function PostDetail() {
                 }}
                 transition={{
                   duration: 0.7,
-                  times: [0, 0.57, 1], // 0.4s 지점까지 기울기 유지, 이후 0.3s 동안 회전 완료
+                  times: [0, 0.57, 1],
                   ease: 'easeInOut',
                 }}
                 onAnimationComplete={() => setIsAnimating(false)}
