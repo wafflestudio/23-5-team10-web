@@ -34,7 +34,7 @@ export function AlbumSummaryCard({ album, className }: AlbumSummaryCardProps) {
           <div className="pointer-events-none absolute inset-0 h-full w-full bg-linear-to-t from-black/35 via-black/5 to-transparent" />
 
           <div className="pointer-events-none absolute right-2 bottom-2">
-            <div className="bg-background/90 text-foreground/90 inline-flex min-w-[40px] items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm backdrop-blur">
+            <div className="text-foreground/90 inline-flex min-w-[40px] items-center justify-center rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold shadow-sm backdrop-blur">
               {postCount}
             </div>
           </div>
