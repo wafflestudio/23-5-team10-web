@@ -1,5 +1,10 @@
 import { http, HttpResponse } from 'msw'
 import { posts } from '../db/post.db'
+import {
+  bookmarkedPostIds,
+  likedPostIds,
+  postAlbumMap,
+} from '../db/postRelations.db'
 
 export const postHandlers = [
   http.get('/api/v1/posts/:postId', ({ params }) => {
@@ -15,17 +20,98 @@ export const postHandlers = [
       data: post,
     })
   }),
+  http.post('*/api/v1/posts/:postId/like', ({ params }) => {
+    const postId = Number(params.postId)
+
+    if (!Number.isInteger(postId)) {
+      return HttpResponse.json(
+        {
+          code: '400',
+          message: '유효하지 않은 경로 파라미터입니다.',
+          success: false,
+        },
+        { status: 400 }
+      )
+    }
+
+    const post = posts.find((p) => Number(p.id) === postId)
+
+    if (!post) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '게시글을 찾을 수 없습니다.',
+          success: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    if (!likedPostIds.has(postId)) {
+      likedPostIds.add(postId)
+      post.likeCount += 1
+    }
+
+    return HttpResponse.json(
+      {
+        code: '200',
+        message: '게시글에 좋아요를 남겼습니다.',
+        success: true,
+      },
+      { status: 200 }
+    )
+  }),
+  http.delete('*/api/v1/posts/:postId/like', ({ params }) => {
+    const postId = Number(params.postId)
+
+    if (!Number.isInteger(postId)) {
+      return HttpResponse.json(
+        {
+          code: '400',
+          message: '유효하지 않은 경로 파라미터입니다.',
+          success: false,
+        },
+        { status: 400 }
+      )
+    }
+
+    const post = posts.find((p) => Number(p.id) === postId)
+
+    if (!post) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '게시글을 찾을 수 없습니다.',
+          success: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    if (likedPostIds.has(postId)) {
+      likedPostIds.delete(postId)
+      post.likeCount = Math.max(0, post.likeCount - 1)
+    }
+
+    return HttpResponse.json(
+      {
+        code: '200',
+        message: '게시글 좋아요를 취소했습니다.',
+        success: true,
+      },
+      { status: 200 }
+    )
+  }),
   http.get('*/api/v1/posts/bookmarks', () => {
-    const bookmarkedPostIds = ['1', '3', '5', '7', '9']
     const bookmarkedPosts = posts
-      .filter((p) => bookmarkedPostIds.includes(p.id))
-      .map((p, index) => ({
+      .filter((p) => bookmarkedPostIds.has(Number(p.id)))
+      .map((p) => ({
         id: Number(p.id),
         userId: 1,
         nickname: p.username,
         profileImageUrl: p.userImage,
         content: p.caption,
-        albumId: null,
+        albumId: postAlbumMap[Number(p.id)] ?? null,
         images: p.images.map((url, imgIndex) => ({
           id: Number(p.id) * 100 + imgIndex,
           url,
@@ -35,7 +121,7 @@ export const postHandlers = [
         commentCount: p.commentCount,
         createdAt: p.createdAt,
         updatedAt: p.createdAt,
-        liked: index % 2 === 0,
+        liked: likedPostIds.has(Number(p.id)),
         bookmarked: true,
       }))
 
@@ -47,7 +133,7 @@ export const postHandlers = [
     })
   }),
   http.get('*/api/v1/posts/search', () => {
-    const searchResults = posts.map((p, index) => {
+    const searchResults = posts.map((p) => {
       const postId = Number(p.id)
       const userId = 1
       return {
@@ -56,7 +142,7 @@ export const postHandlers = [
         nickname: p.username,
         profileImageUrl: p.userImage,
         content: p.caption,
-        albumId: null as number | null,
+        albumId: (postAlbumMap[postId] ?? null) as number | null,
         images: (p.images ?? []).map((url, imgIndex) => ({
           id: postId * 100 + imgIndex,
           url,
@@ -66,8 +152,8 @@ export const postHandlers = [
         commentCount: p.commentCount,
         createdAt: p.createdAt,
         updatedAt: p.createdAt,
-        liked: index % 2 === 0,
-        bookmarked: index % 3 === 0,
+        liked: likedPostIds.has(postId),
+        bookmarked: bookmarkedPostIds.has(postId),
       }
     })
 
