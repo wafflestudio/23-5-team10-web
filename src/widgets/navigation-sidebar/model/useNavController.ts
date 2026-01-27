@@ -10,7 +10,8 @@ import { useXlBreakpoint } from '@/shared/lib/hooks/useXlBreakpoint'
 type NavAction =
   | { type: 'search_toggle' }
   | { type: 'search_set'; open: boolean }
-  | { type: 'create_open' }
+  | { type: 'create_post_open' }
+  | { type: 'create_story_open' }
   | { type: 'profile_open' }
 
 type NavUiState = {
@@ -24,10 +25,14 @@ function assertNever(value: never): never {
 }
 
 type UseNavControllerArgs = {
-  onCreateClick: () => void
+  onCreatePostClick: () => void
+  onCreateStoryClick: () => void
 }
 
-export function useNavController({ onCreateClick }: UseNavControllerArgs) {
+export function useNavController({
+  onCreatePostClick,
+  onCreateStoryClick,
+}: UseNavControllerArgs) {
   const matchRoute = useMatchRoute()
   const navigate = useNavigate()
   const isBelowXl = useXlBreakpoint()
@@ -40,8 +45,11 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
           return { ...prev, isSearchOpen: !prev.isSearchOpen }
         case 'search_set':
           return { ...prev, isSearchOpen: action.open }
-        case 'create_open':
-          onCreateClick()
+        case 'create_post_open':
+          onCreatePostClick()
+          return prev
+        case 'create_story_open':
+          onCreateStoryClick()
           return prev
         case 'profile_open':
           navigate({
@@ -98,7 +106,8 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
           return uiState.isSearchOpen
         case 'profile':
           return isMyProfileRouteActive
-        case 'create':
+        case 'createPost':
+        case 'createStory':
           return false
         default:
           return assertNever(item.action)
@@ -115,8 +124,11 @@ export function useNavController({ onCreateClick }: UseNavControllerArgs) {
         case 'search':
           dispatchNavAction({ type: 'search_toggle' })
           return
-        case 'create':
-          dispatchNavAction({ type: 'create_open' })
+        case 'createPost':
+          dispatchNavAction({ type: 'create_post_open' })
+          return
+        case 'createStory':
+          dispatchNavAction({ type: 'create_story_open' })
           return
         case 'profile':
           dispatchNavAction({ type: 'profile_open' })

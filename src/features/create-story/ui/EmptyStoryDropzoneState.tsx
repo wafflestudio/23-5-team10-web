@@ -3,7 +3,7 @@ import type { ComponentPropsWithRef, HTMLAttributes } from 'react'
 import { Button } from '@/shared/ui/button'
 import { ImagePlus } from 'lucide-react'
 
-type EmptyDropzoneStateProps = {
+type EmptyStoryDropzoneStateProps = {
   getRootProps: (
     props?: HTMLAttributes<HTMLElement>
   ) => HTMLAttributes<HTMLElement>
@@ -14,12 +14,12 @@ type EmptyDropzoneStateProps = {
   isDragging: boolean
 }
 
-export function EmptyDropzoneState({
+export function EmptyStoryDropzoneState({
   getRootProps,
   getInputProps,
   openFileDialog,
   isDragging,
-}: EmptyDropzoneStateProps) {
+}: EmptyStoryDropzoneStateProps) {
   return (
     <div
       {...getRootProps({
@@ -32,7 +32,7 @@ export function EmptyDropzoneState({
       <ImagePlus className="size-10" />
 
       <p className="text-lg font-medium break-keep">
-        사진과 동영상을 여기에 끌어다 놓으세요
+        스토리에 올릴 사진을 여기에 끌어다 놓으세요
       </p>
 
       <input {...getInputProps({ className: 'hidden' })} />
