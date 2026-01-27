@@ -1,5 +1,6 @@
 import { StoriesCarousel } from '@/widgets/stories'
 import { HomeFeedSection } from '@/widgets/home/HomeFeedSection'
+import { AppFooter } from '@/shared/ui/app-footer'
 
 export const HomePage = () => {
   return (
@@ -9,6 +10,8 @@ export const HomePage = () => {
       </div>
 
       <HomeFeedSection />
+
+      <AppFooter />
     </div>
   )
 }
