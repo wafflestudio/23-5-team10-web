@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import instagramLogo from '../../assets/instagram-logo.svg'
+import { instance } from '../../shared/api/ky'
+import { MessageCircle } from 'lucide-react'
 
 interface FloatingInputProps {
   label: string
@@ -9,6 +11,14 @@ interface FloatingInputProps {
   type?: string
   showPw?: boolean
   setShowPw?: (show: boolean) => void
+}
+
+interface LoginResponse {
+  success: boolean
+  data?: {
+    accessToken: string
+    refreshToken: string
+  }
 }
 
 const FloatingInput = ({
@@ -61,9 +71,31 @@ const LoginCard = () => {
   const [id, setId] = useState('')
   const [pw, setPw] = useState('')
   const [showPw, setShowPw] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
 
   const isValid = id.length > 0 && pw.length >= 6
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrorMsg('')
+
+    try {
+      const res = await instance
+        .post('*/api/v1/auth/login', {
+          json: { loginId: id, password: pw },
+        })
+        .json<LoginResponse>()
+
+      if (res.success && res.data) {
+        localStorage.setItem('accessToken', res.data.accessToken)
+        localStorage.setItem('refreshToken', res.data.refreshToken)
+        navigate({ to: '/' })
+      }
+    } catch {
+      setErrorMsg('잘못된 이메일 또는 비밀번호입니다. 다시 입력해주세요.')
+    }
+  }
 
   return (
     <div className="flex w-full flex-col items-center bg-white p-10">
@@ -73,13 +105,7 @@ const LoginCard = () => {
         className="mt-2 mb-8 w-[175px]"
       />
 
-      <form
-        className="flex w-full flex-col"
-        onSubmit={(e) => {
-          e.preventDefault()
-          navigate({ to: '/' })
-        }}
-      >
+      <form className="flex w-full flex-col" onSubmit={handleLogin}>
         <FloatingInput
           label="전화번호, 사용자 이름 또는 이메일"
           value={id}
@@ -94,9 +120,16 @@ const LoginCard = () => {
           setShowPw={setShowPw}
         />
 
+        {errorMsg && (
+          <p className="mb-2 px-1 text-left text-[11px] leading-tight text-[#ed4956]">
+            {errorMsg}
+          </p>
+        )}
+
         <button
+          type="submit"
           disabled={!isValid}
-          className={`mt-3 rounded py-1.5 text-sm font-semibold text-white transition-colors ${
+          className={`mt-1.5 rounded py-1.5 text-sm font-semibold text-white transition-colors ${
             isValid ? 'bg-[#0095f6]' : 'bg-[#b2dffc]'
           }`}
         >
@@ -113,8 +146,16 @@ const LoginCard = () => {
       </div>
 
       <button
+        type="button"
+        className="flex w-full items-center justify-center gap-2 rounded bg-[#FEE500] py-2 text-[14px] font-semibold text-[#191919] transition-opacity hover:opacity-90"
+      >
+        <MessageCircle className="h-4 w-4 fill-[#191919] stroke-none" />
+        카카오톡으로 로그인
+      </button>
+
+      <button
         onClick={() => navigate({ to: '/password/reset' })}
-        className="mt-2 cursor-pointer text-xs text-[#00376b] hover:underline"
+        className="mt-6 cursor-pointer text-xs text-[#00376b] hover:underline"
       >
         비밀번호를 잊으셨나요?
       </button>
