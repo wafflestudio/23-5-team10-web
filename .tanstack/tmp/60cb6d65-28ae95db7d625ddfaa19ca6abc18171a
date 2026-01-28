@@ -90,9 +90,9 @@ const AccountsPasswordResetRoute = AccountsPasswordResetRouteImport.update({
 } as any)
 const AccountsEmailsignupBirthdayRoute =
   AccountsEmailsignupBirthdayRouteImport.update({
-    id: '/accounts/emailsignup/birthday',
-    path: '/accounts/emailsignup/birthday',
-    getParentRoute: () => rootRouteImport,
+    id: '/birthday',
+    path: '/birthday',
+    getParentRoute: () => AccountsEmailsignupRoute,
   } as any)
 const AppPPost_idRoute = AppPPost_idRouteImport.update({
   id: '/p/$post_id',
@@ -232,7 +232,6 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   WebLiteRoute: typeof WebLiteRoute
-  AccountsEmailsignupBirthdayRoute: typeof AccountsEmailsignupBirthdayRoute
   AccountsPasswordResetRoute: typeof AccountsPasswordResetRoute
   StoriesProfile_nameStory_idRoute: typeof StoriesProfile_nameStory_idRoute
   AccountsEmailsignupIndexRoute: typeof AccountsEmailsignupIndexRoute
@@ -328,10 +327,10 @@ declare module '@tanstack/react-router' {
     }
     '/accounts/emailsignup/birthday': {
       id: '/accounts/emailsignup/birthday'
-      path: '/accounts/emailsignup/birthday'
+      path: '/birthday'
       fullPath: '/accounts/emailsignup/birthday'
       preLoaderRoute: typeof AccountsEmailsignupBirthdayRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AccountsEmailsignupRoute
     }
     '/_app/p/$post_id': {
       id: '/_app/p/$post_id'
@@ -377,7 +376,7 @@ const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
 }
 
 const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren
+  AppProfile_nameRouteChildren,
 )
 
 interface AppRouteChildren {
@@ -402,7 +401,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   WebLiteRoute: WebLiteRoute,
-  AccountsEmailsignupBirthdayRoute: AccountsEmailsignupBirthdayRoute,
   AccountsPasswordResetRoute: AccountsPasswordResetRoute,
   StoriesProfile_nameStory_idRoute: StoriesProfile_nameStory_idRoute,
   AccountsEmailsignupIndexRoute: AccountsEmailsignupIndexRoute,
