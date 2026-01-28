@@ -1,10 +1,14 @@
 import ky from 'ky'
 
+import { cropImagesToSquare } from '@/features/create-post/lib/cropImageToSquare'
+
 const API_URL = import.meta.env.VITE_API_URL
 
 export async function uploadImages(files: File[]): Promise<string[]> {
+  const croppedFiles = await cropImagesToSquare(files)
+
   const formData = new FormData()
-  files.forEach((file) => {
+  croppedFiles.forEach((file) => {
     formData.append('image', file)
   })
 
