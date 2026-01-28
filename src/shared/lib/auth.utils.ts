@@ -32,6 +32,14 @@ export const generateRandomId = (base: string) => {
   else if (randLen > 0.4) result = result.slice(0, 12)
   else result = result.slice(0, 18)
 
+  while (result.includes('..')) {
+    result = result.replace('..', `.${getRand(numbers, 1)}`)
+  }
+
+  if (/^[._]/.test(result)) {
+    result = result.replace(/^[._]/, getRand(numbers, 1))
+  }
+
   if (/[._]$/.test(result)) {
     result = result.replace(/[._]$/, getRand(numbers, 1))
   }
