@@ -6,14 +6,14 @@ interface CitySelectViewProps {
   country: string
   onLoginClick: () => void
   onSignupClick: () => void
-  onBack: () => void
+  onHomeClick: () => void
 }
 
 const CitySelectView = ({
   country,
   onLoginClick,
   onSignupClick,
-  onBack,
+  onHomeClick,
 }: CitySelectViewProps) => {
   const displayCountry = country === 'south-korea' ? 'South Korea' : country
 
@@ -25,7 +25,7 @@ const CitySelectView = ({
             src={instagramLogo}
             alt="Instagram"
             className="w-[103px] cursor-pointer"
-            onClick={onBack}
+            onClick={onHomeClick}
           />
           <div className="flex items-center gap-4">
             <button

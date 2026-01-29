@@ -1,76 +1,143 @@
 import { http, HttpResponse } from 'msw'
-import { authUsers } from '../db/auth.db'
+import { authDb } from '../db/auth.db'
+
+interface RegisterRequest {
+  email: string
+  password: string
+  nickname: string
+}
+
+interface LoginRequest {
+  loginId: string
+  password: string
+}
 
 export const authHandlers = [
-  http.post('*/api/v1/auth/login', async ({ request }) => {
-    const body = (await request.json()) as Record<string, string>
-    const { loginId, password } = body
+  http.get('*/api/v1/auth/check-nickname', ({ request }) => {
+    const url = new URL(request.url)
+    const nickname = url.searchParams.get('nickname')
+    const isDuplicate = authDb.some((user) => user.nickname === nickname)
 
-    const authInfo = authUsers.find((u) => u.loginId === loginId)
+    if (isDuplicate) {
+      return HttpResponse.json({
+        success: true,
+        code: 'AUTH_409',
+        message: '이미 존재하는 닉네임입니다.',
+        data: { isAvailable: false },
+      })
+    }
 
-    if (!authInfo) {
+    return HttpResponse.json({
+      success: true,
+      code: 'COMMON_200',
+      message: '사용 가능한 닉네임입니다.',
+      data: { isAvailable: true },
+    })
+  }),
+
+  http.post('*/api/v1/auth/check-account', async ({ request }) => {
+    const { identity } = (await request.json()) as { identity: string }
+    const user = authDb.find(
+      (u) => u.email === identity || u.nickname === identity
+    )
+
+    if (!user) {
       return HttpResponse.json(
         {
-          code: 'USER404',
+          success: false,
+          message: '계정을 찾을 수 없습니다.',
+        },
+        { status: 404 }
+      )
+    }
+
+    const [name, domain] = user.email.split('@')
+    const maskedEmail = `${name.slice(0, 2)}****@${domain}`
+
+    return HttpResponse.json({
+      success: true,
+      data: { sentEmail: maskedEmail },
+    })
+  }),
+
+  http.post('*/api/v1/auth/register', async ({ request }) => {
+    const newUser = (await request.json()) as RegisterRequest
+    const isDuplicate = authDb.some(
+      (u) => u.email === newUser.email || u.nickname === newUser.nickname
+    )
+
+    if (isDuplicate) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_400',
+          message: '이미 존재하는 이메일/닉네임입니다.',
+          data: {
+            accessToken: 'string',
+            refreshToken: 'string',
+          },
+          success: false,
+        },
+        { status: 400 }
+      )
+    }
+
+    authDb.push({
+      userId: authDb.length + 1,
+      email: newUser.email,
+      password: newUser.password,
+      nickname: newUser.nickname,
+    })
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '회원가입 및 로그인 성공',
+      data: {
+        accessToken: 'mock-access-token-123',
+        refreshToken: 'mock-refresh-token-456',
+      },
+      success: true,
+    })
+  }),
+
+  http.post('*/api/v1/auth/login', async ({ request }) => {
+    const { loginId, password } = (await request.json()) as LoginRequest
+
+    const userExists = authDb.find(
+      (u) => u.email === loginId || u.nickname === loginId
+    )
+
+    if (!userExists) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_404',
           message: '사용자를 찾을 수 없습니다.',
+          data: null,
           success: false,
         },
         { status: 404 }
       )
     }
 
-    if (authInfo.password !== password) {
+    if (userExists.password !== password) {
       return HttpResponse.json(
         {
-          code: 'AUTH401',
-          message: '비밀번호가 일치하지 않습니다.',
+          code: 'AUTH_401',
+          message: '비밀번호가 틀렸습니다.',
+          data: null,
           success: false,
         },
         { status: 401 }
       )
     }
 
-    return HttpResponse.json(
-      {
-        code: 'COMMON200',
-        message: '성공입니다.',
-        data: {
-          accessToken: `mock-access-token-${authInfo.userId}`,
-          refreshToken: 'mock-refresh-token',
-        },
-        success: true,
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '로그인 성공',
+      data: {
+        accessToken: `mock-access-token-${userExists.userId}`,
+        refreshToken: `mock-refresh-token-${userExists.userId}`,
       },
-      { status: 200 }
-    )
-  }),
-
-  http.post('*/api/v1/auth/check-account', async ({ request }) => {
-    const body = (await request.json()) as { identity: string }
-    const { identity } = body
-
-    const user = authUsers.find((u) => u.loginId === identity)
-
-    if (!user) {
-      return HttpResponse.json(
-        {
-          code: 'USER404',
-          message: '계정을 찾을 수 없습니다.',
-          success: false,
-        },
-        { status: 404 }
-      )
-    }
-
-    return HttpResponse.json(
-      {
-        code: 'COMMON200',
-        message: '성공입니다.',
-        data: {
-          sentEmail: user.loginId,
-        },
-        success: true,
-      },
-      { status: 200 }
-    )
+      success: true,
+    })
   }),
 ]

@@ -15,10 +15,12 @@ interface FloatingInputProps {
 
 interface LoginResponse {
   success: boolean
-  data?: {
+  code: string
+  message: string
+  data: {
     accessToken: string
     refreshToken: string
-  }
+  } | null
 }
 
 const FloatingInput = ({
@@ -82,7 +84,7 @@ const LoginCard = () => {
 
     try {
       const res = await instance
-        .post('*/api/v1/auth/login', {
+        .post('api/v1/auth/login', {
           json: { loginId: id, password: pw },
         })
         .json<LoginResponse>()
@@ -98,7 +100,7 @@ const LoginCard = () => {
   }
 
   return (
-    <div className="flex w-full flex-col items-center bg-white p-10">
+    <div className="flex w-full flex-col items-center border border-gray-300 bg-white p-10 shadow-sm">
       <img
         src={instagramLogo}
         alt="Instagram"
