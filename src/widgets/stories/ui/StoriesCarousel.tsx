@@ -5,65 +5,28 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/shared/ui/carousel'
+import { useStoryFeedQuery } from '@/entities/story/model/hooks/useStoryFeedQuery'
 
 export function StoriesCarousel() {
-  const stories = [
-    {
-      id: '1',
-      profileName: 'test',
-      storyId: '1',
-    },
-    {
-      id: '2',
-      profileName: 'test',
-      storyId: '2',
-    },
-    {
-      id: '3',
-      profileName: 'test',
-      storyId: '3',
-    },
-    {
-      id: '4',
-      profileName: 'test',
-      storyId: '4',
-    },
-    {
-      id: '5',
-      profileName: 'test',
-      storyId: '5',
-    },
-    {
-      id: '6',
-      profileName: 'test',
-      storyId: '6',
-    },
-    {
-      id: '7',
-      profileName: 'test',
-      storyId: '7',
-    },
-    {
-      id: '8',
-      profileName: 'test',
-      storyId: '8',
-    },
-    {
-      id: '9',
-      profileName: 'test',
-      storyId: '9',
-    },
-    {
-      id: '10',
-      profileName: 'test',
-      storyId: '10',
-    },
-  ]
+  const { data: stories, isLoading } = useStoryFeedQuery()
+
+  if (isLoading) {
+    return (
+      <div className="flex h-24 w-full items-center justify-center">
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+      </div>
+    )
+  }
+
+  if (!stories || stories.length === 0) {
+    return null
+  }
+
   return (
     <Carousel className="h-fit w-full" opts={{ slidesToScroll: 4 }}>
       <CarouselContent>
         {stories.map((story) => (
-          <StoryItem key={story.id} {...story} />
+          <StoryItem key={story.userId} {...story} />
         ))}
       </CarouselContent>
       <CarouselNext className="top-1/2 right-0 translate-y-[-50%]" />

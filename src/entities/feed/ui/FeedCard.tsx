@@ -59,7 +59,13 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
       </button>
 
       <CardHeader className="flex flex-row items-center gap-3 px-3 py-2">
-        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200" />
+        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
+          <img
+            src={item.author.profileImageUrl}
+            alt={`${item.author.nickname} 프로필`}
+            className="h-full w-full object-cover"
+          />
+        </div>
         <div className="flex flex-col">
           <span className="text-sm leading-tight font-semibold">
             {item.author.nickname}
