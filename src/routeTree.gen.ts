@@ -13,6 +13,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as WebLiteRouteImport } from './routes/web/lite'
+import { Route as StoriesUser_idRouteImport } from './routes/stories/$user_id'
+import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
 import { Route as AppTestRouteImport } from './routes/_app/test'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
@@ -47,6 +49,16 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const WebLiteRoute = WebLiteRouteImport.update({
   id: '/web/lite',
   path: '/web/lite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesUser_idRoute = StoriesUser_idRouteImport.update({
+  id: '/stories/$user_id',
+  path: '/stories/$user_id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
+  id: '/accounts/emailsignup',
+  path: '/accounts/emailsignup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppTestRoute = AppTestRouteImport.update({
@@ -142,6 +154,8 @@ export interface FileRoutesByFullPath {
   '/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
+  '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
   '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
@@ -162,6 +176,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
+  '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
   '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
@@ -185,6 +201,8 @@ export interface FileRoutesById {
   '/_app/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/_app/explore': typeof AppExploreRoute
   '/_app/test': typeof AppTestRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
+  '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
@@ -208,6 +226,8 @@ export interface FileRouteTypes {
     | '/$profile_name'
     | '/explore'
     | '/test'
+    | '/accounts/emailsignup'
+    | '/stories/$user_id'
     | '/web/lite'
     | '/'
     | '/$profile_name/albums'
@@ -228,6 +248,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/explore'
     | '/test'
+    | '/accounts/emailsignup'
+    | '/stories/$user_id'
     | '/web/lite'
     | '/'
     | '/$profile_name/albums'
@@ -250,6 +272,8 @@ export interface FileRouteTypes {
     | '/_app/$profile_name'
     | '/_app/explore'
     | '/_app/test'
+    | '/accounts/emailsignup'
+    | '/stories/$user_id'
     | '/web/lite'
     | '/_app/'
     | '/_app/$profile_name/albums'
@@ -270,6 +294,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  AccountsEmailsignupRoute: typeof AccountsEmailsignupRoute
+  StoriesUser_idRoute: typeof StoriesUser_idRoute
   WebLiteRoute: typeof WebLiteRoute
   AccountsEmailsignupBirthdayRoute: typeof AccountsEmailsignupBirthdayRoute
   AccountsEmailsignupCaptchaRoute: typeof AccountsEmailsignupCaptchaRoute
@@ -310,6 +336,20 @@ declare module '@tanstack/react-router' {
       path: '/web/lite'
       fullPath: '/web/lite'
       preLoaderRoute: typeof WebLiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories/$user_id': {
+      id: '/stories/$user_id'
+      path: '/stories/$user_id'
+      fullPath: '/stories/$user_id'
+      preLoaderRoute: typeof StoriesUser_idRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup': {
+      id: '/accounts/emailsignup'
+      path: '/accounts/emailsignup'
+      fullPath: '/accounts/emailsignup'
+      preLoaderRoute: typeof AccountsEmailsignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/test': {
@@ -464,6 +504,8 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  AccountsEmailsignupRoute: AccountsEmailsignupRoute,
+  StoriesUser_idRoute: StoriesUser_idRoute,
   WebLiteRoute: WebLiteRoute,
   AccountsEmailsignupBirthdayRoute: AccountsEmailsignupBirthdayRoute,
   AccountsEmailsignupCaptchaRoute: AccountsEmailsignupCaptchaRoute,

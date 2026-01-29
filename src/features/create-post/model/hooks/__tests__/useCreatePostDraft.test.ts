@@ -2,6 +2,7 @@ import { renderHook, act } from '@testing-library/react'
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 
 import { useCreatePostDraft } from '../useCreatePostDraft'
+import { TestWrapper } from '@/test/testUtils'
 
 describe('useCreatePostDraft', () => {
   beforeEach(() => {
@@ -16,8 +17,9 @@ describe('useCreatePostDraft', () => {
   it('파일 선택 시 maxFiles로 제한하고 초과분(ignoredCount)을 알려준다', () => {
     const onIgnoredCount = vi.fn()
 
-    const { result } = renderHook(() =>
-      useCreatePostDraft({ maxFiles: 2, onIgnoredCount })
+    const { result } = renderHook(
+      () => useCreatePostDraft({ maxFiles: 2, onIgnoredCount }),
+      { wrapper: TestWrapper }
     )
 
     const file1 = new File(['a'], 'a.png', { type: 'image/png' })
@@ -36,7 +38,9 @@ describe('useCreatePostDraft', () => {
   })
 
   it('draft 초기화시 files/step/carousel index를 모두 리셋한다', () => {
-    const { result } = renderHook(() => useCreatePostDraft({ maxFiles: 10 }))
+    const { result } = renderHook(() => useCreatePostDraft({ maxFiles: 10 }), {
+      wrapper: TestWrapper,
+    })
 
     const file1 = new File(['a'], 'a.png', { type: 'image/png' })
     const file2 = new File(['b'], 'b.png', { type: 'image/png' })

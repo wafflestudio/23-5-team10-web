@@ -18,6 +18,8 @@ const CreateStoryRequestSchema = z.object({
 
 export const storyHandlers = [
   http.post('*/api/v1/stories', async ({ request }) => {
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+
     const json = await request.json().catch(() => null)
     const result = CreateStoryRequestSchema.safeParse(json)
 
@@ -43,12 +45,11 @@ export const storyHandlers = [
       viewCount: 0,
     })
 
-    const responseBody = ApiResponseSchema(z.number()).parse({
+    const responseBody = {
       code: '200',
       message: '요청에 성공하였습니다.',
-      data: storyId,
-      success: true,
-    })
+      success: true as const,
+    }
 
     return HttpResponse.json(responseBody)
   }),

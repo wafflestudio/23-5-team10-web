@@ -1,21 +1,25 @@
-import { useState } from 'react'
 import { MAX_CAPTION_LENGTH } from '@/features/create-post/constants'
-import { useCaption } from '@/features/create-post/model/hooks/useCaption'
 import { AlbumSelectDropdown } from '@/features/create-post/ui/AlbumSelectDropdown'
 
 type PostDetailsPaneProps = {
   profileName: string
   profileImageUrl?: string
+  caption: string
+  onCaptionChange: (caption: string) => void
+  selectedAlbumId: number | null
+  onAlbumSelect: (albumId: number | null) => void
 }
 
 export function PostDetailsPane({
   profileName,
   profileImageUrl,
+  caption,
+  onCaptionChange,
+  selectedAlbumId,
+  onAlbumSelect,
 }: PostDetailsPaneProps) {
-  const { caption, setCaption, captionLength, maxLength } = useCaption({
-    maxLength: MAX_CAPTION_LENGTH,
-  })
-  const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
+  const captionLength = caption.length
+  const maxLength = MAX_CAPTION_LENGTH
 
   return (
     <aside className="flex h-full w-full flex-col border-l border-zinc-200 bg-white">
@@ -37,13 +41,13 @@ export function PostDetailsPane({
         <div className="mb-4">
           <AlbumSelectDropdown
             selectedAlbumId={selectedAlbumId}
-            onSelect={setSelectedAlbumId}
+            onSelect={onAlbumSelect}
           />
         </div>
 
         <textarea
           value={caption}
-          onChange={(e) => setCaption(e.target.value)}
+          onChange={(e) => onCaptionChange(e.target.value.slice(0, maxLength))}
           placeholder="문구 입력..."
           maxLength={maxLength}
           className="min-h-0 flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-zinc-400"
