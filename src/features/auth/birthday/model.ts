@@ -1,16 +1,19 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { instance } from '@/shared/api/ky'
 
 export function useBirthday() {
   const navigate = useNavigate()
   const signupData = useSearch({ from: '/accounts/emailsignup/birthday' })
 
-  const currentYear = new Date().getFullYear()
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = (now.getMonth() + 1).toString()
+  const currentDay = now.getDate().toString()
+
   const [birthDate, setBirthDate] = useState({
     year: currentYear.toString(),
-    month: '1',
-    day: '1',
+    month: currentMonth,
+    day: currentDay,
   })
 
   const years = useMemo(
@@ -32,44 +35,35 @@ export function useBirthday() {
     return Array.from({ length: lastDay }, (_, i) => (i + 1).toString())
   }, [birthDate.year, birthDate.month])
 
-  const age = useMemo(() => {
-    const today = new Date()
+  const isAgeValid = useMemo(() => {
     const birth = new Date(
       Number(birthDate.year),
       Number(birthDate.month) - 1,
       Number(birthDate.day)
     )
-    let calculatedAge = today.getFullYear() - birth.getFullYear()
-    const m = today.getMonth() - birth.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-      calculatedAge--
-    }
-    return calculatedAge
-  }, [birthDate])
+    const ageLimitDate = new Date(
+      now.getFullYear() - 5,
+      now.getMonth(),
+      now.getDate()
+    )
+    return birth <= ageLimitDate
+  }, [birthDate, now])
 
-  const handleNext = async () => {
-    try {
-      const formattedBirthday = `${birthDate.year}-${birthDate.month.padStart(2, '0')}-${birthDate.day.padStart(2, '0')}`
+  const handleNext = (): void => {
+    if (!isAgeValid) return
 
-      const res = await instance
-        .post('api/v1/auth/register', {
-          json: {
-            email: signupData.email,
-            password: signupData.password,
-            nickname: signupData.nickname,
-            name: signupData.name,
-            birthday: formattedBirthday,
-          },
-        })
-        .json<{ success: boolean; data: { accessToken: string } }>()
+    const formattedBirthday = `${birthDate.year}-${birthDate.month.padStart(2, '0')}-${birthDate.day.padStart(2, '0')}`
 
-      if (res.success) {
-        localStorage.setItem('accessToken', res.data.accessToken)
-        navigate({ to: '/' })
-      }
-    } catch (err) {
-      console.error(err)
-    }
+    navigate({
+      to: '/accounts/emailsignup/captcha',
+      search: {
+        email: signupData.email ?? '',
+        name: signupData.name ?? '',
+        nickname: signupData.nickname ?? '',
+        password: signupData.password ?? '',
+        birthday: formattedBirthday,
+      },
+    })
   }
 
   return {
@@ -78,7 +72,7 @@ export function useBirthday() {
     years,
     months,
     days,
-    age,
+    isAgeValid,
     handleNext,
   }
 }

@@ -11,7 +11,6 @@ export const authHandlers = [
   http.get('*/api/v1/auth/check-nickname', ({ request }) => {
     const url = new URL(request.url)
     const nickname = url.searchParams.get('nickname')
-
     const isDuplicate = authDb.some((user) => user.nickname === nickname)
 
     if (isDuplicate) {
@@ -33,7 +32,6 @@ export const authHandlers = [
 
   http.post('*/api/v1/auth/check-account', async ({ request }) => {
     const { identity } = (await request.json()) as { identity: string }
-
     const user = authDb.find(
       (u) => u.email === identity || u.nickname === identity
     )
@@ -59,6 +57,24 @@ export const authHandlers = [
 
   http.post('*/api/v1/auth/register', async ({ request }) => {
     const newUser = (await request.json()) as RegisterRequest
+    const isDuplicate = authDb.some(
+      (u) => u.email === newUser.email || u.nickname === newUser.nickname
+    )
+
+    if (isDuplicate) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_400',
+          message: '이미 존재하는 이메일/닉네임입니다.',
+          data: {
+            accessToken: 'string',
+            refreshToken: 'string',
+          },
+          success: false,
+        },
+        { status: 400 }
+      )
+    }
 
     authDb.push({
       userId: authDb.length + 1,
@@ -68,13 +84,13 @@ export const authHandlers = [
     })
 
     return HttpResponse.json({
-      success: true,
       code: 'COMMON_200',
-      message: '회원가입 성공',
+      message: '회원가입 및 로그인 성공',
       data: {
-        accessToken: 'mock-access-token',
-        refreshEmpty: 'mock-refresh-token',
+        accessToken: 'mock-access-token-123',
+        refreshToken: 'mock-refresh-token-456',
       },
+      success: true,
     })
   }),
 ]

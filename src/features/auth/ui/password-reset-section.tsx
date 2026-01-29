@@ -25,7 +25,8 @@ export const PasswordResetSection = () => {
         .json<{ success: boolean; data?: { sentEmail: string } }>()
 
       if (res.success) {
-        setSentTarget(res.data?.sentEmail || inputValue)
+        // res.data.sentEmail(마스킹된 이메일) 대신 사용자가 입력한 inputValue를 그대로 사용합니다.
+        setSentTarget(inputValue)
         setShowToast(true)
       }
     } catch {
