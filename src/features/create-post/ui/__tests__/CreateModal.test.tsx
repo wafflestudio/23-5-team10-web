@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 
 import { CreateModal } from '../CreateModal'
+import { TestWrapper } from '@/test/testUtils'
 
 function getFileInput() {
   const input = document.querySelector('input[type="file"]')
@@ -34,7 +35,9 @@ describe('CreateModal', () => {
 
   it('업로드 전에는 닫힘 요청 시 confirm 없이 바로 닫힌다', async () => {
     const onOpenChange = vi.fn()
-    render(<CreateModal open onOpenChange={onOpenChange} />)
+    render(<CreateModal open onOpenChange={onOpenChange} />, {
+      wrapper: TestWrapper,
+    })
     expect(screen.queryByText('게시물을 삭제하시겠어요?')).toBeNull()
     fireEvent.keyDown(document, { key: 'Escape' })
     await waitFor(() => {
@@ -46,7 +49,9 @@ describe('CreateModal', () => {
   it('업로드 후에는 바깥을 누르면 confirm이 뜨고, 삭제를 누르면 닫힌다', async () => {
     const user = userEvent.setup()
     const onOpenChange = vi.fn()
-    render(<CreateModal open={true} onOpenChange={onOpenChange} />)
+    render(<CreateModal open={true} onOpenChange={onOpenChange} />, {
+      wrapper: TestWrapper,
+    })
 
     const file = new File(['hello'], 'a.png', { type: 'image/png' })
     await user.upload(getFileInput(), file)
