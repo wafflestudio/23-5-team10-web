@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import cakeIcon from '@/assets/birthday-cake.png'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useBirthday } from '../model'
@@ -18,6 +18,15 @@ export function BirthdayPage() {
     handleNext,
   } = useBirthday()
 
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-white text-center">
       <main className="flex flex-grow flex-col items-center justify-center p-4 py-10">
@@ -27,11 +36,9 @@ export function BirthdayPage() {
             alt="Birthday Cake"
             className="mb-4 h-24 w-48 object-contain"
           />
-
           <h2 className="mb-3 text-base font-semibold text-[#262626]">
             생일 추가
           </h2>
-
           <p className="text-sm text-[#262626]">
             공개 프로필에 포함되지 않습니다.
           </p>
@@ -41,7 +48,6 @@ export function BirthdayPage() {
           >
             왜 생년월일을 입력해야 하나요?
           </button>
-
           <div className="mb-2 flex w-full justify-center gap-2">
             <select
               className="w-[70px] rounded border border-gray-300 bg-white p-2 text-[12px] text-gray-500 outline-none focus:border-gray-400"
@@ -83,16 +89,13 @@ export function BirthdayPage() {
               ))}
             </select>
           </div>
-
           <p className="mb-4 text-xs text-[#8e8e8e]">
             태어난 날짜를 입력해야 합니다
           </p>
-
           <p className="mb-6 px-2 text-xs leading-relaxed text-[#8e8e8e]">
             비즈니스나 반려동물 등을 위한 계정인 경우에도 회원님의 생년월일을
             사용하세요
           </p>
-
           <button
             onClick={handleNext}
             disabled={!isAgeValid}
@@ -104,7 +107,6 @@ export function BirthdayPage() {
           >
             다음
           </button>
-
           <button
             onClick={() => navigate({ to: '/accounts/emailsignup' })}
             className="text-sm font-semibold text-[#4a5df9] hover:opacity-70"
@@ -112,7 +114,6 @@ export function BirthdayPage() {
             돌아가기
           </button>
         </div>
-
         <div className="mt-2.5 flex w-full max-w-[350px] justify-center border border-gray-300 bg-white p-6 shadow-sm">
           <p className="text-sm text-[#262626]">
             계정이 있으신가요?{' '}
@@ -125,12 +126,10 @@ export function BirthdayPage() {
           </p>
         </div>
       </main>
-
       <BirthdayModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-
       <footer className="shrink-0 bg-white py-8">
         <AppFooter />
       </footer>

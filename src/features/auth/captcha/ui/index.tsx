@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useCaptcha } from '../model'
@@ -12,6 +13,15 @@ export function CaptchaPage() {
     handleRegister,
   } = useCaptcha()
 
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-white text-center">
       <main className="flex flex-grow flex-col items-center justify-center p-4 py-10">
@@ -20,7 +30,6 @@ export function CaptchaPage() {
             가입하기
           </h2>
           <p className="mb-6 text-sm text-[#262626]">이메일로 가입</p>
-
           <div className="mb-6 w-full rounded-sm border border-[#d3d3d3] bg-[#f9f9f9] p-2 px-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -62,7 +71,6 @@ export function CaptchaPage() {
               </div>
             </div>
           </div>
-
           <div className="mb-6 space-y-4 px-2 text-left text-[11px] leading-snug text-[#8e8e8e]">
             <p>
               이는 유해한 행위를 방지하고 스팸을 감지 및 예방하며 제품의
@@ -80,7 +88,6 @@ export function CaptchaPage() {
               정보는 Google에서 광고를 맞춤화하는 데 사용되지 않습니다.
             </p>
           </div>
-
           <button
             disabled={!isVerified || isLoading}
             onClick={handleRegister}
@@ -92,7 +99,6 @@ export function CaptchaPage() {
           >
             {isLoading ? '가입 중...' : '다음'}
           </button>
-
           <button
             onClick={() => window.history.back()}
             className="text-sm font-semibold text-[#4a5df9] hover:opacity-70"
@@ -100,7 +106,6 @@ export function CaptchaPage() {
             돌아가기
           </button>
         </div>
-
         <div className="mt-2.5 flex w-full max-w-[350px] justify-center border border-gray-300 bg-white p-6 shadow-sm">
           <p className="text-sm text-[#262626]">
             계정이 있으신가요?{' '}
@@ -113,7 +118,6 @@ export function CaptchaPage() {
           </p>
         </div>
       </main>
-
       <footer className="shrink-0 bg-white py-8">
         <AppFooter />
       </footer>

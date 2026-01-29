@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useEmailChange } from '../model'
@@ -16,6 +17,15 @@ export function EmailChangePage() {
     handleSubmit,
   } = useEmailChange()
 
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-white text-center">
       <main className="flex flex-grow flex-col items-center justify-center p-4 py-10">
@@ -25,7 +35,6 @@ export function EmailChangePage() {
             alt="Security Verification"
             className="mb-4 h-20 w-20 object-contain"
           />
-
           <h2 className="mb-1 text-base font-semibold text-[#262626]">
             이메일 주소 변경
           </h2>
@@ -33,7 +42,6 @@ export function EmailChangePage() {
           <p className="mb-6 text-sm font-semibold text-[#262626]">
             {currentEmail}
           </p>
-
           <div className="w-full">
             <input
               type="email"
@@ -49,7 +57,6 @@ export function EmailChangePage() {
               <p className="mt-1.5 text-left text-xs text-red-500">{error}</p>
             )}
           </div>
-
           <button
             disabled={!isButtonActive}
             onClick={handleSubmit}
@@ -61,7 +68,6 @@ export function EmailChangePage() {
           >
             {isLoading ? '확인 중...' : '변경'}
           </button>
-
           <button
             onClick={() => window.history.back()}
             className="text-sm font-semibold text-[#4a5df9] hover:opacity-70"
@@ -69,7 +75,6 @@ export function EmailChangePage() {
             돌아가기
           </button>
         </div>
-
         <div className="mt-2.5 flex w-full max-w-[350px] justify-center border border-gray-300 bg-white p-6 shadow-sm">
           <p className="text-sm text-[#262626]">
             계정이 있으신가요?{' '}
@@ -82,7 +87,6 @@ export function EmailChangePage() {
           </p>
         </div>
       </main>
-
       <footer className="shrink-0 bg-white py-8">
         <AppFooter />
       </footer>

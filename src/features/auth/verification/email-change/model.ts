@@ -31,7 +31,6 @@ export function useEmailChange() {
           json: { identity: email },
         })
         .json()
-
       setServerError('이미 사용 중인 이메일입니다.')
     } catch (err) {
       if (err instanceof HTTPError && err.response.status === 404) {
@@ -57,13 +56,31 @@ export function useEmailChange() {
   const handleSubmit = async () => {
     if (!newEmail || error || isLoading) return
 
-    await checkEmailDuplicate(newEmail)
-
-    if (!error && !serverError && newEmail) {
-      navigate({
-        to: '/accounts/emailsignup/verification',
-        search: { email: newEmail },
-      })
+    setIsLoading(true)
+    try {
+      await instance
+        .post('api/v1/auth/check-account', {
+          json: { identity: newEmail },
+        })
+        .json()
+      setServerError('이미 사용 중인 이메일입니다.')
+      setIsLoading(false)
+    } catch (err) {
+      if (err instanceof HTTPError && err.response.status === 404) {
+        navigate({
+          to: '/accounts/emailsignup/verification',
+          search: {
+            email: newEmail,
+            password: search.password,
+            nickname: search.nickname,
+            name: search.name || '',
+            birthday: search.birthday || '',
+          },
+        })
+      } else {
+        setServerError('검사 중 오류가 발생했습니다.')
+        setIsLoading(false)
+      }
     }
   }
 

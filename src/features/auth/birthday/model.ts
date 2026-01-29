@@ -5,7 +5,7 @@ export function useBirthday() {
   const navigate = useNavigate()
   const signupData = useSearch({ from: '/accounts/emailsignup/birthday' })
 
-  const now = new Date()
+  const now = useMemo(() => new Date(), [])
   const currentYear = now.getFullYear()
   const currentMonth = (now.getMonth() + 1).toString()
   const currentDay = now.getDate().toString()
@@ -57,10 +57,10 @@ export function useBirthday() {
     navigate({
       to: '/accounts/emailsignup/captcha',
       search: {
-        email: signupData.email ?? '',
-        name: signupData.name ?? '',
-        nickname: signupData.nickname ?? '',
-        password: signupData.password ?? '',
+        email: signupData.email,
+        password: signupData.password,
+        nickname: signupData.nickname,
+        name: signupData.name || '',
         birthday: formattedBirthday,
       },
     })

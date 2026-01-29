@@ -12,6 +12,15 @@ export function VerificationPage() {
   const [showToast, setShowToast] = useState(false)
   const [lastRequestedTime, setLastRequestedTime] = useState<number>(0)
 
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [])
+
   const handleResendCode = () => {
     const now = Date.now()
     const diff = (now - lastRequestedTime) / 1000
@@ -79,7 +88,12 @@ export function VerificationPage() {
               onClick={() =>
                 navigate({
                   to: '/accounts/emailsignup/email-change',
-                  search: { email },
+                  search: (prev) => ({
+                    ...prev,
+                    email: prev.email || email,
+                    password: prev.password || '',
+                    nickname: prev.nickname || '',
+                  }),
                 })
               }
               className="hover:opacity-70"

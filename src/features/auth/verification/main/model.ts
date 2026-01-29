@@ -24,18 +24,34 @@ export function useVerification() {
             email: search.email,
             password: search.password,
             nickname: search.nickname,
+            name: search.name,
+            birthday: search.birthday,
+            code: code,
           },
         })
         .json<{ data: { accessToken: string }; success: boolean }>()
 
       if (res.success) {
         localStorage.setItem('accessToken', res.data.accessToken)
-        navigate({ to: '/' })
+        navigate({
+          to: '/',
+          replace: true,
+          search: {},
+        })
       }
     } catch (err) {
-      if (err instanceof HTTPError && err.response.status === 400) {
-        window.alert('오류가 발생했습니다. 다시 시도해주세요.')
-        navigate({ to: '/accounts/emailsignup' })
+      if (err instanceof HTTPError) {
+        const errorData = (await err.response.json()) as { message?: string }
+        window.alert(
+          errorData.message || '오류가 발생했습니다. 다시 시도해주세요.'
+        )
+
+        if (err.response.status === 400) {
+          navigate({
+            to: '/accounts/emailsignup',
+            replace: true,
+          })
+        }
       }
     } finally {
       setIsLoading(false)

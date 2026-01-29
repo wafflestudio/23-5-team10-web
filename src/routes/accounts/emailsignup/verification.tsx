@@ -1,16 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { VerificationPage } from '@/features/auth/verification/main/ui'
 
 interface VerificationSearch {
   email: string
-  password?: string
-  nickname?: string
-  name?: string
-  birthday?: string
+  password: string
+  nickname: string
+  name: string
+  birthday: string
 }
 
 export const Route = createFileRoute('/accounts/emailsignup/verification')({
-  component: VerificationPage,
   validateSearch: (search: Record<string, unknown>): VerificationSearch => {
     return {
       email: (search.email as string) || '',
@@ -20,4 +19,19 @@ export const Route = createFileRoute('/accounts/emailsignup/verification')({
       birthday: (search.birthday as string) || '',
     }
   },
+  beforeLoad: ({ search }) => {
+    if (
+      !search.email ||
+      !search.password ||
+      !search.nickname ||
+      !search.name ||
+      !search.birthday
+    ) {
+      throw redirect({
+        to: '/accounts/emailsignup',
+        replace: true,
+      })
+    }
+  },
+  component: VerificationPage,
 })

@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { BirthdayPage } from '@/features/auth/birthday/ui'
 
 interface SignupSearch {
-  email?: string
-  password?: string
+  email: string
+  password: string
+  nickname: string
   name?: string
-  nickname?: string
 }
 
 export const Route = createFileRoute('/accounts/emailsignup/birthday')({
@@ -13,8 +13,16 @@ export const Route = createFileRoute('/accounts/emailsignup/birthday')({
     return {
       email: (search.email as string) || '',
       password: (search.password as string) || '',
-      name: (search.name as string) || '',
       nickname: (search.nickname as string) || '',
+      name: (search.name as string) || '',
+    }
+  },
+  beforeLoad: ({ search }) => {
+    if (!search.email || !search.password || !search.nickname) {
+      throw redirect({
+        to: '/accounts/emailsignup',
+        replace: true,
+      })
     }
   },
   component: BirthdayPage,
