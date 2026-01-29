@@ -7,6 +7,11 @@ interface RegisterRequest {
   nickname: string
 }
 
+interface LoginRequest {
+  loginId: string
+  password: string
+}
+
 export const authHandlers = [
   http.get('*/api/v1/auth/check-nickname', ({ request }) => {
     const url = new URL(request.url)
@@ -89,6 +94,48 @@ export const authHandlers = [
       data: {
         accessToken: 'mock-access-token-123',
         refreshToken: 'mock-refresh-token-456',
+      },
+      success: true,
+    })
+  }),
+
+  http.post('*/api/v1/auth/login', async ({ request }) => {
+    const { loginId, password } = (await request.json()) as LoginRequest
+
+    const userExists = authDb.find(
+      (u) => u.email === loginId || u.nickname === loginId
+    )
+
+    if (!userExists) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_404',
+          message: '사용자를 찾을 수 없습니다.',
+          data: null,
+          success: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    if (userExists.password !== password) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_401',
+          message: '비밀번호가 틀렸습니다.',
+          data: null,
+          success: false,
+        },
+        { status: 401 }
+      )
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '로그인 성공',
+      data: {
+        accessToken: `mock-access-token-${userExists.userId}`,
+        refreshToken: `mock-refresh-token-${userExists.userId}`,
       },
       success: true,
     })
