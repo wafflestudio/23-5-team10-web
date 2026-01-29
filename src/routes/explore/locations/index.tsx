@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import LocationSelectView from '@/components/auth/LocationSelectView'
 import { AppFooter } from '@/shared/ui/app-footer'
-import { useSmartBack } from '@/hooks/useSmartBack'
 
 export const Route = createFileRoute('/explore/locations/')({
   component: LocationsPage,
@@ -9,30 +8,31 @@ export const Route = createFileRoute('/explore/locations/')({
 
 function LocationsPage() {
   const navigate = useNavigate()
-  const handleBack = useSmartBack()
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-white">
       <main className="flex-grow">
         <LocationSelectView
-          onBack={handleBack}
+          onHomeClick={() => navigate({ to: '/login' })}
           onLoginClick={() => navigate({ to: '/login' })}
           onSignupClick={() => navigate({ to: '/accounts/emailsignup' })}
-          onSelect={() => {
+          onSelect={(country) => {
             navigate({
               to: '/explore/locations/$countryCode/$countryName',
               params: {
-                countryCode: 'KR',
-                countryName: 'South Korea',
+                countryCode: country === 'South Korea' ? 'KR' : 'US',
+                countryName: country.toLowerCase().replace(/\s/g, '-'),
               },
             })
           }}
         />
       </main>
-      <AppFooter
-        onLocationClick={() => navigate({ to: '/explore/locations' })}
-        onLiteClick={() => navigate({ to: '/web/lite' })}
-      />
+      <footer className="bg-white pb-8">
+        <AppFooter
+          onLocationClick={() => navigate({ to: '/explore/locations' })}
+          onLiteClick={() => navigate({ to: '/web/lite' })}
+        />
+      </footer>
     </div>
   )
 }

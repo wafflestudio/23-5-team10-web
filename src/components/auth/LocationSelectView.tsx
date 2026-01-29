@@ -4,14 +4,14 @@ import { COUNTRIES } from '../../constants/countries'
 interface LocationSelectViewProps {
   onLoginClick: () => void
   onSignupClick: () => void
-  onBack: () => void
+  onHomeClick: () => void
   onSelect?: (country: string) => void
 }
 
 const LocationSelectView = ({
   onLoginClick,
   onSignupClick,
-  onBack,
+  onHomeClick,
   onSelect,
 }: LocationSelectViewProps) => {
   return (
@@ -22,7 +22,7 @@ const LocationSelectView = ({
             src={instagramLogo}
             alt="Instagram"
             className="w-[103px] cursor-pointer"
-            onClick={onBack}
+            onClick={onHomeClick}
           />
           <div className="flex items-center gap-4">
             <button
