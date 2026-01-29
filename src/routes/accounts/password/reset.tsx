@@ -42,7 +42,10 @@ function PasswordResetPage() {
           <PasswordResetSection />
         </div>
         <footer className="bg-white pb-8">
-          <AppFooter />
+          <AppFooter
+            onLocationClick={() => navigate({ to: '/explore/locations' })}
+            onLiteClick={() => navigate({ to: '/web/lite' })}
+          />
         </footer>
       </main>
     </div>

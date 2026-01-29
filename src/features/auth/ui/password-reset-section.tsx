@@ -25,7 +25,6 @@ export const PasswordResetSection = () => {
         .json<{ success: boolean; data?: { sentEmail: string } }>()
 
       if (res.success) {
-        // res.data.sentEmail(마스킹된 이메일) 대신 사용자가 입력한 inputValue를 그대로 사용합니다.
         setSentTarget(inputValue)
         setShowToast(true)
       }
@@ -94,7 +93,7 @@ export const PasswordResetSection = () => {
         </div>
         <button
           type="button"
-          className="mb-6 flex w-full items-center justify-center gap-2 rounded bg-[#FEE500] py-2 text-[14px] font-semibold text-[#191919] hover:opacity-90"
+          className="mb-6 flex h-[34px] w-full items-center justify-center gap-2 rounded bg-[#FEE500] text-[14px] font-semibold text-[#191919] hover:opacity-90"
         >
           <MessageCircle className="h-4 w-4 fill-[#191919] stroke-none" />{' '}
           카카오톡으로 로그인

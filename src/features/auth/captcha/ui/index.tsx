@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useCaptcha } from '../model'
 
 export function CaptchaPage() {
   const navigate = useNavigate()
+  const signupData = useSearch({ from: '/accounts/emailsignup/captcha' })
   const {
     isVerifying,
     isVerified,
@@ -119,7 +120,20 @@ export function CaptchaPage() {
         </div>
       </main>
       <footer className="shrink-0 bg-white py-8">
-        <AppFooter />
+        <AppFooter
+          onLocationClick={() =>
+            navigate({
+              to: '/explore/locations',
+              search: { ...signupData },
+            })
+          }
+          onLiteClick={() =>
+            navigate({
+              to: '/web/lite',
+              search: { ...signupData },
+            })
+          }
+        />
       </footer>
     </div>
   )

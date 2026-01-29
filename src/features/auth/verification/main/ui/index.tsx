@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useVerification } from '../model'
 import verificationIcon from '@/assets/verification-security.png'
 
 export function VerificationPage() {
   const navigate = useNavigate()
+  const signupData = useSearch({ from: '/accounts/emailsignup/verification' })
   const { email, code, isLoading, handleCodeChange, handleVerify } =
     useVerification()
 
@@ -88,12 +89,12 @@ export function VerificationPage() {
               onClick={() =>
                 navigate({
                   to: '/accounts/emailsignup/email-change',
-                  search: (prev) => ({
-                    ...prev,
-                    email: prev.email || email,
-                    password: prev.password || '',
-                    nickname: prev.nickname || '',
-                  }),
+                  search: {
+                    ...signupData,
+                    email: signupData.email || email,
+                    password: signupData.password || '',
+                    nickname: signupData.nickname || '',
+                  },
                 })
               }
               className="hover:opacity-70"
@@ -121,7 +122,24 @@ export function VerificationPage() {
       </main>
 
       <footer className="shrink-0 bg-white py-8">
-        <AppFooter />
+        <AppFooter
+          onLocationClick={() =>
+            navigate({
+              to: '/explore/locations',
+              search: {
+                ...signupData,
+              },
+            })
+          }
+          onLiteClick={() =>
+            navigate({
+              to: '/web/lite',
+              search: {
+                ...signupData,
+              },
+            })
+          }
+        />
       </footer>
 
       {showToast && (

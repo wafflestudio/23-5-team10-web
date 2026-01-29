@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import cakeIcon from '@/assets/birthday-cake.png'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useBirthday } from '../model'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { BirthdayModal } from './birthday-modal'
 
 export function BirthdayPage() {
   const navigate = useNavigate()
+  const signupData = useSearch({ from: '/accounts/emailsignup/birthday' })
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {
     birthDate,
@@ -131,7 +132,20 @@ export function BirthdayPage() {
         onClose={() => setIsModalOpen(false)}
       />
       <footer className="shrink-0 bg-white py-8">
-        <AppFooter />
+        <AppFooter
+          onLocationClick={() =>
+            navigate({
+              to: '/explore/locations',
+              search: { ...signupData },
+            })
+          }
+          onLiteClick={() =>
+            navigate({
+              to: '/web/lite',
+              search: { ...signupData },
+            })
+          }
+        />
       </footer>
     </div>
   )

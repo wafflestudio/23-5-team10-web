@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { MessageCircle } from 'lucide-react'
 import instagramLogo from '@/assets/instagram-logo.svg'
 import { AppFooter } from '@/shared/ui/app-footer'
@@ -26,6 +27,22 @@ export function EmailSignupPage() {
     setServerErrors,
     setIsNicknameAvailable,
   } = useEmailSignup()
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (
+        formData.contact ||
+        formData.name ||
+        formData.username ||
+        formData.password
+      ) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [formData])
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-white">
@@ -123,7 +140,10 @@ export function EmailSignupPage() {
         </div>
       </main>
       <footer className="shrink-0 bg-white py-8">
-        <AppFooter />
+        <AppFooter
+          onLocationClick={() => navigate({ to: '/explore/locations' })}
+          onLiteClick={() => navigate({ to: '/web/lite' })}
+        />
       </footer>
     </div>
   )

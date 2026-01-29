@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { AppFooter } from '@/shared/ui/app-footer'
 import { useEmailChange } from '../model'
 import verificationIcon from '@/assets/verification-security.png'
 
 export function EmailChangePage() {
   const navigate = useNavigate()
+  const signupData = useSearch({ from: '/accounts/emailsignup/email-change' })
   const {
     currentEmail,
     newEmail,
@@ -88,7 +89,24 @@ export function EmailChangePage() {
         </div>
       </main>
       <footer className="shrink-0 bg-white py-8">
-        <AppFooter />
+        <AppFooter
+          onLocationClick={() =>
+            navigate({
+              to: '/explore/locations',
+              search: {
+                ...signupData,
+              },
+            })
+          }
+          onLiteClick={() =>
+            navigate({
+              to: '/web/lite',
+              search: {
+                ...signupData,
+              },
+            })
+          }
+        />
       </footer>
     </div>
   )

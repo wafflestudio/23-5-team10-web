@@ -19,10 +19,12 @@ const LoginPage = () => {
         </div>
       </main>
 
-      <AppFooter
-        onLocationClick={() => navigate({ to: '/explore/locations' })}
-        onLiteClick={() => navigate({ to: '/web/lite' })}
-      />
+      <div className="shrink-0 bg-white py-8">
+        <AppFooter
+          onLocationClick={() => navigate({ to: '/explore/locations' })}
+          onLiteClick={() => navigate({ to: '/web/lite' })}
+        />
+      </div>
     </div>
   )
 }
