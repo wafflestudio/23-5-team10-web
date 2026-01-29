@@ -16,7 +16,7 @@ export function StoryItem({
   hasUnseenStory,
 }: StoryItemProps) {
   return (
-    <CarouselItem className="flex basis-1/8 flex-col items-center gap-1">
+    <CarouselItem className="flex basis-1/4 flex-col items-center gap-1 sm:basis-1/5 md:basis-1/6 lg:basis-1/8">
       <Link
         to="/stories/$user_id"
         params={{ user_id: String(userId) }}

@@ -23,7 +23,7 @@ export function StoriesCarousel() {
   }
 
   return (
-    <Carousel className="h-fit w-full" opts={{ slidesToScroll: 4 }}>
+    <Carousel className="h-fit" opts={{ slidesToScroll: 4 }}>
       <CarouselContent>
         {stories.map((story) => (
           <StoryItem key={story.userId} {...story} />
