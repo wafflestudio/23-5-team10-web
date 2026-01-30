@@ -9,6 +9,7 @@ export const comments = [
     createdAt: '2025-12-01T10:00:00.000',
     updatedAt: '2025-12-01T10:00:00.000',
     parentId: null,
+    likeCount: 5,
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ export const comments = [
     createdAt: '2025-12-01T11:00:00.000',
     updatedAt: '2025-12-01T11:00:00.000',
     parentId: 1,
+    likeCount: 0,
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ export const comments = [
     createdAt: '2026-01-02T09:30:00.000',
     updatedAt: '2026-01-02T09:30:00.000',
     parentId: null,
+    likeCount: 12,
   },
   {
     id: 4,
@@ -42,6 +45,7 @@ export const comments = [
     createdAt: '2026-01-02T10:15:00.000',
     updatedAt: '2026-01-02T10:15:00.000',
     parentId: 3,
+    likeCount: 2,
   },
   {
     id: 5,
@@ -53,6 +57,7 @@ export const comments = [
     createdAt: '2026-01-02T11:00:00.000',
     updatedAt: '2026-01-02T11:00:00.000',
     parentId: 3,
+    likeCount: 0,
   },
   {
     id: 6,
@@ -64,6 +69,7 @@ export const comments = [
     createdAt: '2026-01-11T15:20:00.000',
     updatedAt: '2026-01-11T15:20:00.000',
     parentId: null,
+    likeCount: 3,
   },
   {
     id: 7,
@@ -75,6 +81,7 @@ export const comments = [
     createdAt: '2026-01-14T20:00:00.000',
     updatedAt: '2026-01-14T20:00:00.000',
     parentId: null,
+    likeCount: 1,
   },
   {
     id: 8,
@@ -86,6 +93,7 @@ export const comments = [
     createdAt: '2026-01-15T14:00:00.000',
     updatedAt: '2026-01-15T14:00:00.000',
     parentId: null,
+    likeCount: 0,
   },
   {
     id: 9,
@@ -97,6 +105,7 @@ export const comments = [
     createdAt: '2026-01-16T10:30:00.000',
     updatedAt: '2026-01-16T10:30:00.000',
     parentId: null,
+    likeCount: 8,
   },
   {
     id: 10,
@@ -108,6 +117,7 @@ export const comments = [
     createdAt: '2026-01-16T11:45:00.000',
     updatedAt: '2026-01-16T11:45:00.000',
     parentId: 9,
+    likeCount: 0,
   },
   {
     id: 11,
@@ -119,6 +129,7 @@ export const comments = [
     createdAt: '2026-01-16T16:00:00.000',
     updatedAt: '2026-01-16T16:00:00.000',
     parentId: null,
+    likeCount: 4,
   },
   {
     id: 12,
@@ -130,6 +141,7 @@ export const comments = [
     createdAt: '2026-01-16T17:20:00.000',
     updatedAt: '2026-01-16T17:20:00.000',
     parentId: null,
+    likeCount: 0,
   },
   {
     id: 13,
@@ -141,5 +153,6 @@ export const comments = [
     createdAt: '2026-01-16T18:10:00.000',
     updatedAt: '2026-01-16T18:10:00.000',
     parentId: null,
+    likeCount: 2,
   },
 ]

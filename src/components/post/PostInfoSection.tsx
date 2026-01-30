@@ -5,6 +5,7 @@ import PostMenuModal from './PostMenuModal'
 import CommentItem from './CommentItem'
 import PostActionSection from './PostActionSection'
 import { formatRelativeTime } from '../../utils/date.ts'
+import { instance } from '../../shared/api/ky'
 
 interface Comment {
   id: number
@@ -16,6 +17,7 @@ interface Comment {
   createdAt: string
   updatedAt: string
   parentId: number | null
+  likeCount?: number
 }
 
 export default function PostInfoSection({ data }: { data: PostData | null }) {
@@ -62,7 +64,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         isFetching.current = false
       }
     },
-    [data]
+    [data?.id]
   )
 
   useEffect(() => {
@@ -92,15 +94,45 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     }
   }, [hasMore, fetchComments])
 
-  const handleDoubleClick = (id: number) => {
-    if (!likedComments[id]) {
-      setLikedComments((p) => ({ ...p, [id]: true }))
+  const handleHeartClick = async (commentId: number, e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    const postId = data?.id
+    if (!postId) return
+
+    const isCurrentlyLiked = !!likedComments[commentId]
+
+    try {
+      if (isCurrentlyLiked) {
+        await instance.delete(
+          `api/v1/posts/${postId}/comments/${commentId}/like`
+        )
+      } else {
+        await instance.post(`api/v1/posts/${postId}/comments/${commentId}/like`)
+      }
+
+      setLikedComments((p) => ({ ...p, [commentId]: !isCurrentlyLiked }))
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId
+            ? {
+                ...c,
+                likeCount: Math.max(
+                  0,
+                  (c.likeCount || 0) + (isCurrentlyLiked ? -1 : 1)
+                ),
+              }
+            : c
+        )
+      )
+    } catch (error) {
+      console.error(error)
     }
   }
 
-  const handleHeartClick = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setLikedComments((p) => ({ ...p, [id]: !p[id] }))
+  const handleDoubleClick = (id: number) => {
+    if (!likedComments[id]) {
+      handleHeartClick(id)
+    }
   }
 
   return (
@@ -108,12 +140,12 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
       <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3">
           <img
-            src={data?.userImage || ''}
+            src={data?.profileImageUrl || ''}
             className="h-8 w-8 rounded-full object-cover"
             alt=""
           />
           <div className="text-sm font-semibold text-black">
-            {data?.username || ''}
+            {data?.nickname || ''}
           </div>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="p-1">
@@ -130,14 +162,14 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
 
         <div className="mb-2 flex gap-3 px-1 py-3">
           <img
-            src={data?.userImage || ''}
+            src={data?.profileImageUrl || ''}
             className="h-8 w-8 shrink-0 rounded-full object-cover"
             alt=""
           />
           <div className="text-sm text-black">
-            <span className="mr-2 font-semibold">{data?.username}</span>
-            <span className="whitespace-pre-wrap">{data?.caption}</span>
-            <div className="mt-2 text-xs font-semibold text-gray-500">
+            <span className="mr-2 font-semibold">{data?.nickname}</span>
+            <span className="whitespace-pre-wrap">{data?.content}</span>
+            <div className="mt-2 text-xs font-normal text-gray-500">
               {data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
             </div>
           </div>
@@ -146,46 +178,53 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         <div className="flex flex-col">
           {comments
             .filter((c) => c.parentId === null)
-            .map((comment) => (
-              <div key={comment.id} className="mb-1">
-                <CommentItem
-                  comment={comment}
-                  isLiked={!!likedComments[comment.id]}
-                  onDoubleClick={handleDoubleClick}
-                  onHeartClick={handleHeartClick}
-                />
+            .map((comment) => {
+              const replyCount = comments.filter(
+                (r) => r.parentId === comment.id
+              ).length
+              return (
+                <div key={comment.id} className="mb-1">
+                  <CommentItem
+                    comment={comment}
+                    isLiked={!!likedComments[comment.id]}
+                    onDoubleClick={handleDoubleClick}
+                    onHeartClick={handleHeartClick}
+                  />
 
-                {comments.some((r) => r.parentId === comment.id) && (
-                  <div className="ml-12">
-                    <button
-                      onClick={() =>
-                        setShowReplies((p) => ({
-                          ...p,
-                          [comment.id]: !p[comment.id],
-                        }))
-                      }
-                      className="flex items-center gap-2 py-2 text-xs font-semibold text-gray-500"
-                    >
-                      <div className="h-[1px] w-6 bg-gray-300" />
-                      {showReplies[comment.id] ? '답글 숨기기' : '답글 보기'}
-                    </button>
-                    {showReplies[comment.id] &&
-                      comments
-                        .filter((r) => r.parentId === comment.id)
-                        .map((r) => (
-                          <CommentItem
-                            key={r.id}
-                            comment={r}
-                            isReply
-                            isLiked={!!likedComments[r.id]}
-                            onDoubleClick={handleDoubleClick}
-                            onHeartClick={handleHeartClick}
-                          />
-                        ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {replyCount > 0 && (
+                    <div className="ml-12">
+                      <button
+                        onClick={() =>
+                          setShowReplies((p) => ({
+                            ...p,
+                            [comment.id]: !p[comment.id],
+                          }))
+                        }
+                        className="flex items-center gap-2 py-2 text-xs font-semibold text-gray-500"
+                      >
+                        <div className="h-[1px] w-6 bg-gray-300" />
+                        {showReplies[comment.id]
+                          ? '답글 숨기기'
+                          : `답글 보기(${replyCount}개)`}
+                      </button>
+                      {showReplies[comment.id] &&
+                        comments
+                          .filter((r) => r.parentId === comment.id)
+                          .map((r) => (
+                            <CommentItem
+                              key={r.id}
+                              comment={r}
+                              isReply
+                              isLiked={!!likedComments[r.id]}
+                              onDoubleClick={handleDoubleClick}
+                              onHeartClick={handleHeartClick}
+                            />
+                          ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           <div ref={observerTarget} className="h-1" />
         </div>
       </div>
@@ -193,8 +232,8 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
       <PostActionSection
         likeCount={data?.likeCount || 0}
         createdAt={data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
-        isLiked={false}
-        isBookmarked={false}
+        isLiked={data?.liked || false}
+        isBookmarked={data?.bookmarked || false}
         onLikeClick={() => {}}
         onBookmarkClick={() => {}}
         onCommentSubmit={() => {}}
