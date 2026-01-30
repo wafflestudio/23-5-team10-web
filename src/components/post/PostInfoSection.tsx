@@ -107,11 +107,17 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     <div className="flex h-full flex-col bg-white">
       <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3">
-          <img
-            src={data?.userImage || ''}
-            className="h-8 w-8 rounded-full object-cover"
-            alt=""
-          />
+          {data?.userImage ? (
+            <img
+              src={data.userImage}
+              className="h-8 w-8 rounded-full object-cover"
+              alt=""
+            />
+          ) : (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-500">
+              {data?.username?.trim().slice(0, 1).toUpperCase() || '?'}
+            </div>
+          )}
           <div className="text-sm font-semibold text-black">
             {data?.username || ''}
           </div>
@@ -129,11 +135,17 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         />
 
         <div className="mb-2 flex gap-3 px-1 py-3">
-          <img
-            src={data?.userImage || ''}
-            className="h-8 w-8 shrink-0 rounded-full object-cover"
-            alt=""
-          />
+          {data?.userImage ? (
+            <img
+              src={data.userImage}
+              className="h-8 w-8 shrink-0 rounded-full object-cover"
+              alt=""
+            />
+          ) : (
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-500">
+              {data?.username?.trim().slice(0, 1).toUpperCase() || '?'}
+            </div>
+          )}
           <div className="text-sm text-black">
             <span className="mr-2 font-semibold">{data?.username}</span>
             <span className="whitespace-pre-wrap">{data?.caption}</span>

@@ -60,11 +60,17 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
 
       <CardHeader className="flex flex-row items-center gap-3 px-3 py-2">
         <div className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
-          <img
-            src={item.author.profileImageUrl}
-            alt={`${item.author.nickname} 프로필`}
-            className="h-full w-full object-cover"
-          />
+          {item.author.profileImageUrl ? (
+            <img
+              src={item.author.profileImageUrl}
+              alt={`${item.author.nickname} 프로필`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-gray-500">
+              {item.author.nickname.trim().slice(0, 1).toUpperCase() || '?'}
+            </div>
+          )}
         </div>
         <div className="flex flex-col">
           <span className="text-sm leading-tight font-semibold">
