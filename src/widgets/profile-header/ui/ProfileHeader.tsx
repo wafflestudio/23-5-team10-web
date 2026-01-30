@@ -17,6 +17,7 @@ interface ProfileHeaderProps {
   followingCount: number
   defaultIsFollowing?: boolean
   onFollowToggle?: (nextIsFollowing: boolean) => Promise<void> | void
+  userId: number
 }
 
 export function ProfileHeader({
@@ -29,6 +30,7 @@ export function ProfileHeader({
   followingCount,
   defaultIsFollowing = false,
   onFollowToggle,
+  userId,
 }: ProfileHeaderProps) {
   const [modalState, setModalState] = useState<{
     open: boolean
@@ -65,6 +67,7 @@ export function ProfileHeader({
         open={modalState.open}
         onOpenChange={handleModalOpenChange}
         type={modalState.type}
+        userId={userId}
       />
       <section className={cn(PROFILE_CONTAINER_CLASSNAME, className)}>
         <div className="flex gap-8 md:gap-16">
