@@ -67,6 +67,36 @@ export const postHandlers = [
       { status: 201 }
     )
   }),
+  http.get('*/api/v1/posts/bookmarks', () => {
+    const bookmarkedPosts = posts
+      .filter((p) => bookmarkedPostIds.has(Number(p.id)))
+      .map((p) => ({
+        id: Number(p.id),
+        userId: 1,
+        nickname: p.username,
+        profileImageUrl: p.userImage,
+        content: p.caption,
+        albumId: postAlbumMap[Number(p.id)] ?? null,
+        images: p.images.map((url, imgIndex) => ({
+          id: Number(p.id) * 100 + imgIndex,
+          url,
+          orderIndex: imgIndex,
+        })),
+        likeCount: p.likeCount,
+        commentCount: p.commentCount,
+        createdAt: p.createdAt,
+        updatedAt: p.createdAt,
+        liked: likedPostIds.has(Number(p.id)),
+        bookmarked: true,
+      }))
+
+    return HttpResponse.json({
+      code: '200',
+      message: '요청에 성공하였습니다.',
+      data: bookmarkedPosts,
+      isSuccess: true,
+    })
+  }),
   http.get('/api/v1/posts/:postId', ({ params }) => {
     const { postId } = params
     const post = posts.find((p) => p.id === postId)
@@ -237,36 +267,6 @@ export const postHandlers = [
       },
       { status: 200 }
     )
-  }),
-  http.get('*/api/v1/posts/bookmarks', () => {
-    const bookmarkedPosts = posts
-      .filter((p) => bookmarkedPostIds.has(Number(p.id)))
-      .map((p) => ({
-        id: Number(p.id),
-        userId: 1,
-        nickname: p.username,
-        profileImageUrl: p.userImage,
-        content: p.caption,
-        albumId: postAlbumMap[Number(p.id)] ?? null,
-        images: p.images.map((url, imgIndex) => ({
-          id: Number(p.id) * 100 + imgIndex,
-          url,
-          orderIndex: imgIndex,
-        })),
-        likeCount: p.likeCount,
-        commentCount: p.commentCount,
-        createdAt: p.createdAt,
-        updatedAt: p.createdAt,
-        liked: likedPostIds.has(Number(p.id)),
-        bookmarked: true,
-      }))
-
-    return HttpResponse.json({
-      code: '200',
-      message: '요청에 성공하였습니다.',
-      data: bookmarkedPosts,
-      isSuccess: true,
-    })
   }),
   http.get('*/api/v1/posts/search', () => {
     const searchResults = posts.map((p) => {

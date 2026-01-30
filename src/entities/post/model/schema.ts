@@ -10,7 +10,7 @@ export const PostListItemSchema = z.object({
   id: z.number(),
   userId: z.number(),
   nickname: z.string(),
-  profileImageUrl: z.string(),
+  profileImageUrl: z.string().nullable(),
   content: z.string(),
   albumId: z.number().nullable(),
   images: z.array(PostImageSchema),
