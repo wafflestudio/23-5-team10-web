@@ -29,9 +29,9 @@ export function useVerification() {
             code: code,
           },
         })
-        .json<{ data: { accessToken: string }; success: boolean }>()
+        .json<{ data: { accessToken: string }; isSuccess: boolean }>()
 
-      if (res.success) {
+      if (res.isSuccess) {
         localStorage.setItem('accessToken', res.data.accessToken)
         navigate({
           to: '/',

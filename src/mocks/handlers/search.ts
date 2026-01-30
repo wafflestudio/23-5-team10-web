@@ -42,7 +42,7 @@ export const searchHandlers = [
       code: 'RECENT_SEARCH_SAVED',
       message: '최근 검색 기록 저장 완료',
       data: { searchId },
-      success: true,
+      isSuccess: true,
     })
   }),
 
@@ -56,8 +56,8 @@ export const searchHandlers = [
         searchId: r.searchId,
         userId: r.userId,
         nickname: user?.nickname ?? 'unknown',
-        profileImageUrl: user?.profileImageUrl ?? '',
-        name: user?.name ?? '',
+        profileImageUrl: user?.profileImageUrl ?? null,
+        name: user?.name ?? null,
         followed,
       }
     })
@@ -66,7 +66,7 @@ export const searchHandlers = [
       code: 'RECENT_SEARCH_LIST_SUCCESS',
       message: '최근 검색 목록 조회 성공',
       data: { items },
-      success: true,
+      isSuccess: true,
     })
   }),
 
@@ -81,7 +81,17 @@ export const searchHandlers = [
     return HttpResponse.json({
       code: 'RECENT_SEARCH_DELETED',
       message: '최근 검색 기록 삭제 완료',
-      success: true,
+      isSuccess: true,
+    })
+  }),
+
+  http.delete('*/api/v1/search/recent/all', () => {
+    recentSearchDb.length = 0
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '요청에 성공하였습니다.',
+      isSuccess: true,
     })
   }),
 ]

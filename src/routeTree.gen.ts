@@ -16,10 +16,10 @@ import { Route as WebLiteRouteImport } from './routes/web/lite'
 import { Route as StoriesUser_idRouteImport } from './routes/stories/$user_id'
 import { Route as AppTestRouteImport } from './routes/_app/test'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
-import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
+import { Route as AppUserIdRouteImport } from './routes/_app/$userId'
 import { Route as ExploreLocationsIndexRouteImport } from './routes/explore/locations/index'
 import { Route as AccountsEmailsignupIndexRouteImport } from './routes/accounts/emailsignup/index'
-import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile_name/index'
+import { Route as AppUserIdIndexRouteImport } from './routes/_app/$userId/index'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
 import { Route as AccountsPasswordResetRouteImport } from './routes/accounts/password/reset'
 import { Route as AccountsEmailsignupVerificationRouteImport } from './routes/accounts/emailsignup/verification'
@@ -27,8 +27,8 @@ import { Route as AccountsEmailsignupEmailChangeRouteImport } from './routes/acc
 import { Route as AccountsEmailsignupCaptchaRouteImport } from './routes/accounts/emailsignup/captcha'
 import { Route as AccountsEmailsignupBirthdayRouteImport } from './routes/accounts/emailsignup/birthday'
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
-import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
-import { Route as AppProfile_nameAlbumsRouteImport } from './routes/_app/$profile_name/albums'
+import { Route as AppUserIdSavedRouteImport } from './routes/_app/$userId/saved'
+import { Route as AppUserIdAlbumsRouteImport } from './routes/_app/$userId/albums'
 import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
 const LoginRoute = LoginRouteImport.update({
@@ -65,9 +65,9 @@ const AppExploreRoute = AppExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => AppRoute,
 } as any)
-const AppProfile_nameRoute = AppProfile_nameRouteImport.update({
-  id: '/$profile_name',
-  path: '/$profile_name',
+const AppUserIdRoute = AppUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
   getParentRoute: () => AppRoute,
 } as any)
 const ExploreLocationsIndexRoute = ExploreLocationsIndexRouteImport.update({
@@ -81,10 +81,10 @@ const AccountsEmailsignupIndexRoute =
     path: '/accounts/emailsignup/',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AppProfile_nameIndexRoute = AppProfile_nameIndexRouteImport.update({
+const AppUserIdIndexRoute = AppUserIdIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppProfile_nameRoute,
+  getParentRoute: () => AppUserIdRoute,
 } as any)
 const StoriesProfile_nameStory_idRoute =
   StoriesProfile_nameStory_idRouteImport.update({
@@ -126,15 +126,15 @@ const AppPPost_idRoute = AppPPost_idRouteImport.update({
   path: '/p/$post_id',
   getParentRoute: () => AppRoute,
 } as any)
-const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
+const AppUserIdSavedRoute = AppUserIdSavedRouteImport.update({
   id: '/saved',
   path: '/saved',
-  getParentRoute: () => AppProfile_nameRoute,
+  getParentRoute: () => AppUserIdRoute,
 } as any)
-const AppProfile_nameAlbumsRoute = AppProfile_nameAlbumsRouteImport.update({
+const AppUserIdAlbumsRoute = AppUserIdAlbumsRouteImport.update({
   id: '/albums',
   path: '/albums',
-  getParentRoute: () => AppProfile_nameRoute,
+  getParentRoute: () => AppUserIdRoute,
 } as any)
 const ExploreLocationsCountryCodeCountryNameRoute =
   ExploreLocationsCountryCodeCountryNameRouteImport.update({
@@ -145,14 +145,14 @@ const ExploreLocationsCountryCodeCountryNameRoute =
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
-  '/$profile_name': typeof AppProfile_nameRouteWithChildren
+  '/$userId': typeof AppUserIdRouteWithChildren
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
   '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
-  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
-  '/$profile_name/saved': typeof AppProfile_nameSavedRoute
+  '/$userId/albums': typeof AppUserIdAlbumsRoute
+  '/$userId/saved': typeof AppUserIdSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
   '/accounts/emailsignup/birthday': typeof AccountsEmailsignupBirthdayRoute
   '/accounts/emailsignup/captcha': typeof AccountsEmailsignupCaptchaRoute
@@ -160,7 +160,7 @@ export interface FileRoutesByFullPath {
   '/accounts/emailsignup/verification': typeof AccountsEmailsignupVerificationRoute
   '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
-  '/$profile_name/': typeof AppProfile_nameIndexRoute
+  '/$userId/': typeof AppUserIdIndexRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupIndexRoute
   '/explore/locations': typeof ExploreLocationsIndexRoute
   '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
@@ -172,8 +172,8 @@ export interface FileRoutesByTo {
   '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
-  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
-  '/$profile_name/saved': typeof AppProfile_nameSavedRoute
+  '/$userId/albums': typeof AppUserIdAlbumsRoute
+  '/$userId/saved': typeof AppUserIdSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
   '/accounts/emailsignup/birthday': typeof AccountsEmailsignupBirthdayRoute
   '/accounts/emailsignup/captcha': typeof AccountsEmailsignupCaptchaRoute
@@ -181,7 +181,7 @@ export interface FileRoutesByTo {
   '/accounts/emailsignup/verification': typeof AccountsEmailsignupVerificationRoute
   '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
-  '/$profile_name': typeof AppProfile_nameIndexRoute
+  '/$userId': typeof AppUserIdIndexRoute
   '/accounts/emailsignup': typeof AccountsEmailsignupIndexRoute
   '/explore/locations': typeof ExploreLocationsIndexRoute
   '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
@@ -190,14 +190,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/_app/$profile_name': typeof AppProfile_nameRouteWithChildren
+  '/_app/$userId': typeof AppUserIdRouteWithChildren
   '/_app/explore': typeof AppExploreRoute
   '/_app/test': typeof AppTestRoute
   '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/_app/': typeof AppIndexRoute
-  '/_app/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
-  '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
+  '/_app/$userId/albums': typeof AppUserIdAlbumsRoute
+  '/_app/$userId/saved': typeof AppUserIdSavedRoute
   '/_app/p/$post_id': typeof AppPPost_idRoute
   '/accounts/emailsignup/birthday': typeof AccountsEmailsignupBirthdayRoute
   '/accounts/emailsignup/captcha': typeof AccountsEmailsignupCaptchaRoute
@@ -205,7 +205,7 @@ export interface FileRoutesById {
   '/accounts/emailsignup/verification': typeof AccountsEmailsignupVerificationRoute
   '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
-  '/_app/$profile_name/': typeof AppProfile_nameIndexRoute
+  '/_app/$userId/': typeof AppUserIdIndexRoute
   '/accounts/emailsignup/': typeof AccountsEmailsignupIndexRoute
   '/explore/locations/': typeof ExploreLocationsIndexRoute
   '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
@@ -214,14 +214,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
-    | '/$profile_name'
+    | '/$userId'
     | '/explore'
     | '/test'
     | '/stories/$user_id'
     | '/web/lite'
     | '/'
-    | '/$profile_name/albums'
-    | '/$profile_name/saved'
+    | '/$userId/albums'
+    | '/$userId/saved'
     | '/p/$post_id'
     | '/accounts/emailsignup/birthday'
     | '/accounts/emailsignup/captcha'
@@ -229,7 +229,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup/verification'
     | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
-    | '/$profile_name/'
+    | '/$userId/'
     | '/accounts/emailsignup'
     | '/explore/locations'
     | '/explore/locations/$countryCode/$countryName'
@@ -241,8 +241,8 @@ export interface FileRouteTypes {
     | '/stories/$user_id'
     | '/web/lite'
     | '/'
-    | '/$profile_name/albums'
-    | '/$profile_name/saved'
+    | '/$userId/albums'
+    | '/$userId/saved'
     | '/p/$post_id'
     | '/accounts/emailsignup/birthday'
     | '/accounts/emailsignup/captcha'
@@ -250,7 +250,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup/verification'
     | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
-    | '/$profile_name'
+    | '/$userId'
     | '/accounts/emailsignup'
     | '/explore/locations'
     | '/explore/locations/$countryCode/$countryName'
@@ -258,14 +258,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/login'
-    | '/_app/$profile_name'
+    | '/_app/$userId'
     | '/_app/explore'
     | '/_app/test'
     | '/stories/$user_id'
     | '/web/lite'
     | '/_app/'
-    | '/_app/$profile_name/albums'
-    | '/_app/$profile_name/saved'
+    | '/_app/$userId/albums'
+    | '/_app/$userId/saved'
     | '/_app/p/$post_id'
     | '/accounts/emailsignup/birthday'
     | '/accounts/emailsignup/captcha'
@@ -273,7 +273,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup/verification'
     | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
-    | '/_app/$profile_name/'
+    | '/_app/$userId/'
     | '/accounts/emailsignup/'
     | '/explore/locations/'
     | '/explore/locations/$countryCode/$countryName'
@@ -346,11 +346,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppExploreRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/$profile_name': {
-      id: '/_app/$profile_name'
-      path: '/$profile_name'
-      fullPath: '/$profile_name'
-      preLoaderRoute: typeof AppProfile_nameRouteImport
+    '/_app/$userId': {
+      id: '/_app/$userId'
+      path: '/$userId'
+      fullPath: '/$userId'
+      preLoaderRoute: typeof AppUserIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/explore/locations/': {
@@ -367,12 +367,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountsEmailsignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/$profile_name/': {
-      id: '/_app/$profile_name/'
+    '/_app/$userId/': {
+      id: '/_app/$userId/'
       path: '/'
-      fullPath: '/$profile_name/'
-      preLoaderRoute: typeof AppProfile_nameIndexRouteImport
-      parentRoute: typeof AppProfile_nameRoute
+      fullPath: '/$userId/'
+      preLoaderRoute: typeof AppUserIdIndexRouteImport
+      parentRoute: typeof AppUserIdRoute
     }
     '/stories/$profile_name/$story_id': {
       id: '/stories/$profile_name/$story_id'
@@ -423,19 +423,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPPost_idRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/$profile_name/saved': {
-      id: '/_app/$profile_name/saved'
+    '/_app/$userId/saved': {
+      id: '/_app/$userId/saved'
       path: '/saved'
-      fullPath: '/$profile_name/saved'
-      preLoaderRoute: typeof AppProfile_nameSavedRouteImport
-      parentRoute: typeof AppProfile_nameRoute
+      fullPath: '/$userId/saved'
+      preLoaderRoute: typeof AppUserIdSavedRouteImport
+      parentRoute: typeof AppUserIdRoute
     }
-    '/_app/$profile_name/albums': {
-      id: '/_app/$profile_name/albums'
+    '/_app/$userId/albums': {
+      id: '/_app/$userId/albums'
       path: '/albums'
-      fullPath: '/$profile_name/albums'
-      preLoaderRoute: typeof AppProfile_nameAlbumsRouteImport
-      parentRoute: typeof AppProfile_nameRoute
+      fullPath: '/$userId/albums'
+      preLoaderRoute: typeof AppUserIdAlbumsRouteImport
+      parentRoute: typeof AppUserIdRoute
     }
     '/explore/locations/$countryCode/$countryName': {
       id: '/explore/locations/$countryCode/$countryName'
@@ -447,24 +447,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AppProfile_nameRouteChildren {
-  AppProfile_nameAlbumsRoute: typeof AppProfile_nameAlbumsRoute
-  AppProfile_nameSavedRoute: typeof AppProfile_nameSavedRoute
-  AppProfile_nameIndexRoute: typeof AppProfile_nameIndexRoute
+interface AppUserIdRouteChildren {
+  AppUserIdAlbumsRoute: typeof AppUserIdAlbumsRoute
+  AppUserIdSavedRoute: typeof AppUserIdSavedRoute
+  AppUserIdIndexRoute: typeof AppUserIdIndexRoute
 }
 
-const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
-  AppProfile_nameAlbumsRoute: AppProfile_nameAlbumsRoute,
-  AppProfile_nameSavedRoute: AppProfile_nameSavedRoute,
-  AppProfile_nameIndexRoute: AppProfile_nameIndexRoute,
+const AppUserIdRouteChildren: AppUserIdRouteChildren = {
+  AppUserIdAlbumsRoute: AppUserIdAlbumsRoute,
+  AppUserIdSavedRoute: AppUserIdSavedRoute,
+  AppUserIdIndexRoute: AppUserIdIndexRoute,
 }
 
-const AppProfile_nameRouteWithChildren = AppProfile_nameRoute._addFileChildren(
-  AppProfile_nameRouteChildren
+const AppUserIdRouteWithChildren = AppUserIdRoute._addFileChildren(
+  AppUserIdRouteChildren
 )
 
 interface AppRouteChildren {
-  AppProfile_nameRoute: typeof AppProfile_nameRouteWithChildren
+  AppUserIdRoute: typeof AppUserIdRouteWithChildren
   AppExploreRoute: typeof AppExploreRoute
   AppTestRoute: typeof AppTestRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -472,7 +472,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppProfile_nameRoute: AppProfile_nameRouteWithChildren,
+  AppUserIdRoute: AppUserIdRouteWithChildren,
   AppExploreRoute: AppExploreRoute,
   AppTestRoute: AppTestRoute,
   AppIndexRoute: AppIndexRoute,

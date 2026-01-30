@@ -7,7 +7,7 @@ export const commentHandlers = [
       code: 'COMMON_200',
       message: '댓글 목록 조회 성공',
       data: comments,
-      success: true,
+      isSuccess: true,
     })
   }),
 ]

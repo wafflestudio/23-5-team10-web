@@ -14,7 +14,7 @@ export async function getFeed(params: GetFeedParams = {}): Promise<FeedPage> {
 
   const parsed = ApiResponseSchema(FeedPageSchema).parse(raw)
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to load feed')
   }
 

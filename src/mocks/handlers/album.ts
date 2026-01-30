@@ -15,7 +15,7 @@ import { CreateAlbumRequestSchema } from '../../entities/album/model/schema'
 type AlbumActionResponse = {
   code: string
   message: string
-  success: boolean
+  isSuccess: boolean
 }
 
 export const albumHandlers = [
@@ -36,7 +36,7 @@ export const albumHandlers = [
         code: '400',
         message: '잘못된 요청입니다.',
         data: 0,
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -51,7 +51,7 @@ export const albumHandlers = [
       code: '200',
       message: '앨범 생성 성공',
       data: id,
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
@@ -91,7 +91,7 @@ export const albumHandlers = [
       code: '200',
       message: '내 앨범 목록 조회 성공',
       data: albumSummaries,
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
@@ -104,7 +104,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '400',
         message: '유효하지 않은 경로 파라미터입니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -116,7 +116,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '404',
         message: '앨범을 찾을 수 없습니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 404 })
@@ -127,7 +127,7 @@ export const albumHandlers = [
     const body: AlbumActionResponse = {
       code: '200',
       message: '게시글을 앨범에 담았습니다.',
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
@@ -139,7 +139,7 @@ export const albumHandlers = [
       const body: Omit<AlbumDetailResponse, 'data'> = {
         code: '400',
         message: '유효하지 않은 경로 파라미터입니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -151,7 +151,7 @@ export const albumHandlers = [
       const body: Omit<AlbumDetailResponse, 'data'> = {
         code: '404',
         message: '앨범을 찾을 수 없습니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 404 })
@@ -189,7 +189,7 @@ export const albumHandlers = [
         title: album.title,
         posts: postSummaries,
       },
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
@@ -202,7 +202,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '400',
         message: '유효하지 않은 경로 파라미터입니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -214,7 +214,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '404',
         message: '해당 앨범에 속한 게시글이 아닙니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 404 })
@@ -225,7 +225,7 @@ export const albumHandlers = [
     const body: AlbumActionResponse = {
       code: '200',
       message: '게시글을 앨범에서 제거했습니다.',
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
@@ -237,7 +237,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '400',
         message: '유효하지 않은 경로 파라미터입니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -249,7 +249,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '404',
         message: '앨범을 찾을 수 없습니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 404 })
@@ -268,7 +268,7 @@ export const albumHandlers = [
     const body: AlbumActionResponse = {
       code: '200',
       message: '앨범을 삭제했습니다.',
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
@@ -280,7 +280,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '400',
         message: '유효하지 않은 경로 파라미터입니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -301,7 +301,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '400',
         message: '잘못된 요청입니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 400 })
@@ -313,7 +313,7 @@ export const albumHandlers = [
       const body: AlbumActionResponse = {
         code: '404',
         message: '앨범을 찾을 수 없습니다.',
-        success: false,
+        isSuccess: false,
       }
 
       return HttpResponse.json(body, { status: 404 })
@@ -325,7 +325,7 @@ export const albumHandlers = [
     const body: AlbumActionResponse = {
       code: '200',
       message: '앨범 제목을 수정했습니다.',
-      success: true,
+      isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })

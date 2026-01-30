@@ -30,7 +30,7 @@ export default function PostDetail() {
     fetch(`/api/v1/posts/${postId}`)
       .then((res) => res.json())
       .then((json) => {
-        if (json.success) setPostData(json.data)
+        if (json.isSuccess) setPostData(json.data)
       })
   }, [postId])
 

@@ -12,7 +12,7 @@ export async function getMyAlbums(): Promise<AlbumSummary[]> {
 
   const parsed = ApiResponseSchema(AlbumSummarySchema.array()).parse(raw)
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to load albums')
   }
 

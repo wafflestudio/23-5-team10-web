@@ -5,7 +5,7 @@ import { cn } from '@/shared/lib/utils'
 type StoryItemProps = {
   userId: number
   nickname: string
-  profileImageUrl: string
+  profileImageUrl: string | null
   hasUnseenStory: boolean
 }
 
@@ -32,11 +32,17 @@ export function StoryItem({
         >
           <div className="flex size-full items-center justify-center rounded-full bg-white p-1">
             <div className="flex size-full items-center justify-center overflow-hidden rounded-full bg-gray-200">
-              <img
-                src={profileImageUrl}
-                alt={`${nickname} 프로필`}
-                className="h-full w-full object-cover"
-              />
+              {profileImageUrl ? (
+                <img
+                  src={profileImageUrl}
+                  alt={`${nickname} 프로필`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="text-xl font-semibold text-gray-500">
+                  {nickname.trim().slice(0, 1).toUpperCase() || '?'}
+                </span>
+              )}
             </div>
           </div>
         </div>

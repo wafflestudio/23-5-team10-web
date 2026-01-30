@@ -14,7 +14,7 @@ export async function postRecentSearch({
   const raw = await response.json()
   const parsed = PostRecentSearchResponseSchema.parse(raw)
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to save recent search')
   }
 

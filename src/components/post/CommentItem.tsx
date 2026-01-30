@@ -51,11 +51,19 @@ export default function CommentItem({
         onDoubleClick={() => onDoubleClick(comment.id)}
       >
         <div className="flex flex-1 gap-3">
-          <img
-            src={comment.profileImageUrl}
-            className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} shrink-0 rounded-full object-cover`}
-            alt=""
-          />
+          {comment.profileImageUrl ? (
+            <img
+              src={comment.profileImageUrl}
+              className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} shrink-0 rounded-full object-cover`}
+              alt=""
+            />
+          ) : (
+            <div
+              className={`${isReply ? 'h-6 w-6 text-xs' : 'h-8 w-8 text-sm'} flex shrink-0 items-center justify-center rounded-full bg-gray-200 font-semibold text-gray-500`}
+            >
+              {comment.nickname.trim().slice(0, 1).toUpperCase() || '?'}
+            </div>
+          )}
           <div className="text-sm">
             <span className="mr-2 font-semibold text-black">
               {comment.nickname}
