@@ -4,6 +4,8 @@ export const SearchUserSchema = z.object({
   userId: z.number(),
   nickname: z.string(),
   profileImageUrl: z.string(),
+  name: z.string(),
+  followed: z.boolean(),
 })
 
 export const SearchUserResponseSchema = z.object({
