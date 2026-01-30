@@ -1,15 +1,21 @@
 import { cn } from '@/shared/lib/utils'
-import type { CSSProperties, RefObject } from 'react'
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import type { RefObject } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { Input } from '@/shared/ui/input'
 import { useDebounce } from '@/shared/lib/hooks/useDebounce'
+import type { SearchUser } from '@/entities/user/model/types'
+import { useSearchUser } from '@/entities/user/model/hooks/useSearchUser'
+import {
+  useRecentSearchQuery,
+  useAddRecentSearchMutation,
+  useDeleteRecentSearchMutation,
+} from '@/entities/search'
+import { useAnchorPosition } from '../hooks/useAnchorPosition'
+import { useClickOutside } from '../hooks/useClickOutside'
+import { SearchResultList } from './SearchResultList'
+import { RecentSearchList } from './RecentSearchList'
+import { ClearSearchHistoryDialog } from './ClearSearchHistoryDialog'
 
 type SearchDrawerProps = {
   open: boolean
@@ -17,84 +23,68 @@ type SearchDrawerProps = {
   anchorRef?: RefObject<HTMLElement | null>
 }
 
-const DEFAULT_ANCHOR_RIGHT_PX = 0
-
 export function SearchDrawer({
   open,
   onOpenChange,
   anchorRef,
 }: SearchDrawerProps) {
-  const close = useCallback(() => onOpenChange(false), [onOpenChange])
-  const [anchorRightPx, setAnchorRightPx] = useState(DEFAULT_ANCHOR_RIGHT_PX)
-  const [searchTerm, setSearchTerm] = useState('')
-  const debouncedSearchTerm = useDebounce(searchTerm, 300)
+  const navigate = useNavigate()
   const containerRef = useRef<HTMLDivElement | null>(null)
   const drawerRef = useRef<HTMLElement | null>(null)
 
-  useLayoutEffect(() => {
-    const el = anchorRef?.current
-    if (!el) return
+  const [searchTerm, setSearchTerm] = useState('')
+  const [clearDialogOpen, setClearDialogOpen] = useState(false)
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
-    const update = () => {
-      setAnchorRightPx(el.getBoundingClientRect().right)
-    }
+  const { data: searchedUsers = [], isFetching: isSearching } =
+    useSearchUser(debouncedSearchTerm)
+  const { data: recentSearchedUsers = [] } = useRecentSearchQuery()
+  const addRecentSearch = useAddRecentSearchMutation()
+  const deleteRecentSearch = useDeleteRecentSearchMutation()
 
-    update()
+  const close = useCallback(() => {
+    setSearchTerm('')
+    onOpenChange(false)
+  }, [onOpenChange])
 
-    const ro = new ResizeObserver(update)
-    ro.observe(el)
+  const anchoredStyle = useAnchorPosition(anchorRef, open)
 
-    window.addEventListener('resize', update)
-    window.addEventListener('scroll', update, { passive: true })
+  useClickOutside({
+    enabled: open,
+    containerRef,
+    drawerRef,
+    anchorRef,
+    onClickOutside: close,
+  })
 
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('resize', update)
-      window.removeEventListener('scroll', update)
-    }
-  }, [anchorRef, open])
-
-  const anchoredStyle = useMemo<CSSProperties>(
-    () => ({ left: anchorRightPx }),
-    [anchorRightPx]
+  const handleClickSearchResult = useCallback(
+    (user: SearchUser) => {
+      addRecentSearch.mutate({ toUserId: user.userId })
+      close()
+      navigate({
+        to: '/$profile_name',
+        params: { profile_name: user.nickname },
+      })
+    },
+    [addRecentSearch, close, navigate]
   )
 
-  useEffect(() => {
-    if (!open) return
-
-    const container = containerRef.current
-    if (!container) return
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as HTMLElement | null
-      if (!target) return
-
-      const drawerEl = drawerRef.current
-      const anchorEl = anchorRef?.current ?? null
-
-      const isInsideDrawer = drawerEl?.contains(target)
-      const isInsideAnchor = anchorEl?.contains(target)
-
-      if (isInsideDrawer || isInsideAnchor) {
-        return
-      }
-
+  const handleClickRecentSearch = useCallback(
+    (nickname: string) => {
       close()
-    }
+      navigate({ to: '/$profile_name', params: { profile_name: nickname } })
+    },
+    [close, navigate]
+  )
 
-    container.addEventListener('pointerdown', handlePointerDown)
+  const handleRemoveRecentSearch = useCallback(
+    (userId: number) => {
+      deleteRecentSearch.mutate({ toUserId: userId })
+    },
+    [deleteRecentSearch]
+  )
 
-    return () => {
-      container.removeEventListener('pointerdown', handlePointerDown)
-    }
-  }, [anchorRef, close, open])
-
-  useEffect(() => {
-    // TODO: API 연결
-    if (debouncedSearchTerm) {
-      console.log(debouncedSearchTerm)
-    }
-  }, [debouncedSearchTerm])
+  const isSearchMode = debouncedSearchTerm.length > 0
 
   return (
     <>
@@ -121,10 +111,30 @@ export function SearchDrawer({
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="검색"
             />
-            <h3 className="text-md font-semibold">최근 검색 항목</h3>
+            {isSearchMode ? (
+              <SearchResultList
+                users={searchedUsers}
+                isLoading={isSearching}
+                onClickUser={handleClickSearchResult}
+              />
+            ) : (
+              <RecentSearchList
+                items={recentSearchedUsers}
+                onClickItem={handleClickRecentSearch}
+                onRemoveItem={handleRemoveRecentSearch}
+                onClearAll={() => setClearDialogOpen(true)}
+              />
+            )}
           </div>
         </aside>
       </div>
+      <ClearSearchHistoryDialog
+        open={clearDialogOpen}
+        onOpenChange={setClearDialogOpen}
+        onClear={() => {
+          setClearDialogOpen(false)
+        }}
+      />
     </>
   )
 }

@@ -1,6 +1,8 @@
 import { Heart, Bookmark } from 'lucide-react'
 
 import type { FeedItem } from '@/entities/feed/model/types'
+import { useToggleLikeMutation } from '@/entities/post/model/hooks/useToggleLikeMutation'
+import { useToggleBookmarkMutation } from '@/entities/post/model/hooks/useToggleBookmarkMutation'
 import { Button } from '@/shared/ui/button'
 import { Card, CardFooter, CardHeader } from '@/shared/ui/card'
 import { cn } from '@/shared/lib/utils'
@@ -10,27 +12,31 @@ type FeedCardProps = {
   item: FeedItem
   className?: string
   onOpenPost?: (postId: number) => void
-  onToggleLike?: (postId: number, liked: boolean) => void
-  onToggleBookmark?: (postId: number, bookmarked: boolean) => void
 }
 
-export function FeedCard({
-  item,
-  className,
-  onOpenPost,
-  onToggleLike,
-  onToggleBookmark,
-}: FeedCardProps) {
+export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
+  const toggleLikeMutation = useToggleLikeMutation({
+    postId: item.postId,
+    initiallyLiked: item.liked,
+  })
+
+  const toggleBookmarkMutation = useToggleBookmarkMutation({
+    postId: item.postId,
+    initiallyBookmarked: item.bookmarked,
+  })
+
   const handleOpenPost = () => {
     onOpenPost?.(item.postId)
   }
 
   const handleToggleLike = () => {
-    onToggleLike?.(item.postId, !item.liked)
+    if (toggleLikeMutation.isPending) return
+    toggleLikeMutation.mutate(!item.liked)
   }
 
   const handleToggleBookmark = () => {
-    onToggleBookmark?.(item.postId, !item.bookmarked)
+    if (toggleBookmarkMutation.isPending) return
+    toggleBookmarkMutation.mutate(!item.bookmarked)
   }
 
   return (
@@ -53,7 +59,13 @@ export function FeedCard({
       </button>
 
       <CardHeader className="flex flex-row items-center gap-3 px-3 py-2">
-        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200" />
+        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
+          <img
+            src={item.author.profileImageUrl}
+            alt={`${item.author.nickname} 프로필`}
+            className="h-full w-full object-cover"
+          />
+        </div>
         <div className="flex flex-col">
           <span className="text-sm leading-tight font-semibold">
             {item.author.nickname}
@@ -72,6 +84,7 @@ export function FeedCard({
             size="icon"
             className="h-9 w-9"
             aria-pressed={item.liked}
+            disabled={toggleLikeMutation.isPending}
             onClick={handleToggleLike}
           >
             <Heart
@@ -89,6 +102,7 @@ export function FeedCard({
           size="icon"
           className="h-9 w-9"
           aria-pressed={item.bookmarked}
+          disabled={toggleBookmarkMutation.isPending}
           onClick={handleToggleBookmark}
         >
           <Bookmark

@@ -1,16 +1,16 @@
 import { instance } from '@/shared/api/ky'
 import {
-  BookmarkedPostSchema,
+  PostListItemSchema,
   ApiResponseSchema,
 } from '@/entities/post/model/schema'
-import type { BookmarkedPost } from '@/entities/post/model/types'
+import type { PostListItem } from '@/entities/post/model/types'
 
-export async function getBookmarkedPosts(): Promise<BookmarkedPost[]> {
+export async function getBookmarkedPosts(): Promise<PostListItem[]> {
   const response = await instance.get('api/v1/posts/bookmarks')
 
   const raw = await response.json()
 
-  const parsed = ApiResponseSchema(BookmarkedPostSchema.array()).parse(raw)
+  const parsed = ApiResponseSchema(PostListItemSchema.array()).parse(raw)
 
   if (!parsed.success) {
     throw new Error(parsed.message || 'Failed to load bookmarked posts')

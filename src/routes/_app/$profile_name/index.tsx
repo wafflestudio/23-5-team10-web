@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
-import { ProfileContentContainer } from '@/widgets/profile-layout'
+import { ContentContainer } from '@/widgets/profile-layout'
 
 export const Route = createFileRoute('/_app/$profile_name/')({
   component: RouteComponent,
@@ -25,8 +25,8 @@ const FALLBACK_POST_ITEMS = Array.from(
 
 function RouteComponent() {
   return (
-    <ProfileContentContainer className="py-6">
+    <ContentContainer className="py-6">
       <ProfilePostsGrid items={FALLBACK_POST_ITEMS} />
-    </ProfileContentContainer>
+    </ContentContainer>
   )
 }

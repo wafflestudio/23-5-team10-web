@@ -31,7 +31,7 @@ export function EmptyDropzoneState({
     >
       <ImagePlus className="size-10" />
 
-      <p className="text-lg font-medium">
+      <p className="text-lg font-medium break-keep">
         사진과 동영상을 여기에 끌어다 놓으세요
       </p>
 
@@ -39,7 +39,7 @@ export function EmptyDropzoneState({
 
       <Button
         type="button"
-        variant="outline"
+        className="bg-gray-200"
         onClick={(e) => {
           e.preventDefault()
           e.stopPropagation()

@@ -12,15 +12,24 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as PasswordResetRouteImport } from './routes/password/reset'
-import { Route as AccountsEmailsignupRouteImport } from './routes/accounts/emailsignup'
+import { Route as WebLiteRouteImport } from './routes/web/lite'
+import { Route as StoriesUser_idRouteImport } from './routes/stories/$user_id'
 import { Route as AppTestRouteImport } from './routes/_app/test'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppProfile_nameRouteImport } from './routes/_app/$profile_name'
+import { Route as ExploreLocationsIndexRouteImport } from './routes/explore/locations/index'
+import { Route as AccountsEmailsignupIndexRouteImport } from './routes/accounts/emailsignup/index'
 import { Route as AppProfile_nameIndexRouteImport } from './routes/_app/$profile_name/index'
 import { Route as StoriesProfile_nameStory_idRouteImport } from './routes/stories/$profile_name/$story_id'
+import { Route as AccountsPasswordResetRouteImport } from './routes/accounts/password/reset'
+import { Route as AccountsEmailsignupVerificationRouteImport } from './routes/accounts/emailsignup/verification'
+import { Route as AccountsEmailsignupEmailChangeRouteImport } from './routes/accounts/emailsignup/email-change'
+import { Route as AccountsEmailsignupCaptchaRouteImport } from './routes/accounts/emailsignup/captcha'
+import { Route as AccountsEmailsignupBirthdayRouteImport } from './routes/accounts/emailsignup/birthday'
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppProfile_nameSavedRouteImport } from './routes/_app/$profile_name/saved'
+import { Route as AppProfile_nameAlbumsRouteImport } from './routes/_app/$profile_name/albums'
+import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -36,14 +45,14 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const PasswordResetRoute = PasswordResetRouteImport.update({
-  id: '/password/reset',
-  path: '/password/reset',
+const WebLiteRoute = WebLiteRouteImport.update({
+  id: '/web/lite',
+  path: '/web/lite',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AccountsEmailsignupRoute = AccountsEmailsignupRouteImport.update({
-  id: '/accounts/emailsignup',
-  path: '/accounts/emailsignup',
+const StoriesUser_idRoute = StoriesUser_idRouteImport.update({
+  id: '/stories/$user_id',
+  path: '/stories/$user_id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppTestRoute = AppTestRouteImport.update({
@@ -61,6 +70,17 @@ const AppProfile_nameRoute = AppProfile_nameRouteImport.update({
   path: '/$profile_name',
   getParentRoute: () => AppRoute,
 } as any)
+const ExploreLocationsIndexRoute = ExploreLocationsIndexRouteImport.update({
+  id: '/explore/locations/',
+  path: '/explore/locations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsEmailsignupIndexRoute =
+  AccountsEmailsignupIndexRouteImport.update({
+    id: '/accounts/emailsignup/',
+    path: '/accounts/emailsignup/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppProfile_nameIndexRoute = AppProfile_nameIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -70,6 +90,35 @@ const StoriesProfile_nameStory_idRoute =
   StoriesProfile_nameStory_idRouteImport.update({
     id: '/stories/$profile_name/$story_id',
     path: '/stories/$profile_name/$story_id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AccountsPasswordResetRoute = AccountsPasswordResetRouteImport.update({
+  id: '/accounts/password/reset',
+  path: '/accounts/password/reset',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountsEmailsignupVerificationRoute =
+  AccountsEmailsignupVerificationRouteImport.update({
+    id: '/accounts/emailsignup/verification',
+    path: '/accounts/emailsignup/verification',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AccountsEmailsignupEmailChangeRoute =
+  AccountsEmailsignupEmailChangeRouteImport.update({
+    id: '/accounts/emailsignup/email-change',
+    path: '/accounts/emailsignup/email-change',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AccountsEmailsignupCaptchaRoute =
+  AccountsEmailsignupCaptchaRouteImport.update({
+    id: '/accounts/emailsignup/captcha',
+    path: '/accounts/emailsignup/captcha',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AccountsEmailsignupBirthdayRoute =
+  AccountsEmailsignupBirthdayRouteImport.update({
+    id: '/accounts/emailsignup/birthday',
+    path: '/accounts/emailsignup/birthday',
     getParentRoute: () => rootRouteImport,
   } as any)
 const AppPPost_idRoute = AppPPost_idRouteImport.update({
@@ -82,31 +131,60 @@ const AppProfile_nameSavedRoute = AppProfile_nameSavedRouteImport.update({
   path: '/saved',
   getParentRoute: () => AppProfile_nameRoute,
 } as any)
+const AppProfile_nameAlbumsRoute = AppProfile_nameAlbumsRouteImport.update({
+  id: '/albums',
+  path: '/albums',
+  getParentRoute: () => AppProfile_nameRoute,
+} as any)
+const ExploreLocationsCountryCodeCountryNameRoute =
+  ExploreLocationsCountryCodeCountryNameRouteImport.update({
+    id: '/explore/locations/$countryCode/$countryName',
+    path: '/explore/locations/$countryCode/$countryName',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
-  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/password/reset': typeof PasswordResetRoute
+  '/stories/$user_id': typeof StoriesUser_idRoute
+  '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
+  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
+  '/accounts/emailsignup/birthday': typeof AccountsEmailsignupBirthdayRoute
+  '/accounts/emailsignup/captcha': typeof AccountsEmailsignupCaptchaRoute
+  '/accounts/emailsignup/email-change': typeof AccountsEmailsignupEmailChangeRoute
+  '/accounts/emailsignup/verification': typeof AccountsEmailsignupVerificationRoute
+  '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/$profile_name/': typeof AppProfile_nameIndexRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupIndexRoute
+  '/explore/locations': typeof ExploreLocationsIndexRoute
+  '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
-  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/password/reset': typeof PasswordResetRoute
+  '/stories/$user_id': typeof StoriesUser_idRoute
+  '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
+  '/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
+  '/accounts/emailsignup/birthday': typeof AccountsEmailsignupBirthdayRoute
+  '/accounts/emailsignup/captcha': typeof AccountsEmailsignupCaptchaRoute
+  '/accounts/emailsignup/email-change': typeof AccountsEmailsignupEmailChangeRoute
+  '/accounts/emailsignup/verification': typeof AccountsEmailsignupVerificationRoute
+  '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/$profile_name': typeof AppProfile_nameIndexRoute
+  '/accounts/emailsignup': typeof AccountsEmailsignupIndexRoute
+  '/explore/locations': typeof ExploreLocationsIndexRoute
+  '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,13 +193,22 @@ export interface FileRoutesById {
   '/_app/$profile_name': typeof AppProfile_nameRouteWithChildren
   '/_app/explore': typeof AppExploreRoute
   '/_app/test': typeof AppTestRoute
-  '/accounts/emailsignup': typeof AccountsEmailsignupRoute
-  '/password/reset': typeof PasswordResetRoute
+  '/stories/$user_id': typeof StoriesUser_idRoute
+  '/web/lite': typeof WebLiteRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/$profile_name/albums': typeof AppProfile_nameAlbumsRoute
   '/_app/$profile_name/saved': typeof AppProfile_nameSavedRoute
   '/_app/p/$post_id': typeof AppPPost_idRoute
+  '/accounts/emailsignup/birthday': typeof AccountsEmailsignupBirthdayRoute
+  '/accounts/emailsignup/captcha': typeof AccountsEmailsignupCaptchaRoute
+  '/accounts/emailsignup/email-change': typeof AccountsEmailsignupEmailChangeRoute
+  '/accounts/emailsignup/verification': typeof AccountsEmailsignupVerificationRoute
+  '/accounts/password/reset': typeof AccountsPasswordResetRoute
   '/stories/$profile_name/$story_id': typeof StoriesProfile_nameStory_idRoute
   '/_app/$profile_name/': typeof AppProfile_nameIndexRoute
+  '/accounts/emailsignup/': typeof AccountsEmailsignupIndexRoute
+  '/explore/locations/': typeof ExploreLocationsIndexRoute
+  '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,25 +217,43 @@ export interface FileRouteTypes {
     | '/$profile_name'
     | '/explore'
     | '/test'
-    | '/accounts/emailsignup'
-    | '/password/reset'
+    | '/stories/$user_id'
+    | '/web/lite'
     | '/'
+    | '/$profile_name/albums'
     | '/$profile_name/saved'
     | '/p/$post_id'
+    | '/accounts/emailsignup/birthday'
+    | '/accounts/emailsignup/captcha'
+    | '/accounts/emailsignup/email-change'
+    | '/accounts/emailsignup/verification'
+    | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
     | '/$profile_name/'
+    | '/accounts/emailsignup'
+    | '/explore/locations'
+    | '/explore/locations/$countryCode/$countryName'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/explore'
     | '/test'
-    | '/accounts/emailsignup'
-    | '/password/reset'
+    | '/stories/$user_id'
+    | '/web/lite'
     | '/'
+    | '/$profile_name/albums'
     | '/$profile_name/saved'
     | '/p/$post_id'
+    | '/accounts/emailsignup/birthday'
+    | '/accounts/emailsignup/captcha'
+    | '/accounts/emailsignup/email-change'
+    | '/accounts/emailsignup/verification'
+    | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
     | '/$profile_name'
+    | '/accounts/emailsignup'
+    | '/explore/locations'
+    | '/explore/locations/$countryCode/$countryName'
   id:
     | '__root__'
     | '/_app'
@@ -156,21 +261,38 @@ export interface FileRouteTypes {
     | '/_app/$profile_name'
     | '/_app/explore'
     | '/_app/test'
-    | '/accounts/emailsignup'
-    | '/password/reset'
+    | '/stories/$user_id'
+    | '/web/lite'
     | '/_app/'
+    | '/_app/$profile_name/albums'
     | '/_app/$profile_name/saved'
     | '/_app/p/$post_id'
+    | '/accounts/emailsignup/birthday'
+    | '/accounts/emailsignup/captcha'
+    | '/accounts/emailsignup/email-change'
+    | '/accounts/emailsignup/verification'
+    | '/accounts/password/reset'
     | '/stories/$profile_name/$story_id'
     | '/_app/$profile_name/'
+    | '/accounts/emailsignup/'
+    | '/explore/locations/'
+    | '/explore/locations/$countryCode/$countryName'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
-  AccountsEmailsignupRoute: typeof AccountsEmailsignupRoute
-  PasswordResetRoute: typeof PasswordResetRoute
+  StoriesUser_idRoute: typeof StoriesUser_idRoute
+  WebLiteRoute: typeof WebLiteRoute
+  AccountsEmailsignupBirthdayRoute: typeof AccountsEmailsignupBirthdayRoute
+  AccountsEmailsignupCaptchaRoute: typeof AccountsEmailsignupCaptchaRoute
+  AccountsEmailsignupEmailChangeRoute: typeof AccountsEmailsignupEmailChangeRoute
+  AccountsEmailsignupVerificationRoute: typeof AccountsEmailsignupVerificationRoute
+  AccountsPasswordResetRoute: typeof AccountsPasswordResetRoute
   StoriesProfile_nameStory_idRoute: typeof StoriesProfile_nameStory_idRoute
+  AccountsEmailsignupIndexRoute: typeof AccountsEmailsignupIndexRoute
+  ExploreLocationsIndexRoute: typeof ExploreLocationsIndexRoute
+  ExploreLocationsCountryCodeCountryNameRoute: typeof ExploreLocationsCountryCodeCountryNameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -196,18 +318,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/password/reset': {
-      id: '/password/reset'
-      path: '/password/reset'
-      fullPath: '/password/reset'
-      preLoaderRoute: typeof PasswordResetRouteImport
+    '/web/lite': {
+      id: '/web/lite'
+      path: '/web/lite'
+      fullPath: '/web/lite'
+      preLoaderRoute: typeof WebLiteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/accounts/emailsignup': {
-      id: '/accounts/emailsignup'
-      path: '/accounts/emailsignup'
-      fullPath: '/accounts/emailsignup'
-      preLoaderRoute: typeof AccountsEmailsignupRouteImport
+    '/stories/$user_id': {
+      id: '/stories/$user_id'
+      path: '/stories/$user_id'
+      fullPath: '/stories/$user_id'
+      preLoaderRoute: typeof StoriesUser_idRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/test': {
@@ -231,6 +353,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfile_nameRouteImport
       parentRoute: typeof AppRoute
     }
+    '/explore/locations/': {
+      id: '/explore/locations/'
+      path: '/explore/locations'
+      fullPath: '/explore/locations'
+      preLoaderRoute: typeof ExploreLocationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup/': {
+      id: '/accounts/emailsignup/'
+      path: '/accounts/emailsignup'
+      fullPath: '/accounts/emailsignup'
+      preLoaderRoute: typeof AccountsEmailsignupIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/$profile_name/': {
       id: '/_app/$profile_name/'
       path: '/'
@@ -243,6 +379,41 @@ declare module '@tanstack/react-router' {
       path: '/stories/$profile_name/$story_id'
       fullPath: '/stories/$profile_name/$story_id'
       preLoaderRoute: typeof StoriesProfile_nameStory_idRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/password/reset': {
+      id: '/accounts/password/reset'
+      path: '/accounts/password/reset'
+      fullPath: '/accounts/password/reset'
+      preLoaderRoute: typeof AccountsPasswordResetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup/verification': {
+      id: '/accounts/emailsignup/verification'
+      path: '/accounts/emailsignup/verification'
+      fullPath: '/accounts/emailsignup/verification'
+      preLoaderRoute: typeof AccountsEmailsignupVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup/email-change': {
+      id: '/accounts/emailsignup/email-change'
+      path: '/accounts/emailsignup/email-change'
+      fullPath: '/accounts/emailsignup/email-change'
+      preLoaderRoute: typeof AccountsEmailsignupEmailChangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup/captcha': {
+      id: '/accounts/emailsignup/captcha'
+      path: '/accounts/emailsignup/captcha'
+      fullPath: '/accounts/emailsignup/captcha'
+      preLoaderRoute: typeof AccountsEmailsignupCaptchaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounts/emailsignup/birthday': {
+      id: '/accounts/emailsignup/birthday'
+      path: '/accounts/emailsignup/birthday'
+      fullPath: '/accounts/emailsignup/birthday'
+      preLoaderRoute: typeof AccountsEmailsignupBirthdayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/p/$post_id': {
@@ -259,15 +430,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfile_nameSavedRouteImport
       parentRoute: typeof AppProfile_nameRoute
     }
+    '/_app/$profile_name/albums': {
+      id: '/_app/$profile_name/albums'
+      path: '/albums'
+      fullPath: '/$profile_name/albums'
+      preLoaderRoute: typeof AppProfile_nameAlbumsRouteImport
+      parentRoute: typeof AppProfile_nameRoute
+    }
+    '/explore/locations/$countryCode/$countryName': {
+      id: '/explore/locations/$countryCode/$countryName'
+      path: '/explore/locations/$countryCode/$countryName'
+      fullPath: '/explore/locations/$countryCode/$countryName'
+      preLoaderRoute: typeof ExploreLocationsCountryCodeCountryNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AppProfile_nameRouteChildren {
+  AppProfile_nameAlbumsRoute: typeof AppProfile_nameAlbumsRoute
   AppProfile_nameSavedRoute: typeof AppProfile_nameSavedRoute
   AppProfile_nameIndexRoute: typeof AppProfile_nameIndexRoute
 }
 
 const AppProfile_nameRouteChildren: AppProfile_nameRouteChildren = {
+  AppProfile_nameAlbumsRoute: AppProfile_nameAlbumsRoute,
   AppProfile_nameSavedRoute: AppProfile_nameSavedRoute,
   AppProfile_nameIndexRoute: AppProfile_nameIndexRoute,
 }
@@ -297,9 +484,18 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
-  AccountsEmailsignupRoute: AccountsEmailsignupRoute,
-  PasswordResetRoute: PasswordResetRoute,
+  StoriesUser_idRoute: StoriesUser_idRoute,
+  WebLiteRoute: WebLiteRoute,
+  AccountsEmailsignupBirthdayRoute: AccountsEmailsignupBirthdayRoute,
+  AccountsEmailsignupCaptchaRoute: AccountsEmailsignupCaptchaRoute,
+  AccountsEmailsignupEmailChangeRoute: AccountsEmailsignupEmailChangeRoute,
+  AccountsEmailsignupVerificationRoute: AccountsEmailsignupVerificationRoute,
+  AccountsPasswordResetRoute: AccountsPasswordResetRoute,
   StoriesProfile_nameStory_idRoute: StoriesProfile_nameStory_idRoute,
+  AccountsEmailsignupIndexRoute: AccountsEmailsignupIndexRoute,
+  ExploreLocationsIndexRoute: ExploreLocationsIndexRoute,
+  ExploreLocationsCountryCodeCountryNameRoute:
+    ExploreLocationsCountryCodeCountryNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
