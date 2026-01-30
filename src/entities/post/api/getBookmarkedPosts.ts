@@ -12,7 +12,7 @@ export async function getBookmarkedPosts(): Promise<PostListItem[]> {
 
   const parsed = ApiResponseSchema(PostListItemSchema.array()).parse(raw)
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to load bookmarked posts')
   }
 

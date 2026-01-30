@@ -21,7 +21,7 @@ export async function createAlbum(
 
   const parsed = CreateAlbumResponseSchema.parse(raw) as CreateAlbumResponse
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to create album')
   }
 
