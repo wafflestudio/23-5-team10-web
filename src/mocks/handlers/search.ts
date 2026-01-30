@@ -56,8 +56,8 @@ export const searchHandlers = [
         searchId: r.searchId,
         userId: r.userId,
         nickname: user?.nickname ?? 'unknown',
-        profileImageUrl: user?.profileImageUrl ?? '',
-        name: user?.name ?? '',
+        profileImageUrl: user?.profileImageUrl ?? null,
+        name: user?.name ?? null,
         followed,
       }
     })
@@ -81,6 +81,16 @@ export const searchHandlers = [
     return HttpResponse.json({
       code: 'RECENT_SEARCH_DELETED',
       message: '최근 검색 기록 삭제 완료',
+      success: true,
+    })
+  }),
+
+  http.delete('*/api/v1/search/recent/all', () => {
+    recentSearchDb.length = 0
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '요청에 성공하였습니다.',
       success: true,
     })
   }),
