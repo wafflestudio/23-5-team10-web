@@ -29,7 +29,7 @@ export const storyHandlers = [
           code: '400',
           message: '잘못된 요청입니다.',
           data: 0,
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -48,7 +48,7 @@ export const storyHandlers = [
     const responseBody = {
       code: '200',
       message: '요청에 성공하였습니다.',
-      success: true as const,
+      isSuccess: true as const,
     }
 
     return HttpResponse.json(responseBody)
@@ -67,7 +67,7 @@ export const storyHandlers = [
       code: '200',
       message: '요청에 성공하였습니다.',
       data: storyFeedItems,
-      success: true,
+      isSuccess: true,
     })
 
     return HttpResponse.json(responseBody)
@@ -80,7 +80,7 @@ export const storyHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -89,7 +89,7 @@ export const storyHandlers = [
     const responseBody = {
       code: '200',
       message: '요청에 성공하였습니다.',
-      success: true as const,
+      isSuccess: true as const,
     }
 
     return HttpResponse.json(responseBody)
@@ -102,7 +102,7 @@ export const storyHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -131,7 +131,7 @@ export const storyHandlers = [
       code: '200',
       message: '요청에 성공하였습니다.',
       data: storyItems,
-      success: true,
+      isSuccess: true,
     })
 
     return HttpResponse.json(responseBody)

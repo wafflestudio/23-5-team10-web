@@ -62,7 +62,7 @@ export const postHandlers = [
         code: '201',
         message: '게시글을 생성했습니다.',
         data: responsePost,
-        success: true,
+        isSuccess: true,
       },
       { status: 201 }
     )
@@ -76,7 +76,7 @@ export const postHandlers = [
     }
 
     return HttpResponse.json({
-      success: true,
+      isSuccess: true,
       data: post,
     })
   }),
@@ -88,7 +88,7 @@ export const postHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -101,7 +101,7 @@ export const postHandlers = [
         {
           code: '404',
           message: '게시글을 찾을 수 없습니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 404 }
       )
@@ -116,7 +116,7 @@ export const postHandlers = [
       {
         code: '200',
         message: '게시글에 좋아요를 남겼습니다.',
-        success: true,
+        isSuccess: true,
       },
       { status: 200 }
     )
@@ -129,7 +129,7 @@ export const postHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -142,7 +142,7 @@ export const postHandlers = [
         {
           code: '404',
           message: '게시글을 찾을 수 없습니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 404 }
       )
@@ -157,7 +157,7 @@ export const postHandlers = [
       {
         code: '200',
         message: '게시글 좋아요를 취소했습니다.',
-        success: true,
+        isSuccess: true,
       },
       { status: 200 }
     )
@@ -170,7 +170,7 @@ export const postHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -183,7 +183,7 @@ export const postHandlers = [
         {
           code: '404',
           message: '게시글을 찾을 수 없습니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 404 }
       )
@@ -195,7 +195,7 @@ export const postHandlers = [
       {
         code: '200',
         message: '게시글을 북마크했습니다.',
-        success: true,
+        isSuccess: true,
       },
       { status: 200 }
     )
@@ -208,7 +208,7 @@ export const postHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -221,7 +221,7 @@ export const postHandlers = [
         {
           code: '404',
           message: '게시글을 찾을 수 없습니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 404 }
       )
@@ -233,7 +233,7 @@ export const postHandlers = [
       {
         code: '200',
         message: '게시글 북마크를 취소했습니다.',
-        success: true,
+        isSuccess: true,
       },
       { status: 200 }
     )
@@ -265,7 +265,7 @@ export const postHandlers = [
       code: '200',
       message: '요청에 성공하였습니다.',
       data: bookmarkedPosts,
-      success: true,
+      isSuccess: true,
     })
   }),
   http.get('*/api/v1/posts/search', () => {
@@ -297,7 +297,7 @@ export const postHandlers = [
       code: '200',
       message: '요청에 성공하였습니다.',
       data: searchResults,
-      success: true,
+      isSuccess: true,
     })
   }),
   http.get('*/api/v1/users/:userId/posts', ({ params }) => {
@@ -308,7 +308,7 @@ export const postHandlers = [
         {
           code: '400',
           message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -359,7 +359,7 @@ export const postHandlers = [
       code: '200',
       message: '요청에 성공하였습니다.',
       data: grouped,
-      success: true,
+      isSuccess: true,
     })
   }),
 ]

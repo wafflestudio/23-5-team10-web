@@ -55,7 +55,7 @@ export const feedHandlers = [
       code: '200',
       message: '요청에 성공하였습니다.',
       data: feedPage,
-      success: true,
+      isSuccess: true,
     })
 
     return HttpResponse.json(responseBody)

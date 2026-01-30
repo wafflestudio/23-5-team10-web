@@ -20,7 +20,7 @@ export const authHandlers = [
 
     if (isDuplicate) {
       return HttpResponse.json({
-        success: true,
+        isSuccess: true,
         code: 'AUTH_409',
         message: '이미 존재하는 닉네임입니다.',
         data: { isAvailable: false },
@@ -28,7 +28,7 @@ export const authHandlers = [
     }
 
     return HttpResponse.json({
-      success: true,
+      isSuccess: true,
       code: 'COMMON_200',
       message: '사용 가능한 닉네임입니다.',
       data: { isAvailable: true },
@@ -44,7 +44,7 @@ export const authHandlers = [
     if (!user) {
       return HttpResponse.json(
         {
-          success: false,
+          isSuccess: false,
           message: '계정을 찾을 수 없습니다.',
         },
         { status: 404 }
@@ -55,7 +55,7 @@ export const authHandlers = [
     const maskedEmail = `${name.slice(0, 2)}****@${domain}`
 
     return HttpResponse.json({
-      success: true,
+      isSuccess: true,
       data: { sentEmail: maskedEmail },
     })
   }),
@@ -75,7 +75,7 @@ export const authHandlers = [
             accessToken: 'string',
             refreshToken: 'string',
           },
-          success: false,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -95,7 +95,7 @@ export const authHandlers = [
         accessToken: 'mock-access-token-123',
         refreshToken: 'mock-refresh-token-456',
       },
-      success: true,
+      isSuccess: true,
     })
   }),
 
@@ -112,7 +112,7 @@ export const authHandlers = [
           code: 'AUTH_404',
           message: '사용자를 찾을 수 없습니다.',
           data: null,
-          success: false,
+          isSuccess: false,
         },
         { status: 404 }
       )
@@ -124,7 +124,7 @@ export const authHandlers = [
           code: 'AUTH_401',
           message: '비밀번호가 틀렸습니다.',
           data: null,
-          success: false,
+          isSuccess: false,
         },
         { status: 401 }
       )
@@ -137,7 +137,7 @@ export const authHandlers = [
         accessToken: `mock-access-token-${userExists.userId}`,
         refreshToken: `mock-refresh-token-${userExists.userId}`,
       },
-      success: true,
+      isSuccess: true,
     })
   }),
 ]
