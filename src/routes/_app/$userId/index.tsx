@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
 import { ContentContainer } from '@/widgets/profile-layout'
 
-export const Route = createFileRoute('/_app/$profile_name/')({
+export const Route = createFileRoute('/_app/$userId/')({
   component: RouteComponent,
 })
 

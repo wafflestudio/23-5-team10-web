@@ -7,6 +7,8 @@ import { testHandlers } from './handlers/test'
 import { authHandlers } from './handlers/auth'
 import { imageHandlers } from './handlers/images'
 import { storyHandlers } from './handlers/story'
+import { userHandlers } from './handlers/user'
+import { searchHandlers } from './handlers/search'
 
 export const handlers = [
   ...authHandlers,
@@ -17,5 +19,7 @@ export const handlers = [
   ...followHandlers,
   ...imageHandlers,
   ...storyHandlers,
+  ...userHandlers,
+  ...searchHandlers,
   ...testHandlers,
 ]

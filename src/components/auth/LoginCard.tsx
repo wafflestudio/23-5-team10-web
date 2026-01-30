@@ -14,7 +14,7 @@ interface FloatingInputProps {
 }
 
 interface LoginResponse {
-  success: boolean
+  isSuccess: boolean
   code: string
   message: string
   data: {
@@ -89,7 +89,7 @@ const LoginCard = () => {
         })
         .json<LoginResponse>()
 
-      if (res.success && res.data) {
+      if (res.isSuccess && res.data) {
         localStorage.setItem('accessToken', res.data.accessToken)
         localStorage.setItem('refreshToken', res.data.refreshToken)
         navigate({ to: '/' })

@@ -17,6 +17,7 @@ type ProfileRouteTabsProps = {
   className?: string
   value: ProfileRouteTabValue
   onValueChange: (value: ProfileRouteTabValue) => void
+  showSavedTab?: boolean
 }
 
 const TAB_TRIGGER_CLASSNAME =
@@ -34,6 +35,7 @@ export function ProfileRouteTabs({
   className,
   value,
   onValueChange,
+  showSavedTab = false,
 }: ProfileRouteTabsProps) {
   const handleValueChange = (nextValue: string) => {
     if (!isProfileRouteTabValue(nextValue)) return
@@ -65,13 +67,15 @@ export function ProfileRouteTabs({
               <span className="sr-only">앨범</span>
             </TabsTrigger>
 
-            <TabsTrigger
-              value={PROFILE_ROUTE_TAB_VALUE.SAVED}
-              className={TAB_TRIGGER_CLASSNAME}
-            >
-              <Bookmark aria-hidden="true" />
-              <span className="sr-only">저장됨</span>
-            </TabsTrigger>
+            {showSavedTab && (
+              <TabsTrigger
+                value={PROFILE_ROUTE_TAB_VALUE.SAVED}
+                className={TAB_TRIGGER_CLASSNAME}
+              >
+                <Bookmark aria-hidden="true" />
+                <span className="sr-only">저장됨</span>
+              </TabsTrigger>
+            )}
           </TabsList>
         </Tabs>
       </ContentContainer>

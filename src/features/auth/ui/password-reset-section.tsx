@@ -22,9 +22,9 @@ export const PasswordResetSection = () => {
         .post('api/v1/auth/check-account', {
           json: { identity: inputValue },
         })
-        .json<{ success: boolean; data?: { sentEmail: string } }>()
+        .json<{ isSuccess: boolean; data?: { sentEmail: string } }>()
 
-      if (res.success) {
+      if (res.isSuccess) {
         setSentTarget(inputValue)
         setShowToast(true)
       }

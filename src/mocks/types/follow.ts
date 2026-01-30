@@ -3,7 +3,8 @@ import type { ApiResponse } from '@/mocks/types/common'
 export interface FollowUser {
   userId: number
   nickname: string
-  profileImageUrl: string
+  name: string | null
+  profileImageUrl: string | null
   isFollowing: boolean
 }
 
