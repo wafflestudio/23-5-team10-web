@@ -42,7 +42,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         )
         const result = await response.json()
 
-        if (result.success && result.data.length > 0) {
+        if (result.isSuccess && result.data.length > 0) {
           setComments((prev) => {
             if (pageNum === 1) return result.data
             const existingIds = new Set(prev.map((c) => c.id))
