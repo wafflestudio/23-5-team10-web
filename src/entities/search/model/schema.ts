@@ -4,8 +4,8 @@ export const RecentSearchItemSchema = z.object({
   searchId: z.number(),
   userId: z.number(),
   nickname: z.string(),
-  profileImageUrl: z.string(),
-  name: z.string(),
+  profileImageUrl: z.string().nullable(),
+  name: z.string().nullable(),
   followed: z.boolean(),
 })
 
