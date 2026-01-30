@@ -62,17 +62,17 @@ export function SearchDrawer({
       addRecentSearch.mutate({ toUserId: user.userId })
       close()
       navigate({
-        to: '/$profile_name',
-        params: { profile_name: user.nickname },
+        to: '/$userId',
+        params: { userId: String(user.userId) },
       })
     },
     [addRecentSearch, close, navigate]
   )
 
   const handleClickRecentSearch = useCallback(
-    (nickname: string) => {
+    (userId: number) => {
       close()
-      navigate({ to: '/$profile_name', params: { profile_name: nickname } })
+      navigate({ to: '/$userId', params: { userId: String(userId) } })
     },
     [close, navigate]
   )
