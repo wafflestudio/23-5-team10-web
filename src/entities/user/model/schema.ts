@@ -14,7 +14,7 @@ export const SearchUserResponseSchema = z.object({
   data: z.object({
     users: z.array(SearchUserSchema),
   }),
-  success: z.boolean(),
+  isSuccess: z.boolean(),
 })
 
 export const ProfileUserSchema = z.object({
@@ -34,5 +34,5 @@ export const ProfileUserResponseSchema = z.object({
   code: z.string(),
   message: z.string(),
   data: ProfileUserSchema,
-  success: z.boolean(),
+  isSuccess: z.boolean(),
 })

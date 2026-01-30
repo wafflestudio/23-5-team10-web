@@ -27,5 +27,5 @@ export const ApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
     code: z.string(),
     message: z.string(),
     data: dataSchema,
-    success: z.boolean(),
+    isSuccess: z.boolean(),
   })

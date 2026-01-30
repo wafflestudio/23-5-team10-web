@@ -11,5 +11,5 @@ export const StoryFeedResponseSchema = z.object({
   code: z.string(),
   message: z.string(),
   data: z.array(StoryFeedItemSchema),
-  success: z.boolean(),
+  isSuccess: z.boolean(),
 })

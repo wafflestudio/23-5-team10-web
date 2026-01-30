@@ -12,7 +12,7 @@ export const FollowListResponseSchema = z.object({
   code: z.string(),
   message: z.string(),
   data: z.array(FollowUserSchema),
-  success: z.boolean(),
+  isSuccess: z.boolean(),
 })
 
 export type FollowUser = z.infer<typeof FollowUserSchema>
