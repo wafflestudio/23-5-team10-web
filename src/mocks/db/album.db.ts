@@ -15,5 +15,3 @@ export const albums: Album[] = [
 ]
 
 export const nextAlbumId = { value: 3 }
-
-export const postAlbumMap: Record<number, number> = {}

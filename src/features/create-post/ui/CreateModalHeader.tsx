@@ -1,6 +1,6 @@
 import { Button } from '@/shared/ui/button'
 import { DialogClose, DialogTitle } from '@/shared/ui/dialog'
-import { ChevronLeft, XIcon } from 'lucide-react'
+import { ChevronLeft, Loader2, XIcon } from 'lucide-react'
 
 type CreateModalHeaderProps = {
   isUploaded: boolean
@@ -8,6 +8,10 @@ type CreateModalHeaderProps = {
   onBack?: () => void
   onNext?: () => void
   onShare?: () => void
+  isShareDisabled?: boolean
+  isUploading?: boolean
+  isSharing?: boolean
+  isShareSuccess?: boolean
 }
 
 export function CreateModalHeader({
@@ -16,12 +20,26 @@ export function CreateModalHeader({
   onBack,
   onNext,
   onShare,
+  isShareDisabled,
+  isUploading,
+  isSharing,
+  isShareSuccess,
 }: CreateModalHeaderProps) {
   const isDetails = isUploaded && step === 'details'
 
+  const getTitle = () => {
+    if (isSharing) return '공유 중...'
+    if (isShareSuccess) return '게시물이 공유됨'
+    return '새 게시물 만들기'
+  }
+
+  const showBackButton = isUploaded && !isSharing && !isShareSuccess
+  const showCloseButton = !isUploaded || isSharing || isShareSuccess
+  const showActionButton = isUploaded && !isSharing && !isShareSuccess
+
   return (
     <header className="relative flex h-auto items-center justify-center px-12 py-6">
-      {isUploaded ? (
+      {showBackButton ? (
         <Button
           type="button"
           variant="ghost"
@@ -35,29 +53,38 @@ export function CreateModalHeader({
       ) : null}
 
       <DialogTitle className="text-base font-semibold">
-        새 게시물 만들기
+        {getTitle()}
       </DialogTitle>
 
-      {isUploaded ? (
+      {showActionButton ? (
         <Button
           type="button"
           variant="ghost"
           className="absolute top-1/2 right-4 -translate-y-1/2"
           onClick={isDetails ? onShare : onNext}
+          disabled={isDetails ? isShareDisabled : isUploading}
         >
-          {isDetails ? '공유하기' : '다음으로'}
+          {isUploading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : isDetails ? (
+            '공유하기'
+          ) : (
+            '다음으로'
+          )}
         </Button>
-      ) : (
+      ) : showCloseButton ? (
         <DialogClose asChild>
           <Button
             type="button"
             variant="ghost"
+            size="icon"
+            aria-label="닫기"
             className="absolute top-1/2 right-4 -translate-y-1/2"
           >
             <XIcon className="size-5" />
           </Button>
         </DialogClose>
-      )}
+      ) : null}
     </header>
   )
 }

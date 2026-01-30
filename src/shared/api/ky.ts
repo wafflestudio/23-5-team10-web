@@ -21,13 +21,13 @@ function maskHeaders(headersInit: HeadersInit | undefined) {
 }
 
 export class AuthError extends Error {
-  constructor(status: 401 | 403, response: Response) {
+  constructor(status: 401, response: Response) {
     super(`Auth error: ${status}`)
     this.name = 'AuthError'
     this.status = status
     this.response = response
   }
-  public status: 401 | 403
+  public status: 401
   public response: Response
 }
 
@@ -102,7 +102,7 @@ export const instance = ky.create({
         }
         const response = error.response
         if (response && (response.status === 401 || response.status === 403)) {
-          throw new AuthError(response.status as 401 | 403, response)
+          throw new AuthError(response.status as 401, response)
         }
         if (DEV) {
           console.groupCollapsed('[API][ERROR]')

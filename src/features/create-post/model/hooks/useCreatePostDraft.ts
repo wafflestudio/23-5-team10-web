@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { useImageCarousel } from '@/features/create-post/model/hooks/useImageCarousel'
+import { useImageUpload } from '@/features/create-post/model/hooks/useImageUpload'
 import { useLimitedFilesDrop } from '@/features/create-post/model/hooks/useLimitedFilesDrop'
 import { useObjectUrl } from '@/features/create-post/model/hooks/useObjectUrl'
 
@@ -9,31 +10,55 @@ export type CreatePostStep = 'select' | 'details'
 type UseCreatePostDraftParams = {
   maxFiles: number
   onIgnoredCount?: (ignoredCount: number) => void
+  onUploadError?: (error: Error) => void
 }
 
 export function useCreatePostDraft({
   maxFiles,
   onIgnoredCount,
+  onUploadError,
 }: UseCreatePostDraftParams) {
   const [files, setFiles] = useState<File[]>([])
   const [step, setStep] = useState<CreatePostStep>('select')
+  const [uploadedUrls, setUploadedUrls] = useState<string[]>([])
+  const [caption, setCaption] = useState('')
+  const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
+
+  const imageUpload = useImageUpload()
 
   const carousel = useImageCarousel(files.length)
   const isUploaded = useMemo(() => files.length > 0, [files.length])
   const isDetails = isUploaded && step === 'details'
+  const isUploading = imageUpload.isPending
+  const isUploadComplete =
+    uploadedUrls.length > 0 && uploadedUrls.length === files.length
 
   const resetDraft = useCallback(() => {
     setFiles([])
     setStep('select')
+    setUploadedUrls([])
+    setCaption('')
+    setSelectedAlbumId(null)
     carousel.reset()
-  }, [carousel])
+    imageUpload.reset()
+  }, [carousel, imageUpload])
 
   const handleDropFiles = useLimitedFilesDrop({
     maxFiles,
     onAcceptedFiles: (limited) => {
       setFiles(limited)
       setStep('select')
+      setUploadedUrls([])
       carousel.reset()
+
+      imageUpload.mutate(limited, {
+        onSuccess: (urls) => {
+          setUploadedUrls(urls)
+        },
+        onError: (error) => {
+          onUploadError?.(error as Error)
+        },
+      })
     },
     onIgnoredCount,
   })
@@ -47,6 +72,13 @@ export function useCreatePostDraft({
     setStep,
     isUploaded,
     isDetails,
+    isUploading,
+    isUploadComplete,
+    uploadedUrls,
+    caption,
+    setCaption,
+    selectedAlbumId,
+    setSelectedAlbumId,
     activePreviewUrl,
     carousel,
     handleDropFiles,

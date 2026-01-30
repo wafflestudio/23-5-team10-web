@@ -1,33 +1,39 @@
 export interface MockAuth {
-  loginId: string
-  password: string
   userId: number
+  email: string
+  password: string
+  nickname: string
 }
 
-export const authUsers: MockAuth[] = [
+export const authDb: MockAuth[] = [
   {
-    loginId: 'admin123@gmail.com',
-    password: 'admin123',
     userId: 1,
+    email: 'admin@gmail.com',
+    password: 'password123',
+    nickname: 'me',
   },
   {
-    loginId: 'user2@gmail.com',
-    password: 'password123',
     userId: 2,
+    email: 'alice@gmail.com',
+    password: 'password123',
+    nickname: 'alice',
   },
   {
-    loginId: 'user3@gmail.com',
-    password: 'password123',
     userId: 3,
+    email: 'bob@gmail.com',
+    password: 'password123',
+    nickname: 'bob',
   },
   {
-    loginId: 'user4@gmail.com',
-    password: 'password123',
     userId: 4,
+    email: 'charlie@gmail.com',
+    password: 'password123',
+    nickname: 'charlie',
   },
   {
-    loginId: 'user5@gmail.com',
-    password: 'password123',
     userId: 5,
+    email: 'celebrity@gmail.com',
+    password: 'password123',
+    nickname: 'celebrity',
   },
 ]
