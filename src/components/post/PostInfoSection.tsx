@@ -17,7 +17,9 @@ interface Comment {
   createdAt: string
   updatedAt: string
   parentId: number | null
-  likeCount?: number
+  likeCount: number
+  liked: boolean
+  likedUserIds: number[]
 }
 
 export default function PostInfoSection({ data }: { data: PostData | null }) {
@@ -45,13 +47,23 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         const result = await response.json()
 
         if (result.success && result.data.length > 0) {
+          const newComments = result.data
+
+          setLikedComments((prev) => {
+            const nextLiked = { ...prev }
+            newComments.forEach((c: Comment) => {
+              nextLiked[c.id] = c.liked
+            })
+            return nextLiked
+          })
+
           setComments((prev) => {
-            if (pageNum === 1) return result.data
+            if (pageNum === 1) return newComments
             const existingIds = new Set(prev.map((c) => c.id))
-            const newComments = result.data.filter(
+            const filtered = newComments.filter(
               (c: Comment) => !existingIds.has(c.id)
             )
-            return [...prev, ...newComments]
+            return [...prev, ...filtered]
           })
           pageRef.current = pageNum
           setHasMore(true)
@@ -94,6 +106,29 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     }
   }, [hasMore, fetchComments])
 
+  const handleCommentSubmit = async (content: string) => {
+    const postId = data?.id
+    if (!postId) return
+
+    try {
+      const response = await instance
+        .post(`api/v1/posts/${postId}/comments`, {
+          json: { content },
+        })
+        .json<{ data: Comment; success: boolean }>()
+
+      if (response.success) {
+        setComments((prev) => [response.data, ...prev])
+        setLikedComments((prev) => ({
+          ...prev,
+          [response.data.id]: response.data.liked,
+        }))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const handleHeartClick = async (commentId: number, e?: React.MouseEvent) => {
     e?.stopPropagation()
     const postId = data?.id
@@ -118,7 +153,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
                 ...c,
                 likeCount: Math.max(
                   0,
-                  (c.likeCount || 0) + (isCurrentlyLiked ? -1 : 1)
+                  c.likeCount + (isCurrentlyLiked ? -1 : 1)
                 ),
               }
             : c
@@ -225,7 +260,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
                 </div>
               )
             })}
-          <div ref={observerTarget} className="h-1" />
+          {hasMore && <div ref={observerTarget} className="h-1" />}
         </div>
       </div>
 
@@ -236,7 +271,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         isBookmarked={data?.bookmarked || false}
         onLikeClick={() => {}}
         onBookmarkClick={() => {}}
-        onCommentSubmit={() => {}}
+        onCommentSubmit={handleCommentSubmit}
       />
 
       {isModalOpen && <PostMenuModal onClose={() => setIsModalOpen(false)} />}

@@ -5,22 +5,31 @@ import { motion, AnimatePresence } from 'framer-motion'
 import PostInfoSection from './PostInfoSection'
 import { instance } from '../../shared/api/ky'
 
+export interface PostImage {
+  id: number
+  url: string
+  orderIndex: number
+}
+
 export interface PostData {
   id: number
   userId: number
   nickname: string
   profileImageUrl: string
   content: string
-  images: {
-    id: number
-    url: string
-    orderIndex: number
-  }[]
+  albumId: number
+  images: PostImage[]
   likeCount: number
   commentCount: number
   createdAt: string
+  updatedAt: string
   liked: boolean
   bookmarked: boolean
+}
+
+interface SearchParams {
+  returnToPath?: string
+  returnToSearch?: Record<string, string>
 }
 
 export default function PostDetail() {
@@ -51,8 +60,9 @@ export default function PostDetail() {
   const images = postData?.images || []
 
   const handleClose = () => {
-    const returnToPath = location.search.returnToPath
-    const returnToSearch = location.search.returnToSearch
+    const search = location.search as SearchParams
+    const returnToPath = search.returnToPath
+    const returnToSearch = search.returnToSearch
 
     if (returnToPath) {
       navigate({

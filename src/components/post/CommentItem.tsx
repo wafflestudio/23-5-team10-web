@@ -10,7 +10,8 @@ interface Comment {
   content: string
   profileImageUrl: string
   createdAt: string
-  likeCount?: number
+  likeCount: number
+  liked: boolean
 }
 
 interface CommentItemProps {
