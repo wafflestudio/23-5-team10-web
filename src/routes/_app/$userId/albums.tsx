@@ -13,7 +13,7 @@ import { useAlbumDetailQuery } from '@/entities/album/model/hooks/useAlbumDetail
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
 import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePostsGrid'
 
-export const Route = createFileRoute('/_app/$profile_name/albums')({
+export const Route = createFileRoute('/_app/$userId/albums')({
   validateSearch: z.object({
     albumId: z.coerce.number().int().optional(),
   }),
@@ -22,8 +22,8 @@ export const Route = createFileRoute('/_app/$profile_name/albums')({
 
 function RouteComponent() {
   const navigate = useNavigate()
-  const { profile_name } = useParams({ from: '/_app/$profile_name/albums' })
-  const { albumId } = useSearch({ from: '/_app/$profile_name/albums' })
+  const { userId } = useParams({ from: '/_app/$userId/albums' })
+  const { albumId } = useSearch({ from: '/_app/$userId/albums' })
 
   const { data: albums = [], isLoading } = useMyAlbumsQuery()
   const selectedAlbumId = albumId ?? null
@@ -37,16 +37,16 @@ function RouteComponent() {
 
   const handleSelectAlbum = (nextAlbumId: number) => {
     navigate({
-      to: '/$profile_name/albums',
-      params: { profile_name },
+      to: '/$userId/albums',
+      params: { userId },
       search: { albumId: nextAlbumId },
     })
   }
 
   const handleBackToList = () => {
     navigate({
-      to: '/$profile_name/albums',
-      params: { profile_name },
+      to: '/$userId/albums',
+      params: { userId },
     })
   }
 
