@@ -41,13 +41,14 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
 
       isFetching.current = true
       try {
-        const response = await fetch(
-          `/api/v1/posts/${postId}/comments?page=${pageNum}`
-        )
-        const result = await response.json()
+        const response = await instance
+          .get(`api/v1/posts/${postId}/comments`, {
+            searchParams: { page: pageNum },
+          })
+          .json<{ data: Comment[]; success: boolean }>()
 
-        if (result.success && result.data.length > 0) {
-          const newComments = result.data
+        if (response.success && response.data.length > 0) {
+          const newComments = response.data
 
           setLikedComments((prev) => {
             const nextLiked = { ...prev }
@@ -174,11 +175,15 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     <div className="flex h-full flex-col bg-white">
       <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3">
-          <img
-            src={data?.profileImageUrl || ''}
-            className="h-8 w-8 rounded-full object-cover"
-            alt=""
-          />
+          {data?.profileImageUrl ? (
+            <img
+              src={data.profileImageUrl}
+              className="h-8 w-8 rounded-full object-cover"
+              alt=""
+            />
+          ) : (
+            <div className="h-8 w-8 rounded-full bg-gray-200" />
+          )}
           <div className="text-sm font-semibold text-black">
             {data?.nickname || ''}
           </div>
@@ -196,11 +201,15 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         />
 
         <div className="mb-2 flex gap-3 px-1 py-3">
-          <img
-            src={data?.profileImageUrl || ''}
-            className="h-8 w-8 shrink-0 rounded-full object-cover"
-            alt=""
-          />
+          {data?.profileImageUrl ? (
+            <img
+              src={data.profileImageUrl}
+              className="h-8 w-8 shrink-0 rounded-full object-cover"
+              alt=""
+            />
+          ) : (
+            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
+          )}
           <div className="text-sm text-black">
             <span className="mr-2 font-semibold">{data?.nickname}</span>
             <span className="whitespace-pre-wrap">{data?.content}</span>

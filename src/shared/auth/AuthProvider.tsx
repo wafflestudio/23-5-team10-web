@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, type ReactNode, useRef } from 'react'
 import { useNavigate, useLocation } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useAuthStore } from './authStore'
@@ -7,23 +7,28 @@ import { refreshAccessToken } from '../api/authApi'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const isInitialMount = useRef(true)
   const { isAuthenticated, isSessionExpired, setAuthenticated, reset } =
     useAuthStore()
 
   useEffect(() => {
     const initAuth = async () => {
-      if (location.pathname === '/login') return
+      if (location.pathname === '/login' || isAuthenticated) return
 
       try {
         const data = await refreshAccessToken()
         setAuthenticated(true, data.user)
       } catch {
         reset()
-        navigate({ to: '/login' })
+        // 로그인이 필요한 페이지에서만 튕기도록 설정 (필요 시 조건 추가)
+        if (location.pathname !== '/') {
+          navigate({ to: '/login' })
+        }
       }
     }
 
-    if (!isAuthenticated) {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
       initAuth()
     }
   }, [isAuthenticated, location.pathname, navigate, reset, setAuthenticated])

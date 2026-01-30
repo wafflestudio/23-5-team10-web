@@ -22,8 +22,8 @@ export const postHandlers = [
       id: String(postId),
       images: body.imageUrls ?? [],
       caption: body.content,
-      username: 'mock_user',
-      userImage: 'https://picsum.photos/id/100/50/50',
+      username: 'me',
+      userImage: 'https://i.pravatar.cc/150?u=1',
       createdAt: new Date().toISOString(),
       likeCount: 0,
       commentCount: 0,
@@ -68,7 +68,7 @@ export const postHandlers = [
 
   http.get('*/api/v1/posts/:postId', ({ params }) => {
     const { postId } = params
-    const post = posts.find((p) => p.id === postId)
+    const post = posts.find((p) => String(p.id) === String(postId))
 
     if (!post) {
       return HttpResponse.json(
