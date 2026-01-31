@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { instance } from '@/shared/api/ky'
 import { HTTPError } from 'ky'
+import { useAuthStore } from '@/shared/auth/authStore'
 
 export function useVerification() {
   const navigate = useNavigate()
   const search = useSearch({ from: '/accounts/emailsignup/verification' })
   const [code, setCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const { setAuthenticated } = useAuthStore()
 
   const handleCodeChange = (value: string) => {
     setCode(value.replace(/[^0-9]/g, ''))
@@ -29,10 +31,16 @@ export function useVerification() {
             code: code,
           },
         })
-        .json<{ data: { accessToken: string }; isSuccess: boolean }>()
+        .json<{
+          data: {
+            accessToken: string
+            user: { id: number; nickname: string; profileImageUrl: string }
+          }
+          success: boolean
+        }>()
 
-      if (res.isSuccess) {
-        localStorage.setItem('accessToken', res.data.accessToken)
+      if (res.success) {
+        setAuthenticated(true, res.data.user)
         navigate({
           to: '/',
           replace: true,
