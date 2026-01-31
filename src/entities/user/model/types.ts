@@ -1,4 +1,5 @@
 import { z } from 'zod'
-import { SearchUserSchema } from './schema'
+import { ProfileUserSchema, SearchUserSchema } from './schema'
 
 export type SearchUser = z.infer<typeof SearchUserSchema>
+export type ProfileUser = z.infer<typeof ProfileUserSchema>

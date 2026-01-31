@@ -14,7 +14,7 @@ export async function deleteRecentSearch({
   const raw = await response.json()
   const parsed = DeleteRecentSearchResponseSchema.parse(raw)
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to delete recent search')
   }
 }

@@ -2,7 +2,7 @@ import { useMatchRoute, useNavigate } from '@tanstack/react-router'
 import { useActionState, useCallback } from 'react'
 
 import type { NavigationSidebarItem } from './navItems'
-import { MOCK_PROFILE_NAME } from './navItems'
+import { MOCK_USER_ID } from './navItems'
 import { useEffect } from 'react'
 import { useSidebar } from '@/shared/ui/sidebar'
 import { useXlBreakpoint } from '@/shared/lib/hooks/useXlBreakpoint'
@@ -53,8 +53,8 @@ export function useNavController({
           return prev
         case 'profile_open':
           navigate({
-            to: '/$profile_name',
-            params: { profile_name: MOCK_PROFILE_NAME },
+            to: '/$userId',
+            params: { userId: String(MOCK_USER_ID) },
           })
           return prev
         default:
@@ -84,14 +84,14 @@ export function useNavController({
   const isMyProfileRouteActive =
     Boolean(
       matchRoute({
-        to: '/$profile_name',
-        params: { profile_name: MOCK_PROFILE_NAME },
+        to: '/$userId',
+        params: { userId: String(MOCK_USER_ID) },
       })
     ) ||
     Boolean(
       matchRoute({
-        to: '/$profile_name/saved',
-        params: { profile_name: MOCK_PROFILE_NAME },
+        to: '/$userId/saved',
+        params: { userId: String(MOCK_USER_ID) },
       })
     )
 

@@ -8,16 +8,17 @@ import type {
 import { toFollowUser } from '../utils/toFollowUser'
 
 export const followHandlers = [
-  http.post('/api/v1/follows/:toUserId', ({ params }) => {
+  http.post('*/api/v1/follows/:toUserId', ({ params }) => {
     const toUserId = Number(params.toUserId)
     const fromUserId = MOCK_USER_ID
 
-    const exists = follows.some(
-      (follow) =>
-        follow.fromUserId === fromUserId && follow.toUserId === toUserId
+    const index = follows.findIndex(
+      (f) => f.fromUserId === fromUserId && f.toUserId === toUserId
     )
 
-    if (!exists) {
+    if (index !== -1) {
+      follows.splice(index, 1)
+    } else {
       follows.push({
         fromUserId,
         toUserId,
@@ -33,7 +34,7 @@ export const followHandlers = [
 
     return HttpResponse.json(response)
   }),
-  http.get('/api/v1/follows/:userId/following', ({ params }) => {
+  http.get('*/api/v1/follows/:userId/following', ({ params }) => {
     const userId = Number(params.userId)
 
     const followingUserIds = follows
@@ -49,7 +50,7 @@ export const followHandlers = [
       data,
     })
   }),
-  http.get('/api/v1/follows/:userId/follower', ({ params }) => {
+  http.get('*/api/v1/follows/:userId/follower', ({ params }) => {
     const userId = Number(params.userId)
 
     const followerUserIds = follows
@@ -65,7 +66,7 @@ export const followHandlers = [
       data,
     })
   }),
-  http.delete('/api/v1/follows/followers/:followerId', ({ params }) => {
+  http.delete('*/api/v1/follows/followers/:followerId', ({ params }) => {
     const followerId = Number(params.followerId)
     const myUserId = MOCK_USER_ID
 

@@ -10,6 +10,7 @@ export function useRecentSearchQuery() {
   return useQuery<RecentSearchItem[]>({
     queryKey: RECENT_SEARCH_QUERY_KEY,
     queryFn: getRecentSearch,
+    staleTime: Infinity,
   })
 }
 

@@ -7,7 +7,7 @@ export async function getRecentSearch(): Promise<RecentSearchItem[]> {
   const raw = await response.json()
   const parsed = RecentSearchListResponseSchema.parse(raw)
 
-  if (!parsed.success) {
+  if (!parsed.isSuccess) {
     throw new Error(parsed.message || 'Failed to load recent searches')
   }
 

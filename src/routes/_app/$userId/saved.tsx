@@ -5,7 +5,7 @@ import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
 import { useBookmarkedPostsQuery } from '@/entities/post/model/hooks/useBookmarkedPostsQuery'
 import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePostsGrid'
 
-export const Route = createFileRoute('/_app/$profile_name/saved')({
+export const Route = createFileRoute('/_app/$userId/saved')({
   component: RouteComponent,
 })
 

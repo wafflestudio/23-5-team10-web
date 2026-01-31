@@ -5,6 +5,8 @@ interface RegisterRequest {
   email: string
   password: string
   nickname: string
+  name?: string
+  birthday?: string
 }
 
 interface LoginRequest {
@@ -71,29 +73,31 @@ export const authHandlers = [
         {
           code: 'AUTH_400',
           message: '이미 존재하는 이메일/닉네임입니다.',
-          data: {
-            accessToken: 'string',
-            refreshToken: 'string',
-          },
           success: false,
         },
         { status: 400 }
       )
     }
 
-    authDb.push({
-      userId: authDb.length + 1,
+    const userId = authDb.length + 1
+    const userObj = {
+      userId,
       email: newUser.email,
       password: newUser.password,
       nickname: newUser.nickname,
-    })
+    }
+    authDb.push(userObj)
 
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '회원가입 및 로그인 성공',
       data: {
-        accessToken: 'mock-access-token-123',
-        refreshToken: 'mock-refresh-token-456',
+        accessToken: `mock-access-token-${userId}`,
+        user: {
+          id: userId,
+          nickname: userObj.nickname,
+          profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+        },
       },
       success: true,
     })
@@ -135,9 +139,29 @@ export const authHandlers = [
       message: '로그인 성공',
       data: {
         accessToken: `mock-access-token-${userExists.userId}`,
-        refreshToken: `mock-refresh-token-${userExists.userId}`,
+        user: {
+          id: userExists.userId,
+          nickname: userExists.nickname,
+          profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+        },
       },
       success: true,
+    })
+  }),
+
+  http.post('*/api/v1/auth/refresh', () => {
+    return HttpResponse.json({
+      success: true,
+      code: 'COMMON_200',
+      message: '토큰 재발급 성공',
+      data: {
+        accessToken: 'mock-refreshed-access-token',
+        user: {
+          id: 1,
+          nickname: 'me',
+          profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+        },
+      },
     })
   }),
 ]

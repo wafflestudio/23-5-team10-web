@@ -13,7 +13,7 @@ type BaseNavigationSidebarItem = {
   icon: ComponentType<{ className?: string }>
 }
 
-export const MOCK_PROFILE_NAME = 'me'
+export const MOCK_USER_ID = 1
 
 export type NavigationSidebarLinkTo = '/' | '/explore'
 

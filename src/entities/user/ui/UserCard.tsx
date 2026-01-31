@@ -10,23 +10,38 @@ type UserCardProps = {
 }
 
 export function UserCard({ user, type, onRemove, onClick }: UserCardProps) {
+  const initial = user.nickname.trim().slice(0, 1).toUpperCase()
+
   return (
     <div
       className="flex cursor-pointer items-center justify-between rounded-lg p-2 hover:bg-gray-100"
       onClick={onClick}
     >
       <div className="flex items-center gap-2">
-        <img
-          src={user.profileImageUrl}
-          alt={user.nickname}
-          className="h-10 w-10 rounded-full"
-        />
+        {user.profileImageUrl ? (
+          <img
+            src={user.profileImageUrl}
+            alt={user.nickname}
+            className="h-10 w-10 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            aria-label={`${user.nickname} 프로필 이미지`}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-base font-semibold text-gray-500"
+          >
+            {initial || '?'}
+          </div>
+        )}
         <div>
           <h3 className="text-sm font-bold">{user.nickname}</h3>
-          <p className="text-xs text-gray-500">
-            {user.name}
-            {type === 'recent' && user.followed && ' · 팔로잉'}
-          </p>
+          {(user.name || (type === 'recent' && user.followed)) && (
+            <p className="text-xs text-gray-500">
+              {user.name}
+              {type === 'recent' &&
+                user.followed &&
+                (user.name ? ' · 팔로잉' : '팔로잉')}
+            </p>
+          )}
         </div>
       </div>
       {type === 'recent' && onRemove && (

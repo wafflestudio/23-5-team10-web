@@ -4,7 +4,7 @@ import type { RecentSearchItem } from '@/entities/search'
 
 type RecentSearchListProps = {
   items: RecentSearchItem[]
-  onClickItem: (nickname: string) => void
+  onClickItem: (userId: number) => void
   onRemoveItem: (userId: number) => void
   onClearAll: () => void
 }
@@ -49,7 +49,7 @@ export function RecentSearchList({
               }}
               type="recent"
               onRemove={() => onRemoveItem(item.userId)}
-              onClick={() => onClickItem(item.nickname)}
+              onClick={() => onClickItem(item.userId)}
             />
           ))}
         </div>

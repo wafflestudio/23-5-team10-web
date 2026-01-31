@@ -82,7 +82,7 @@ describe('AlbumSelectDropdown', () => {
             {
               code: '200',
               message: 'Success',
-              success: true,
+              isSuccess: true,
               data: [
                 {
                   albumId: 1,
@@ -173,7 +173,7 @@ describe('AlbumSelectDropdown', () => {
             {
               code: '200',
               message: 'Success',
-              success: true,
+              isSuccess: true,
               data: [
                 {
                   albumId: 1,
@@ -266,7 +266,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [],
           })
         }),
@@ -274,7 +274,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: 3,
           })
         })
@@ -331,7 +331,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [],
           })
         }),
@@ -339,7 +339,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: 3,
           })
         })
@@ -490,7 +490,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [
               {
                 albumId: 1,
@@ -546,7 +546,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [
               {
                 albumId: 1,
@@ -561,7 +561,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
           })
         })
       )
@@ -619,7 +619,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [
               {
                 albumId: 1,
@@ -689,7 +689,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [
               {
                 albumId: 1,
@@ -755,7 +755,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [],
           })
         }),
@@ -763,7 +763,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: 3,
           })
         })
@@ -816,7 +816,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [
               {
                 albumId: 1,
@@ -831,7 +831,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
           })
         })
       )
@@ -891,7 +891,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: [],
           })
         }),
@@ -900,7 +900,7 @@ describe('AlbumSelectDropdown', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
-            success: true,
+            isSuccess: true,
             data: 3,
           })
         })
