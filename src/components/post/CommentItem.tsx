@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { Heart, MoreHorizontal } from 'lucide-react'
 import { formatRelativeTime } from '../../utils/date.ts'
 import CommentMenuModal from './CommentMenuModal'
+import { useAuthStore } from '@/shared/auth/authStore'
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar.tsx'
 
 interface Comment {
   id: number
@@ -30,7 +32,7 @@ export default function CommentItem({
   onHeartClick,
 }: CommentItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const currentUserId = 999
+  const { user } = useAuthStore()
 
   const timeDisplay = useMemo(
     () => formatRelativeTime(comment.createdAt),
@@ -55,11 +57,16 @@ export default function CommentItem({
         onDoubleClick={() => onDoubleClick(comment.id)}
       >
         <div className="flex flex-1 items-start gap-3">
-          <img
-            src={comment.profileImageUrl}
-            className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} mt-0.5 shrink-0 rounded-full object-cover`}
-            alt=""
-          />
+          <Avatar
+            className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} mt-0.5 shrink-0`}
+          >
+            <AvatarImage
+              src={comment.profileImageUrl}
+              alt={comment.nickname}
+              className="object-cover"
+            />
+            <AvatarFallback>{comment.nickname[0]}</AvatarFallback>
+          </Avatar>
           <div className="text-sm leading-tight">
             <span className="mr-2 font-semibold text-black">
               {comment.nickname}
@@ -110,7 +117,7 @@ export default function CommentItem({
         <CommentMenuModal
           onClose={() => setIsMenuOpen(false)}
           onDelete={handleDelete}
-          isMine={comment.userId === currentUserId}
+          isMine={user ? comment.userId === user.id : false}
         />
       )}
     </>
