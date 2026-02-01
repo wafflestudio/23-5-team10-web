@@ -15,7 +15,7 @@ interface LoginRequest {
 }
 
 export const authHandlers = [
-  http.get('*/api/v1/auth/check-nickname', ({ request }) => {
+  http.get('*/auth/check-nickname', ({ request }) => {
     const url = new URL(request.url)
     const nickname = url.searchParams.get('nickname')
     const isDuplicate = authDb.some((user) => user.nickname === nickname)
@@ -37,7 +37,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/api/v1/auth/check-account', async ({ request }) => {
+  http.post('*/auth/check-account', async ({ request }) => {
     const { identity } = (await request.json()) as { identity: string }
     const user = authDb.find(
       (u) => u.email === identity || u.nickname === identity
@@ -62,7 +62,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/api/v1/auth/register', async ({ request }) => {
+  http.post('*/auth/register', async ({ request }) => {
     const newUser = (await request.json()) as RegisterRequest
     const isDuplicate = authDb.some(
       (u) => u.email === newUser.email || u.nickname === newUser.nickname
@@ -96,14 +96,14 @@ export const authHandlers = [
         user: {
           id: userId,
           nickname: userObj.nickname,
-          profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+          profileImageUrl: `https://i.pravatar.cc/150?u=${userId}`,
         },
       },
       success: true,
     })
   }),
 
-  http.post('*/api/v1/auth/login', async ({ request }) => {
+  http.post('*/auth/login', async ({ request }) => {
     const { loginId, password } = (await request.json()) as LoginRequest
 
     const userExists = authDb.find(
@@ -142,24 +142,29 @@ export const authHandlers = [
         user: {
           id: userExists.userId,
           nickname: userExists.nickname,
-          profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+          profileImageUrl: `https://i.pravatar.cc/150?u=${userExists.userId}`,
         },
       },
       success: true,
     })
   }),
 
-  http.post('*/api/v1/auth/refresh', () => {
+  http.post('*/auth/refresh', ({ request }) => {
+    const authHeader = request.headers.get('Authorization')
+    const token = authHeader?.split('Bearer ')[1]
+    const user =
+      authDb.find((u) => `mock-access-token-${u.userId}` === token) || authDb[0]
+
     return HttpResponse.json({
       success: true,
       code: 'COMMON_200',
       message: '토큰 재발급 성공',
       data: {
-        accessToken: 'mock-refreshed-access-token',
+        accessToken: `mock-access-token-${user.userId}`,
         user: {
-          id: 1,
-          nickname: 'me',
-          profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+          id: user.userId,
+          nickname: user.nickname,
+          profileImageUrl: `https://i.pravatar.cc/150?u=${user.userId}`,
         },
       },
     })

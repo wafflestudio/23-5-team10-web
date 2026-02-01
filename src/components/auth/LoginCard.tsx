@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import instagramLogo from '../../assets/instagram-logo.svg'
 import { instance } from '../../shared/api/ky'
 import { MessageCircle } from 'lucide-react'
+import { useAuthStore } from '@/shared/auth/authStore'
 
 interface FloatingInputProps {
   label: string
@@ -14,12 +15,16 @@ interface FloatingInputProps {
 }
 
 interface LoginResponse {
-  isSuccess: boolean
+  success: boolean
   code: string
   message: string
   data: {
     accessToken: string
-    refreshToken: string
+    user: {
+      id: number
+      nickname: string
+      profileImageUrl: string
+    }
   } | null
 }
 
@@ -75,6 +80,7 @@ const LoginCard = () => {
   const [showPw, setShowPw] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
+  const setAuthenticated = useAuthStore((state) => state.setAuthenticated)
 
   const isValid = id.length > 0 && pw.length >= 6
 
@@ -84,15 +90,17 @@ const LoginCard = () => {
 
     try {
       const res = await instance
-        .post('api/v1/auth/login', {
+        .post('auth/login', {
           json: { loginId: id, password: pw },
         })
         .json<LoginResponse>()
 
-      if (res.isSuccess && res.data) {
+      if (res.success && res.data) {
         localStorage.setItem('accessToken', res.data.accessToken)
-        localStorage.setItem('refreshToken', res.data.refreshToken)
+        setAuthenticated(true, res.data.user)
         navigate({ to: '/' })
+      } else {
+        setErrorMsg(res.message || '로그인에 실패했습니다.')
       }
     } catch {
       setErrorMsg('잘못된 이메일 또는 비밀번호입니다. 다시 입력해주세요.')
