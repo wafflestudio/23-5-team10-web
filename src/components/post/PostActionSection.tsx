@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Heart, MessageCircle, Send, Bookmark, Smile } from 'lucide-react'
+import { Heart, MessageCircle, Bookmark, Smile } from 'lucide-react'
 
 interface PostActionSectionProps {
   likeCount: number
@@ -43,9 +43,6 @@ export default function PostActionSection({
           </button>
           <button className="transition-opacity hover:opacity-60">
             <MessageCircle className="h-6 w-6 text-black" />
-          </button>
-          <button className="transition-opacity hover:opacity-60">
-            <Send className="h-6 w-6 text-black" />
           </button>
         </div>
         <button
