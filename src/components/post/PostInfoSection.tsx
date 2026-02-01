@@ -171,6 +171,14 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     }
   }
 
+  const formattedFullDate = data?.createdAt
+    ? new Date(data.createdAt).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : ''
+
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
@@ -275,7 +283,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
 
       <PostActionSection
         likeCount={data?.likeCount || 0}
-        createdAt={data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
+        createdAt={formattedFullDate}
         isLiked={data?.liked || false}
         isBookmarked={data?.bookmarked || false}
         onLikeClick={() => {}}
