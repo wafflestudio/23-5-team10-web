@@ -7,11 +7,6 @@ type RefreshResponse = {
   message: string
   data: {
     accessToken: string
-    user: {
-      id: number
-      nickname: string
-      profileImageUrl: string
-    }
   }
   success: boolean
 }
