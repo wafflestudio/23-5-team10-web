@@ -77,7 +77,11 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
             {item.author.nickname}
           </span>
           <span className="text-muted-foreground text-[11px]">
-            {new Date(item.createdAt).toLocaleDateString()}
+            {new Date(item.createdAt).toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
           </span>
         </div>
       </CardHeader>

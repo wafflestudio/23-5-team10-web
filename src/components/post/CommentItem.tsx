@@ -2,37 +2,45 @@ import { useMemo, useState } from 'react'
 import { Heart, MoreHorizontal } from 'lucide-react'
 import { formatRelativeTime } from '../../utils/date.ts'
 import CommentMenuModal from './CommentMenuModal'
-import { useAuthStore } from '@/shared/auth/authStore'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar.tsx'
+import { useDeleteCommentMutation } from '@/entities/post/model/hooks/useDeleteCommentMutation'
 
 interface Comment {
   id: number
+  postId: number
   userId: number
   nickname: string
   content: string
   profileImageUrl: string
   createdAt: string
+  updatedAt: string
+  parentId: number | null
   likeCount: number
   liked: boolean
+  likedUserIds: number[]
 }
 
 interface CommentItemProps {
   comment: Comment
-  isReply?: boolean
   isLiked: boolean
   onDoubleClick: (id: number) => void
   onHeartClick: (id: number, e: React.MouseEvent) => void
+  onDeleteSuccess?: (commentId: number) => void
+  onEditClick: (comment: Comment) => void
 }
 
 export default function CommentItem({
   comment,
-  isReply = false,
   isLiked,
   onDoubleClick,
   onHeartClick,
+  onDeleteSuccess,
+  onEditClick,
 }: CommentItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user } = useAuthStore()
+  const deleteMutation = useDeleteCommentMutation(comment.postId)
+
+  const isEdited = comment.createdAt !== comment.updatedAt
 
   const timeDisplay = useMemo(
     () => formatRelativeTime(comment.createdAt),
@@ -45,6 +53,25 @@ export default function CommentItem({
   }
 
   const handleDelete = () => {
+    deleteMutation.mutate(comment.id, {
+      onSuccess: () => {
+        if (onDeleteSuccess) {
+          onDeleteSuccess(comment.id)
+        }
+      },
+    })
+    setIsMenuOpen(false)
+  }
+
+  const handleHide = () => {
+    if (onDeleteSuccess) {
+      onDeleteSuccess(comment.id)
+    }
+    setIsMenuOpen(false)
+  }
+
+  const handleEdit = () => {
+    onEditClick(comment)
     setIsMenuOpen(false)
   }
 
@@ -57,9 +84,7 @@ export default function CommentItem({
         onDoubleClick={() => onDoubleClick(comment.id)}
       >
         <div className="flex flex-1 items-start gap-3">
-          <Avatar
-            className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} mt-0.5 shrink-0`}
-          >
+          <Avatar className="mt-0.5 h-8 w-8 shrink-0">
             <AvatarImage
               src={comment.profileImageUrl}
               alt={comment.nickname}
@@ -74,18 +99,15 @@ export default function CommentItem({
             <span className="break-all text-black">{comment.content}</span>
 
             <div className="mt-[7px] flex h-4 items-center gap-3 text-xs font-semibold text-gray-500">
-              <span className="font-normal">{timeDisplay}</span>
+              <span className="font-normal">
+                {timeDisplay}
+                {isEdited && ' (수정됨)'}
+              </span>
               {displayLikeCount > 0 && (
                 <span className="font-semibold text-gray-500">
                   좋아요 {displayLikeCount}개
                 </span>
               )}
-              <button
-                className="hover:text-gray-900"
-                onClick={(e) => e.stopPropagation()}
-              >
-                답글 달기
-              </button>
               <button
                 className="p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMenuClick}
@@ -117,7 +139,10 @@ export default function CommentItem({
         <CommentMenuModal
           onClose={() => setIsMenuOpen(false)}
           onDelete={handleDelete}
-          isMine={user ? comment.userId === user.id : false}
+          onEdit={handleEdit}
+          onHide={handleHide}
+          authorId={comment.userId}
+          nickname={comment.nickname}
         />
       )}
     </>

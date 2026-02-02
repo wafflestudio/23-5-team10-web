@@ -20,9 +20,8 @@ export const commentHandlers = [
 
   http.post('*/api/v1/posts/:postId/comments', async ({ request, params }) => {
     const { postId } = params
-    const { content, parentId } = (await request.json()) as {
+    const { content } = (await request.json()) as {
       content: string
-      parentId?: number | null
     }
 
     const authHeader = request.headers.get('Authorization')
@@ -39,10 +38,10 @@ export const commentHandlers = [
       content: content,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      parentId: parentId || null,
+      parentId: null as null,
       likeCount: 0,
       liked: false,
-      likedUserIds: [],
+      likedUserIds: [] as number[],
     }
 
     comments.push(newComment)
@@ -54,6 +53,42 @@ export const commentHandlers = [
       success: true,
     })
   }),
+
+  http.put(
+    '*/api/v1/posts/:postId/comments/:commentId',
+    async ({ request, params }) => {
+      const { commentId } = params
+      const { content } = (await request.json()) as { content: string }
+
+      const commentIndex = comments.findIndex(
+        (c) => String(c.id) === String(commentId)
+      )
+
+      if (commentIndex === -1) {
+        return HttpResponse.json(
+          {
+            code: 'COMMENT_404',
+            message: '댓글을 찾을 수 없습니다.',
+            success: false,
+          },
+          { status: 404 }
+        )
+      }
+
+      comments[commentIndex] = {
+        ...comments[commentIndex],
+        content,
+        updatedAt: new Date().toISOString(),
+      }
+
+      return HttpResponse.json({
+        code: 'COMMON_200',
+        message: '댓글 수정 성공',
+        data: comments[commentIndex],
+        success: true,
+      })
+    }
+  ),
 
   http.post(
     '*/api/v1/posts/:postId/comments/:commentId/like',
@@ -110,4 +145,20 @@ export const commentHandlers = [
       })
     }
   ),
+
+  http.delete('*/api/v1/posts/:postId/comments/:commentId', ({ params }) => {
+    const { commentId } = params
+    const index = comments.findIndex((c) => String(c.id) === String(commentId))
+
+    if (index !== -1) {
+      comments.splice(index, 1)
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '댓글 삭제 성공',
+      data: null,
+      success: true,
+    })
+  }),
 ]
