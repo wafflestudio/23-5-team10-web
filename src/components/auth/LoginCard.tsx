@@ -85,7 +85,7 @@ const LoginCard = () => {
 
     try {
       const res = await instance
-        .post('auth/login', {
+        .post('api/v1/auth/login', {
           json: { loginId: id, password: pw },
         })
         .json<LoginResponse>()
