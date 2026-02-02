@@ -1,10 +1,64 @@
 import { http, HttpResponse, delay } from 'msw'
 import { users } from '../db/user.db'
 import { follows } from '../db/follow.db'
+import { authDb } from '../db/auth.db'
 
 const CURRENT_USER_ID = 1
 
+function getUserIdFromToken(request: Request): number | null {
+  const authHeader = request.headers.get('Authorization')
+  const token = authHeader?.replace(/^Bearer\s+/i, '')
+  if (!token?.startsWith('mock-access-token-')) return null
+  const userId = Number(token.replace('mock-access-token-', ''))
+  return Number.isInteger(userId) ? userId : null
+}
+
 export const userHandlers = [
+  http.get('*/api/v1/users/me', ({ request }) => {
+    const userId = getUserIdFromToken(request)
+    if (!userId) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_401',
+          message: '인증이 필요합니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 401 }
+      )
+    }
+
+    const authUser = authDb.find((u) => u.userId === userId)
+    const profileUser = users.find((u) => u.userId === userId)
+
+    if (!authUser) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '사용자를 찾을 수 없습니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '요청에 성공하였습니다.',
+      data: {
+        userId: authUser.userId,
+        email: authUser.email,
+        nickname: profileUser?.nickname ?? authUser.nickname,
+        name: profileUser?.name ?? null,
+        profileImageUrl: profileUser?.profileImageUrl ?? null,
+        bio: profileUser?.bio ?? null,
+        role: 'USER',
+      },
+      isSuccess: true,
+    })
+  }),
+
   http.get('*/api/v1/users/:userId/profile', ({ params }) => {
     const userId = Number(params.userId)
 

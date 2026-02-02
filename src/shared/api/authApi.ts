@@ -7,11 +7,6 @@ type RefreshResponse = {
   message: string
   data: {
     accessToken: string
-    user: {
-      id: number
-      nickname: string
-      profileImageUrl: string
-    }
   }
   success: boolean
 }
@@ -22,7 +17,7 @@ export const authInstance = ky.create({
 })
 
 export async function refreshAccessToken() {
-  const response = await authInstance.post('api/v1/auth/refresh')
+  const response = await authInstance.post('auth/refresh')
   const result = await response.json<RefreshResponse>()
   return result.data
 }

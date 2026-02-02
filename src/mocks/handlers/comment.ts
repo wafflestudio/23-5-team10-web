@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { comments } from '../db/comment.db'
+import { authDb } from '../db/auth.db'
 
 export const commentHandlers = [
   http.get('*/api/v1/posts/:postId/comments', ({ params }) => {
@@ -19,24 +20,28 @@ export const commentHandlers = [
 
   http.post('*/api/v1/posts/:postId/comments', async ({ request, params }) => {
     const { postId } = params
-    const { content, parentId } = (await request.json()) as {
+    const { content } = (await request.json()) as {
       content: string
-      parentId?: number | null
     }
+
+    const authHeader = request.headers.get('Authorization')
+    const token = authHeader?.split('Bearer ')[1]
+    const user =
+      authDb.find((u) => `mock-access-token-${u.userId}` === token) || authDb[0]
 
     const newComment = {
       id: Math.floor(Math.random() * 1000000),
       postId: Number(postId),
-      userId: 1,
-      nickname: 'me',
-      profileImageUrl: 'https://i.pravatar.cc/150?u=1',
+      userId: user.userId,
+      nickname: user.nickname,
+      profileImageUrl: `https://i.pravatar.cc/150?u=${user.userId}`,
       content: content,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      parentId: parentId || null,
+      parentId: null as null,
       likeCount: 0,
       liked: false,
-      likedUserIds: [],
+      likedUserIds: [] as number[],
     }
 
     comments.push(newComment)
@@ -49,34 +54,87 @@ export const commentHandlers = [
     })
   }),
 
-  http.post('*/api/v1/posts/:postId/comments/:commentId/like', ({ params }) => {
-    const { commentId } = params
-    const comment = comments.find((c) => String(c.id) === String(commentId))
+  http.put(
+    '*/api/v1/posts/:postId/comments/:commentId',
+    async ({ request, params }) => {
+      const { commentId } = params
+      const { content } = (await request.json()) as { content: string }
 
-    if (comment && !comment.liked) {
-      comment.liked = true
-      comment.likeCount += 1
-      comment.likedUserIds.push(1)
+      const commentIndex = comments.findIndex(
+        (c) => String(c.id) === String(commentId)
+      )
+
+      if (commentIndex === -1) {
+        return HttpResponse.json(
+          {
+            code: 'COMMENT_404',
+            message: '댓글을 찾을 수 없습니다.',
+            success: false,
+          },
+          { status: 404 }
+        )
+      }
+
+      comments[commentIndex] = {
+        ...comments[commentIndex],
+        content,
+        updatedAt: new Date().toISOString(),
+      }
+
+      return HttpResponse.json({
+        code: 'COMMON_200',
+        message: '댓글 수정 성공',
+        data: comments[commentIndex],
+        success: true,
+      })
     }
+  ),
 
-    return HttpResponse.json({
-      code: 'COMMON_200',
-      message: `댓글 ${commentId} 좋아요 성공`,
-      data: null,
-      success: true,
-    })
-  }),
-
-  http.delete(
+  http.post(
     '*/api/v1/posts/:postId/comments/:commentId/like',
-    ({ params }) => {
+    ({ request, params }) => {
       const { commentId } = params
       const comment = comments.find((c) => String(c.id) === String(commentId))
 
-      if (comment && comment.liked) {
+      const authHeader = request.headers.get('Authorization')
+      const token = authHeader?.split('Bearer ')[1]
+      const user =
+        authDb.find((u) => `mock-access-token-${u.userId}` === token) ||
+        authDb[0]
+
+      if (comment && !comment.likedUserIds.includes(user.userId)) {
+        comment.liked = true
+        comment.likeCount += 1
+        comment.likedUserIds.push(user.userId)
+      }
+
+      return HttpResponse.json({
+        code: 'COMMON_200',
+        message: `댓글 ${commentId} 좋아요 성공`,
+        data: null,
+        success: true,
+      })
+    }
+  ),
+
+  http.delete(
+    '*/api/v1/posts/:postId/comments/:commentId/like',
+    ({ request, params }) => {
+      const { commentId } = params
+      const comment = comments.find((c) => String(c.id) === String(commentId))
+
+      const authHeader = request.headers.get('Authorization')
+      const token = authHeader?.split('Bearer ')[1]
+      const user =
+        authDb.find((u) => `mock-access-token-${u.userId}` === token) ||
+        authDb[0]
+
+      if (comment && comment.likedUserIds.includes(user.userId)) {
         comment.liked = false
         comment.likeCount = Math.max(0, comment.likeCount - 1)
-        comment.likedUserIds = comment.likedUserIds.filter((id) => id !== 1)
+        comment.likedUserIds = comment.likedUserIds.filter(
+          (id) => id !== user.userId
+        )
       }
 
       return HttpResponse.json({
@@ -87,4 +145,20 @@ export const commentHandlers = [
       })
     }
   ),
+
+  http.delete('*/api/v1/posts/:postId/comments/:commentId', ({ params }) => {
+    const { commentId } = params
+    const index = comments.findIndex((c) => String(c.id) === String(commentId))
+
+    if (index !== -1) {
+      comments.splice(index, 1)
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '댓글 삭제 성공',
+      data: null,
+      success: true,
+    })
+  }),
 ]
