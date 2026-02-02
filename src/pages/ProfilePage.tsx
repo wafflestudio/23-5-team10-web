@@ -102,7 +102,7 @@ export function ProfilePage() {
         postsCount={profile.postsCount}
         followersCount={profile.followerCount}
         followingCount={profile.followingCount}
-        defaultIsFollowing={profile.followed}
+        defaultIsFollowing={profile.isFollowed}
         onFollowToggle={handleFollowToggle}
       />
 

@@ -22,7 +22,7 @@ export const SearchUserSchema = z.object({
   nickname: z.string(),
   profileImageUrl: z.string().nullable(),
   name: z.string().nullable(),
-  followed: z.boolean(),
+  isFollowed: z.boolean(),
 })
 
 export const SearchUserResponseSchema = z.object({
@@ -44,7 +44,7 @@ export const ProfileUserSchema = z.object({
   followerCount: z.number(),
   followingCount: z.number(),
   me: z.boolean(),
-  followed: z.boolean(),
+  isFollowed: z.boolean(),
 })
 
 export const ProfileUserResponseSchema = z.object({
