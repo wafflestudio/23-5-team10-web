@@ -60,11 +60,16 @@ export const instance = ky.create({
       (request, options) => {
         requestStartTimes.set(options, performance.now())
 
+        const token = localStorage.getItem('accessToken')
+        if (token) {
+          request.headers.set('Authorization', `Bearer ${token}`)
+        }
+
         if (DEV) {
           console.groupCollapsed(`[API][REQ] ${request.method} ${request.url}`)
           console.debug('options', {
             retry: options.retry,
-            headers: maskHeaders(options.headers),
+            headers: maskHeaders(request.headers),
           })
           console.groupEnd()
         }
@@ -124,6 +129,7 @@ export const instance = ky.create({
 
           try {
             const data = await refreshPromise
+            localStorage.setItem('accessToken', data.accessToken)
             useAuthStore.getState().setAuthenticated(true, data.user)
             isRefreshing = false
             refreshPromise = null
@@ -131,6 +137,7 @@ export const instance = ky.create({
           } catch {
             isRefreshing = false
             refreshPromise = null
+            localStorage.removeItem('accessToken')
             useAuthStore.getState().setSessionExpired()
             return error
           }

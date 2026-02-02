@@ -22,7 +22,7 @@ export const authInstance = ky.create({
 })
 
 export async function refreshAccessToken() {
-  const response = await authInstance.post('api/v1/auth/refresh')
+  const response = await authInstance.post('auth/refresh')
   const result = await response.json<RefreshResponse>()
   return result.data
 }
