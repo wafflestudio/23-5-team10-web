@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import type { PostData } from './PostDetail'
 import PostMenuModal from './PostMenuModal'
@@ -22,285 +29,366 @@ interface Comment {
   likedUserIds: number[]
 }
 
-export default function PostInfoSection({ data }: { data: PostData | null }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [comments, setComments] = useState<Comment[]>([])
-  const [likedComments, setLikedComments] = useState<{
-    [key: number]: boolean
-  }>({})
-  const [hasMore, setHasMore] = useState(true)
-  const [editingComment, setEditingComment] = useState<Comment | null>(null)
+export interface PostInfoSectionRef {
+  handlePostLike: () => Promise<void>
+}
 
-  const observerTarget = useRef<HTMLDivElement>(null)
-  const pageRef = useRef(1)
-  const isFetching = useRef(false)
-  const commentInputRef = useRef<HTMLInputElement>(null)
+interface PostInfoSectionProps {
+  data: PostData | null
+  onDataChange?: (newData: PostData) => void
+}
 
-  const fetchComments = useCallback(
-    async (pageNum: number) => {
-      const postId = data?.id
-      if (!postId || isFetching.current) return
+const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
+  ({ data: initialData, onDataChange }, ref) => {
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [postData, setPostData] = useState<PostData | null>(initialData)
+    const [comments, setComments] = useState<Comment[]>([])
+    const [likedComments, setLikedComments] = useState<{
+      [key: number]: boolean
+    }>({})
+    const [hasMore, setHasMore] = useState(true)
+    const [editingComment, setEditingComment] = useState<Comment | null>(null)
 
-      isFetching.current = true
-      try {
-        const response = await instance
-          .get(`api/v1/posts/${postId}/comments`, {
-            searchParams: { page: pageNum },
-          })
-          .json<{ data: Comment[]; success: boolean }>()
+    const observerTarget = useRef<HTMLDivElement>(null)
+    const pageRef = useRef(1)
+    const isFetching = useRef(false)
+    const commentInputRef = useRef<HTMLInputElement>(null)
 
-        if (response.success && response.data.length > 0) {
-          const newComments = response.data
+    useEffect(() => {
+      setPostData(initialData)
+    }, [initialData])
 
-          setLikedComments((prev) => {
-            const nextLiked = { ...prev }
-            newComments.forEach((c: Comment) => {
-              nextLiked[c.id] = c.liked
+    useImperativeHandle(ref, () => ({
+      handlePostLike: async () => {
+        await handlePostLikeClick()
+      },
+    }))
+
+    const fetchComments = useCallback(
+      async (pageNum: number) => {
+        const postId = postData?.id
+        if (!postId || isFetching.current) return
+
+        isFetching.current = true
+        try {
+          const response = await instance
+            .get(`api/v1/posts/${postId}/comments`, {
+              searchParams: { page: pageNum },
             })
-            return nextLiked
-          })
+            .json<{ data: Comment[]; success: boolean }>()
 
-          setComments((prev) => {
-            if (pageNum === 1) return newComments
-            const existingIds = new Set(prev.map((c) => c.id))
-            const filtered = newComments.filter(
-              (c: Comment) => !existingIds.has(c.id)
-            )
-            return [...prev, ...filtered]
-          })
-          pageRef.current = pageNum
-          setHasMore(true)
+          if (response.success && response.data.length > 0) {
+            const newComments = response.data
+
+            setLikedComments((prev) => {
+              const nextLiked = { ...prev }
+              newComments.forEach((c: Comment) => {
+                nextLiked[c.id] = c.liked
+              })
+              return nextLiked
+            })
+
+            setComments((prev) => {
+              if (pageNum === 1) return newComments
+              const existingIds = new Set(prev.map((c) => c.id))
+              const filtered = newComments.filter(
+                (c: Comment) => !existingIds.has(c.id)
+              )
+              return [...prev, ...filtered]
+            })
+            pageRef.current = pageNum
+            setHasMore(true)
+          } else {
+            setHasMore(false)
+          }
+        } catch (error) {
+          console.error(error)
+        } finally {
+          isFetching.current = false
+        }
+      },
+      [postData?.id]
+    )
+
+    useEffect(() => {
+      if (postData?.id) {
+        fetchComments(1)
+      }
+    }, [fetchComments, postData?.id])
+
+    useEffect(() => {
+      const currentTarget = observerTarget.current
+      if (!currentTarget || !hasMore) return
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !isFetching.current) {
+            const nextPage = pageRef.current + 1
+            fetchComments(nextPage)
+          }
+        },
+        { threshold: 0.1 }
+      )
+
+      observer.observe(currentTarget)
+
+      return () => {
+        if (currentTarget) observer.unobserve(currentTarget)
+      }
+    }, [hasMore, fetchComments])
+
+    const handlePostLikeClick = async () => {
+      if (!postData) return
+      const isCurrentlyLiked = postData.liked
+      const postId = postData.id
+
+      try {
+        if (isCurrentlyLiked) {
+          await instance.delete(`api/v1/posts/${postId}/like`)
         } else {
-          setHasMore(false)
+          await instance.post(`api/v1/posts/${postId}/like`)
+        }
+
+        const updatedData = {
+          ...postData,
+          liked: !isCurrentlyLiked,
+          likeCount: postData.likeCount + (isCurrentlyLiked ? -1 : 1),
+        }
+
+        setPostData(updatedData)
+        onDataChange?.(updatedData)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    const handleBookmarkClick = async () => {
+      if (!postData) return
+      const isCurrentlyBookmarked = postData.bookmarked
+      const postId = postData.id
+
+      try {
+        if (isCurrentlyBookmarked) {
+          await instance.delete(`api/v1/posts/${postId}/bookmark`)
+        } else {
+          await instance.post(`api/v1/posts/${postId}/bookmark`)
+        }
+
+        const updatedData = {
+          ...postData,
+          bookmarked: !isCurrentlyBookmarked,
+        }
+
+        setPostData(updatedData)
+        onDataChange?.(updatedData)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    const handleCommentSubmit = async (content: string) => {
+      const postId = postData?.id
+      if (!postId) return
+
+      try {
+        if (editingComment) {
+          const response = await instance
+            .put(`api/v1/posts/${postId}/comments/${editingComment.id}`, {
+              json: { content },
+            })
+            .json<{ data: Comment; success: boolean }>()
+
+          if (response.success) {
+            setComments((prev) =>
+              prev.map((c) => (c.id === editingComment.id ? response.data : c))
+            )
+            setEditingComment(null)
+          }
+        } else {
+          const response = await instance
+            .post(`api/v1/posts/${postId}/comments`, {
+              json: { content },
+            })
+            .json<{ data: Comment; success: boolean }>()
+
+          if (response.success) {
+            setComments((prev) => [response.data, ...prev])
+            setLikedComments((prev) => ({
+              ...prev,
+              [response.data.id]: response.data.liked,
+            }))
+          }
         }
       } catch (error) {
         console.error(error)
-      } finally {
-        isFetching.current = false
       }
-    },
-    [data?.id]
-  )
-
-  useEffect(() => {
-    if (data?.id) {
-      fetchComments(1)
     }
-  }, [fetchComments, data?.id])
 
-  useEffect(() => {
-    const currentTarget = observerTarget.current
-    if (!currentTarget || !hasMore) return
+    const handleHeartClick = async (
+      commentId: number,
+      e?: React.MouseEvent
+    ) => {
+      e?.stopPropagation()
+      const postId = postData?.id
+      if (!postId) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isFetching.current) {
-          const nextPage = pageRef.current + 1
-          fetchComments(nextPage)
-        }
-      },
-      { threshold: 0.1 }
-    )
+      const isCurrentlyLiked = !!likedComments[commentId]
 
-    observer.observe(currentTarget)
-
-    return () => {
-      if (currentTarget) observer.unobserve(currentTarget)
-    }
-  }, [hasMore, fetchComments])
-
-  const handleCommentSubmit = async (content: string) => {
-    const postId = data?.id
-    if (!postId) return
-
-    try {
-      if (editingComment) {
-        const response = await instance
-          .put(`api/v1/posts/${postId}/comments/${editingComment.id}`, {
-            json: { content },
-          })
-          .json<{ data: Comment; success: boolean }>()
-
-        if (response.success) {
-          setComments((prev) =>
-            prev.map((c) => (c.id === editingComment.id ? response.data : c))
+      try {
+        if (isCurrentlyLiked) {
+          await instance.delete(
+            `api/v1/posts/${postId}/comments/${commentId}/like`
           )
-          setEditingComment(null)
+        } else {
+          await instance.post(
+            `api/v1/posts/${postId}/comments/${commentId}/like`
+          )
         }
-      } else {
-        const response = await instance
-          .post(`api/v1/posts/${postId}/comments`, {
-            json: { content },
-          })
-          .json<{ data: Comment; success: boolean }>()
 
-        if (response.success) {
-          setComments((prev) => [response.data, ...prev])
-          setLikedComments((prev) => ({
-            ...prev,
-            [response.data.id]: response.data.liked,
-          }))
-        }
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const handleHeartClick = async (commentId: number, e?: React.MouseEvent) => {
-    e?.stopPropagation()
-    const postId = data?.id
-    if (!postId) return
-
-    const isCurrentlyLiked = !!likedComments[commentId]
-
-    try {
-      if (isCurrentlyLiked) {
-        await instance.delete(
-          `api/v1/posts/${postId}/comments/${commentId}/like`
+        setLikedComments((p) => ({ ...p, [commentId]: !isCurrentlyLiked }))
+        setComments((prev) =>
+          prev.map((c) =>
+            c.id === commentId
+              ? {
+                  ...c,
+                  likeCount: Math.max(
+                    0,
+                    c.likeCount + (isCurrentlyLiked ? -1 : 1)
+                  ),
+                }
+              : c
+          )
         )
-      } else {
-        await instance.post(`api/v1/posts/${postId}/comments/${commentId}/like`)
+      } catch (error) {
+        console.error(error)
       }
-
-      setLikedComments((p) => ({ ...p, [commentId]: !isCurrentlyLiked }))
-      setComments((prev) =>
-        prev.map((c) =>
-          c.id === commentId
-            ? {
-                ...c,
-                likeCount: Math.max(
-                  0,
-                  c.likeCount + (isCurrentlyLiked ? -1 : 1)
-                ),
-              }
-            : c
-        )
-      )
-    } catch (error) {
-      console.error(error)
     }
-  }
 
-  const handleDoubleClick = (id: number) => {
-    if (!likedComments[id]) {
-      handleHeartClick(id)
+    const handleDoubleClick = (id: number) => {
+      if (!likedComments[id]) {
+        handleHeartClick(id)
+      }
     }
-  }
 
-  const handleDeleteSuccess = (commentId: number) => {
-    setComments((prev) => prev.filter((c) => c.id !== commentId))
-  }
-
-  const handleEditClick = (comment: Comment) => {
-    setEditingComment(comment)
-    setTimeout(() => {
-      commentInputRef.current?.focus()
-    }, 0)
-  }
-
-  const handleCommentIconClick = () => {
-    if (editingComment) {
-      setEditingComment(null)
+    const handleDeleteSuccess = (commentId: number) => {
+      setComments((prev) => prev.filter((c) => c.id !== commentId))
     }
-    setTimeout(() => {
-      commentInputRef.current?.focus()
-    }, 0)
-  }
 
-  const formattedFullDate = data?.createdAt
-    ? new Date(data.createdAt).toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : ''
+    const handleEditClick = (comment: Comment) => {
+      setEditingComment(comment)
+      setTimeout(() => {
+        commentInputRef.current?.focus()
+      }, 0)
+    }
 
-  return (
-    <div className="flex h-full flex-col bg-white">
-      <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center gap-3">
-          {data?.profileImageUrl ? (
-            <img
-              src={data.profileImageUrl}
-              className="h-8 w-8 rounded-full object-cover"
-              alt=""
-            />
-          ) : (
-            <div className="h-8 w-8 rounded-full bg-gray-200" />
-          )}
-          <div className="text-sm font-semibold text-black">
-            {data?.nickname || ''}
-          </div>
-        </div>
-        <button onClick={() => setIsModalOpen(true)} className="p-1">
-          <MoreHorizontal className="h-6 w-6 text-black" />
-        </button>
-      </div>
+    const handleCommentIconClick = () => {
+      if (editingComment) {
+        setEditingComment(null)
+      }
+      setTimeout(() => {
+        commentInputRef.current?.focus()
+      }, 0)
+    }
 
-      <div className="scrollbar-hide flex-1 overflow-y-auto px-3 py-2">
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `.scrollbar-hide::-webkit-scrollbar { display: none; }`,
-          }}
-        />
+    const formattedFullDate = postData?.createdAt
+      ? new Date(postData.createdAt).toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      : ''
 
-        <div className="mb-2 flex gap-3 border-b border-gray-50 px-1 py-3">
-          {data?.profileImageUrl ? (
-            <img
-              src={data.profileImageUrl}
-              className="h-8 w-8 shrink-0 rounded-full object-cover"
-              alt=""
-            />
-          ) : (
-            <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
-          )}
-          <div className="text-sm text-black">
-            <span className="mr-2 font-semibold">{data?.nickname}</span>
-            <span className="whitespace-pre-wrap">{data?.content}</span>
-            <div className="mt-2 text-xs font-normal text-gray-500">
-              {data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
+    return (
+      <div className="flex h-full flex-col bg-white">
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
+          <div className="flex items-center gap-3">
+            {postData?.profileImageUrl ? (
+              <img
+                src={postData.profileImageUrl}
+                className="h-8 w-8 rounded-full object-cover"
+                alt=""
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-gray-200" />
+            )}
+            <div className="text-sm font-semibold text-black">
+              {postData?.nickname || ''}
             </div>
           </div>
+          <button onClick={() => setIsModalOpen(true)} className="p-1">
+            <MoreHorizontal className="h-6 w-6 text-black" />
+          </button>
         </div>
 
-        <div className="flex flex-col">
-          {comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              isLiked={!!likedComments[comment.id]}
-              onDoubleClick={handleDoubleClick}
-              onHeartClick={handleHeartClick}
-              onDeleteSuccess={handleDeleteSuccess}
-              onEditClick={handleEditClick}
-            />
-          ))}
-          {hasMore && <div ref={observerTarget} className="h-1" />}
+        <div className="scrollbar-hide flex-1 overflow-y-auto px-3 py-2">
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `.scrollbar-hide::-webkit-scrollbar { display: none; }`,
+            }}
+          />
+
+          <div className="mb-2 flex gap-3 border-b border-gray-50 px-1 py-3">
+            {postData?.profileImageUrl ? (
+              <img
+                src={postData.profileImageUrl}
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
+                alt=""
+              />
+            ) : (
+              <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
+            )}
+            <div className="text-sm text-black">
+              <span className="mr-2 font-semibold">{postData?.nickname}</span>
+              <span className="whitespace-pre-wrap">{postData?.content}</span>
+              <div className="mt-2 text-xs font-normal text-gray-500">
+                {postData?.createdAt
+                  ? formatRelativeTime(postData.createdAt)
+                  : ''}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            {comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                isLiked={!!likedComments[comment.id]}
+                onDoubleClick={handleDoubleClick}
+                onHeartClick={handleHeartClick}
+                onDeleteSuccess={handleDeleteSuccess}
+                onEditClick={handleEditClick}
+              />
+            ))}
+            {hasMore && <div ref={observerTarget} className="h-1" />}
+          </div>
         </div>
-      </div>
 
-      <PostActionSection
-        key={editingComment ? `edit-${editingComment.id}` : 'new'}
-        likeCount={data?.likeCount || 0}
-        createdAt={formattedFullDate}
-        isLiked={data?.liked || false}
-        isBookmarked={data?.bookmarked || false}
-        onLikeClick={() => {}}
-        onBookmarkClick={() => {}}
-        onCommentSubmit={handleCommentSubmit}
-        onCommentIconClick={handleCommentIconClick}
-        inputRef={commentInputRef}
-        editValue={editingComment?.content}
-        onCancelEdit={() => setEditingComment(null)}
-      />
-
-      {isModalOpen && (
-        <PostMenuModal
-          onClose={() => setIsModalOpen(false)}
-          nickname={data?.nickname || ''}
+        <PostActionSection
+          key={editingComment ? `edit-${editingComment.id}` : 'new'}
+          likeCount={postData?.likeCount || 0}
+          createdAt={formattedFullDate}
+          isLiked={postData?.liked || false}
+          isBookmarked={postData?.bookmarked || false}
+          onLikeClick={handlePostLikeClick}
+          onBookmarkClick={handleBookmarkClick}
+          onCommentSubmit={handleCommentSubmit}
+          onCommentIconClick={handleCommentIconClick}
+          inputRef={commentInputRef}
+          editValue={editingComment?.content}
+          onCancelEdit={() => setEditingComment(null)}
         />
-      )}
-    </div>
-  )
-}
+
+        {isModalOpen && (
+          <PostMenuModal
+            onClose={() => setIsModalOpen(false)}
+            nickname={postData?.nickname || ''}
+          />
+        )}
+      </div>
+    )
+  }
+)
+
+PostInfoSection.displayName = 'PostInfoSection'
+export default PostInfoSection

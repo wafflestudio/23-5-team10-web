@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, useNavigate } from '@tanstack/react-router'
 import { X, ChevronLeft, ChevronRight, Heart } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PostInfoSection from './PostInfoSection'
+import type { PostInfoSectionRef } from './PostInfoSection'
 import { instance } from '../../shared/api/ky'
 
 export interface PostImage {
@@ -43,6 +44,8 @@ export default function PostDetail() {
   const [randomRotate, setRandomRotate] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
 
+  const infoSectionRef = useRef<PostInfoSectionRef>(null)
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -81,15 +84,25 @@ export default function PostDetail() {
     )
   }
 
-  const handleDoubleLike = () => {
+  const handleDoubleLike = async () => {
     if (isAnimating) return
     setIsAnimating(true)
+
     const rotate = Math.floor(Math.random() * 61) - 30
     setRandomRotate(rotate)
     setShowHeart(true)
+
+    if (postData && !postData.liked) {
+      await infoSectionRef.current?.handlePostLike()
+    }
+
     setTimeout(() => {
       setShowHeart(false)
     }, 700)
+  }
+
+  const handlePostDataChange = (newData: PostData) => {
+    setPostData(newData)
   }
 
   return (
@@ -212,7 +225,11 @@ export default function PostDetail() {
         </div>
 
         <div className="flex w-full flex-col border-l border-gray-200 bg-white md:w-[40%]">
-          <PostInfoSection data={postData} />
+          <PostInfoSection
+            data={postData}
+            ref={infoSectionRef}
+            onDataChange={handlePostDataChange}
+          />
         </div>
       </div>
     </div>

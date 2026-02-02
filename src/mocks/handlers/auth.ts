@@ -14,6 +14,12 @@ interface LoginRequest {
   password: string
 }
 
+const postState = {
+  liked: false,
+  bookmarked: false,
+  likeCount: 120,
+}
+
 export const authHandlers = [
   http.get('*/auth/check-nickname', ({ request }) => {
     const url = new URL(request.url)
@@ -167,6 +173,44 @@ export const authHandlers = [
           profileImageUrl: `https://i.pravatar.cc/150?u=${user.userId}`,
         },
       },
+    })
+  }),
+
+  http.post('*/api/v1/posts/:postId/like', () => {
+    postState.liked = true
+    postState.likeCount += 1
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '좋아요 성공',
+      success: true,
+    })
+  }),
+
+  http.delete('*/api/v1/posts/:postId/like', () => {
+    postState.liked = false
+    postState.likeCount -= 1
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '좋아요 취소 성공',
+      success: true,
+    })
+  }),
+
+  http.post('*/api/v1/posts/:postId/bookmark', () => {
+    postState.bookmarked = true
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '북마크 성공',
+      success: true,
+    })
+  }),
+
+  http.delete('*/api/v1/posts/:postId/bookmark', () => {
+    postState.bookmarked = false
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '북마크 취소 성공',
+      success: true,
     })
   }),
 ]
