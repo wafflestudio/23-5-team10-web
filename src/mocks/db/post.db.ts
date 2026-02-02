@@ -21,7 +21,7 @@ export const posts = [
     username: 'test_user',
     userImage: 'https://picsum.photos/id/64/50/50',
     createdAt: '2024-03-20T10:00:00Z',
-    likeCount: 120,
+    likeCount: 0,
     commentCount: 8,
   },
   {

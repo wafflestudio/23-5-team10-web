@@ -152,7 +152,10 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
         const updatedData = {
           ...postData,
           liked: !isCurrentlyLiked,
-          likeCount: postData.likeCount + (isCurrentlyLiked ? -1 : 1),
+          likeCount: Math.max(
+            0,
+            postData.likeCount + (isCurrentlyLiked ? -1 : 1)
+          ),
         }
 
         setPostData(updatedData)
@@ -365,7 +368,6 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
         </div>
 
         <PostActionSection
-          key={editingComment ? `edit-${editingComment.id}` : 'new'}
           likeCount={postData?.likeCount || 0}
           createdAt={formattedFullDate}
           isLiked={postData?.liked || false}

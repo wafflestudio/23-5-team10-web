@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, delay } from 'msw'
 import { authDb } from '../db/auth.db'
 
 interface RegisterRequest {
@@ -17,11 +17,11 @@ interface LoginRequest {
 const postState = {
   liked: false,
   bookmarked: false,
-  likeCount: 120,
+  likeCount: 0,
 }
 
 export const authHandlers = [
-  http.get('*/auth/check-nickname', ({ request }) => {
+  http.get('*/auth/check-nickname', async ({ request }) => {
     const url = new URL(request.url)
     const nickname = url.searchParams.get('nickname')
     const isDuplicate = authDb.some((user) => user.nickname === nickname)
@@ -155,7 +155,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/auth/refresh', ({ request }) => {
+  http.post('*/auth/refresh', async ({ request }) => {
     const authHeader = request.headers.get('Authorization')
     const token = authHeader?.split('Bearer ')[1]
     const user =
@@ -176,41 +176,59 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/api/v1/posts/:postId/like', () => {
+  http.post('**/api/v1/posts/:postId/like', async () => {
+    await delay(100)
     postState.liked = true
     postState.likeCount += 1
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '좋아요 성공',
       success: true,
+      data: {
+        likeCount: postState.likeCount,
+        liked: true,
+      },
     })
   }),
 
-  http.delete('*/api/v1/posts/:postId/like', () => {
+  http.delete('**/api/v1/posts/:postId/like', async () => {
+    await delay(100)
     postState.liked = false
-    postState.likeCount -= 1
+    postState.likeCount = Math.max(0, postState.likeCount - 1)
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '좋아요 취소 성공',
       success: true,
+      data: {
+        likeCount: postState.likeCount,
+        liked: false,
+      },
     })
   }),
 
-  http.post('*/api/v1/posts/:postId/bookmark', () => {
+  http.post('**/api/v1/posts/:postId/bookmark', async () => {
+    await delay(100)
     postState.bookmarked = true
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '북마크 성공',
       success: true,
+      data: {
+        bookmarked: true,
+      },
     })
   }),
 
-  http.delete('*/api/v1/posts/:postId/bookmark', () => {
+  http.delete('**/api/v1/posts/:postId/bookmark', async () => {
+    await delay(100)
     postState.bookmarked = false
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '북마크 취소 성공',
       success: true,
+      data: {
+        bookmarked: false,
+      },
     })
   }),
 ]

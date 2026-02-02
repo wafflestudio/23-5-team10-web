@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, MessageCircle, Bookmark, Smile, X } from 'lucide-react'
+import { motion, useAnimation } from 'framer-motion'
+import type { Transition } from 'framer-motion'
 
 interface PostActionSectionProps {
   likeCount: number
@@ -29,6 +31,26 @@ export default function PostActionSection({
   onCancelEdit,
 }: PostActionSectionProps) {
   const [comment, setComment] = useState(editValue ?? '')
+  const heartControls = useAnimation()
+  const bookmarkControls = useAnimation()
+
+  useEffect(() => {
+    if (isLiked) {
+      heartControls.start({
+        scale: [1, 1.3, 1],
+        transition: { duration: 0.3 },
+      })
+    }
+  }, [isLiked, heartControls])
+
+  useEffect(() => {
+    if (isBookmarked) {
+      bookmarkControls.start({
+        scale: [1, 1.3, 1],
+        transition: { duration: 0.3 },
+      })
+    }
+  }, [isBookmarked, bookmarkControls])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,38 +68,68 @@ export default function PostActionSection({
   const isUnchanged = isEditMode && comment === editValue
   const isSubmitDisabled = !comment.trim() || isUnchanged
 
+  const iconTransition: Transition = {
+    type: 'tween',
+    ease: 'easeOut',
+    duration: 0.3,
+  }
+
+  const iconHoverScale = {
+    scale: 1.25,
+  }
+
+  const iconTapScale = {
+    scale: 1,
+  }
+
   return (
     <div className="flex flex-col border-t border-gray-200 bg-white">
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
         <div className="flex items-center gap-4">
-          <button
+          <motion.button
+            whileHover={iconHoverScale}
+            whileTap={iconTapScale}
+            transition={iconTransition}
             onClick={onLikeClick}
-            className="transition-opacity hover:opacity-60"
+            animate={heartControls}
           >
             <Heart
               className={`h-6 w-6 ${isLiked ? 'fill-[#ED4956] text-[#ED4956]' : 'text-black'}`}
             />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={iconHoverScale}
+            whileTap={iconTapScale}
+            transition={iconTransition}
             onClick={onCommentIconClick}
-            className="transition-opacity hover:opacity-60"
           >
             <MessageCircle className="h-6 w-6 text-black" />
-          </button>
+          </motion.button>
         </div>
-        <button
+        <motion.button
+          whileHover={iconHoverScale}
+          whileTap={iconTapScale}
+          transition={iconTransition}
           onClick={onBookmarkClick}
-          className="transition-opacity hover:opacity-60"
+          animate={bookmarkControls}
         >
           <Bookmark
             className={`h-6 w-6 ${isBookmarked ? 'fill-black text-black' : 'text-black'}`}
           />
-        </button>
+        </motion.button>
       </div>
 
       <div className="px-4 pb-2">
-        <div className="mb-1 text-sm font-bold text-black">
-          좋아요 {likeCount.toLocaleString()}개
+        <div className="mb-1 text-sm text-black">
+          {likeCount > 0 ? (
+            <span className="font-bold">
+              좋아요 {likeCount.toLocaleString()}개
+            </span>
+          ) : (
+            <span>
+              가장 먼저 <span className="font-bold">좋아요</span>를 눌러보세요
+            </span>
+          )}
         </div>
         <div className="text-[10px] text-gray-500 uppercase">{createdAt}</div>
       </div>
@@ -101,9 +153,14 @@ export default function PostActionSection({
         className="flex items-center border-t border-gray-100 px-4 py-3"
       >
         <div className="mr-3 flex items-center">
-          <button type="button" className="transition-opacity hover:opacity-60">
+          <motion.button
+            type="button"
+            whileHover={iconHoverScale}
+            whileTap={iconTapScale}
+            transition={iconTransition}
+          >
             <Smile className="h-6 w-6 text-black" />
-          </button>
+          </motion.button>
         </div>
         <input
           type="text"
