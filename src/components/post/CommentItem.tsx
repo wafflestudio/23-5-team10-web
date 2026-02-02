@@ -125,7 +125,7 @@ export default function CommentItem({
                 className="p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMenuClick}
               >
-                <MoreHorizontal className="h-4 w-4 text-gray-500" />
+                <MoreHorizontal className="h-4 w-4 scale-x-[-1] text-gray-500" />
               </button>
             </div>
           </div>

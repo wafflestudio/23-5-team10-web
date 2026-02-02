@@ -188,7 +188,7 @@ export default function PostActionSection({
             transition={iconTransition}
             onClick={onCommentIconClick}
           >
-            <MessageCircle className="h-6 w-6 text-black" />
+            <MessageCircle className="h-6 w-6 scale-x-[-1] text-black" />
           </motion.button>
         </div>
         <motion.button
