@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useAuthStore } from '@/shared/auth/authStore'
+import { useCurrentUser } from '@/shared/auth/useCurrentUser'
 import ReportModal from './ReportModal'
 
-interface CommentMenuModalProps {
+type CommentMenuModalProps = {
   onClose: () => void
   onDelete?: () => void
   onEdit?: () => void
@@ -21,8 +21,8 @@ export default function CommentMenuModal({
 }: CommentMenuModalProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [isReportOpen, setIsReportOpen] = useState(false)
-  const { user } = useAuthStore()
-  const isMine = user?.id === authorId
+  const { data: currentUser } = useCurrentUser()
+  const isMine = currentUser?.userId === authorId
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setIsVisible(true))
