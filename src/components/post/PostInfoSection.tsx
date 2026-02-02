@@ -7,6 +7,7 @@ import {
   useImperativeHandle,
 } from 'react'
 import { MoreHorizontal } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import type { PostData } from './PostDetail'
 import PostMenuModal from './PostMenuModal'
 import CommentItem from './CommentItem'
@@ -305,18 +306,28 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
       <div className="flex h-full flex-col bg-white">
         <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
           <div className="flex items-center gap-3">
-            {postData?.profileImageUrl ? (
-              <img
-                src={postData.profileImageUrl}
-                className="h-8 w-8 rounded-full object-cover"
-                alt=""
-              />
-            ) : (
-              <div className="h-8 w-8 rounded-full bg-gray-200" />
-            )}
-            <div className="text-sm font-semibold text-black">
+            <Link
+              to="/$userId"
+              params={{ userId: String(postData?.userId) }}
+              className="shrink-0 transition-opacity hover:opacity-80"
+            >
+              {postData?.profileImageUrl ? (
+                <img
+                  src={postData.profileImageUrl}
+                  className="h-8 w-8 rounded-full object-cover"
+                  alt=""
+                />
+              ) : (
+                <div className="h-8 w-8 rounded-full bg-gray-200" />
+              )}
+            </Link>
+            <Link
+              to="/$userId"
+              params={{ userId: String(postData?.userId) }}
+              className="text-sm font-semibold text-black transition-opacity hover:opacity-60"
+            >
               {postData?.nickname || ''}
-            </div>
+            </Link>
           </div>
           <button onClick={() => setIsModalOpen(true)} className="p-1">
             <MoreHorizontal className="h-6 w-6 text-black" />
@@ -331,17 +342,29 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
           />
 
           <div className="mb-2 flex gap-3 border-b border-gray-50 px-1 py-3">
-            {postData?.profileImageUrl ? (
-              <img
-                src={postData.profileImageUrl}
-                className="h-8 w-8 shrink-0 rounded-full object-cover"
-                alt=""
-              />
-            ) : (
-              <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
-            )}
+            <Link
+              to="/$userId"
+              params={{ userId: String(postData?.userId) }}
+              className="shrink-0 transition-opacity hover:opacity-80"
+            >
+              {postData?.profileImageUrl ? (
+                <img
+                  src={postData.profileImageUrl}
+                  className="h-8 w-8 shrink-0 rounded-full object-cover"
+                  alt=""
+                />
+              ) : (
+                <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
+              )}
+            </Link>
             <div className="text-sm text-black">
-              <span className="mr-2 font-semibold">{postData?.nickname}</span>
+              <Link
+                to="/$userId"
+                params={{ userId: String(postData?.userId) }}
+                className="mr-2 font-semibold text-black transition-opacity hover:opacity-60"
+              >
+                {postData?.nickname}
+              </Link>
               <span className="whitespace-pre-wrap">{postData?.content}</span>
               <div className="mt-2 text-xs font-normal text-gray-500">
                 {postData?.createdAt

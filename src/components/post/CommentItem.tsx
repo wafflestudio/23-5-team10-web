@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Heart, MoreHorizontal } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { formatRelativeTime } from '../../utils/date.ts'
 import CommentMenuModal from './CommentMenuModal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar.tsx'
@@ -84,18 +85,30 @@ export default function CommentItem({
         onDoubleClick={() => onDoubleClick(comment.id)}
       >
         <div className="flex flex-1 items-start gap-3">
-          <Avatar className="mt-0.5 h-8 w-8 shrink-0">
-            <AvatarImage
-              src={comment.profileImageUrl}
-              alt={comment.nickname}
-              className="object-cover"
-            />
-            <AvatarFallback>{comment.nickname[0]}</AvatarFallback>
-          </Avatar>
+          <Link
+            to="/$userId"
+            params={{ userId: String(comment.userId) }}
+            className="mt-0.5 shrink-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={comment.profileImageUrl}
+                alt={comment.nickname}
+                className="object-cover"
+              />
+              <AvatarFallback>{comment.nickname[0]}</AvatarFallback>
+            </Avatar>
+          </Link>
           <div className="text-sm leading-tight">
-            <span className="mr-2 font-semibold text-black">
+            <Link
+              to="/$userId"
+              params={{ userId: String(comment.userId) }}
+              className="mr-2 font-semibold text-black transition-opacity hover:opacity-60"
+              onClick={(e) => e.stopPropagation()}
+            >
               {comment.nickname}
-            </span>
+            </Link>
             <span className="break-all text-black">{comment.content}</span>
 
             <div className="mt-[7px] flex h-4 items-center gap-3 text-xs font-semibold text-gray-500">
