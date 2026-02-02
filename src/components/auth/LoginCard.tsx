@@ -14,8 +14,8 @@ type FloatingInputProps = {
   setShowPw?: (show: boolean) => void
 }
 
-type LoginResponse = {
-  success: boolean
+interface LoginResponse {
+  isSuccess: boolean
   code: string
   message: string
   data: {
@@ -90,7 +90,7 @@ const LoginCard = () => {
         })
         .json<LoginResponse>()
 
-      if (res.success && res.data) {
+      if (res.isSuccess && res.data) {
         localStorage.setItem('accessToken', res.data.accessToken)
         await invalidateCurrentUser()
         navigate({ to: '/' })
