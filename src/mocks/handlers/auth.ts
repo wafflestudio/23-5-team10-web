@@ -1,23 +1,16 @@
-import { http, HttpResponse, delay } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { authDb } from '../db/auth.db'
-
-interface RegisterRequest {
-  email: string
-  password: string
-  nickname: string
-  name?: string
-  birthday?: string
-}
 
 interface LoginRequest {
   loginId: string
   password: string
 }
 
-const postState = {
-  liked: false,
-  bookmarked: false,
-  likeCount: 0,
+interface RegisterRequest {
+  email: string
+  password: string
+  nickname: string
+  name?: string
 }
 
 export const authHandlers = [
@@ -28,18 +21,18 @@ export const authHandlers = [
 
     if (isDuplicate) {
       return HttpResponse.json({
-        success: true,
         code: 'AUTH_409',
         message: '이미 존재하는 닉네임입니다.',
         data: { isAvailable: false },
+        isSuccess: true,
       })
     }
 
     return HttpResponse.json({
-      success: true,
       code: 'COMMON_200',
       message: '사용 가능한 닉네임입니다.',
       data: { isAvailable: true },
+      isSuccess: true,
     })
   }),
 
@@ -52,8 +45,10 @@ export const authHandlers = [
     if (!user) {
       return HttpResponse.json(
         {
-          success: false,
+          code: 'AUTH_404',
           message: '계정을 찾을 수 없습니다.',
+          data: null,
+          isSuccess: false,
         },
         { status: 404 }
       )
@@ -63,8 +58,10 @@ export const authHandlers = [
     const maskedEmail = `${name.slice(0, 2)}****@${domain}`
 
     return HttpResponse.json({
-      success: true,
+      code: 'COMMON_200',
+      message: '계정 확인 성공',
       data: { sentEmail: maskedEmail },
+      isSuccess: true,
     })
   }),
 
@@ -79,7 +76,8 @@ export const authHandlers = [
         {
           code: 'AUTH_400',
           message: '이미 존재하는 이메일/닉네임입니다.',
-          success: false,
+          data: null,
+          isSuccess: false,
         },
         { status: 400 }
       )
@@ -105,36 +103,24 @@ export const authHandlers = [
           profileImageUrl: `https://i.pravatar.cc/150?u=${userId}`,
         },
       },
-      success: true,
+      isSuccess: true,
     })
   }),
 
-  http.post('*/auth/login', async ({ request }) => {
+  http.post('**/auth/login', async ({ request }) => {
     const { loginId, password } = (await request.json()) as LoginRequest
 
     const userExists = authDb.find(
       (u) => u.email === loginId || u.nickname === loginId
     )
 
-    if (!userExists) {
-      return HttpResponse.json(
-        {
-          code: 'AUTH_404',
-          message: '사용자를 찾을 수 없습니다.',
-          data: null,
-          success: false,
-        },
-        { status: 404 }
-      )
-    }
-
-    if (userExists.password !== password) {
+    if (!userExists || userExists.password !== password) {
       return HttpResponse.json(
         {
           code: 'AUTH_401',
-          message: '비밀번호가 틀렸습니다.',
+          message: '사용자 정보가 일치하지 않습니다.',
           data: null,
-          success: false,
+          isSuccess: false,
         },
         { status: 401 }
       )
@@ -151,7 +137,7 @@ export const authHandlers = [
           profileImageUrl: `https://i.pravatar.cc/150?u=${userExists.userId}`,
         },
       },
-      success: true,
+      isSuccess: true,
     })
   }),
 
@@ -162,7 +148,6 @@ export const authHandlers = [
       authDb.find((u) => `mock-access-token-${u.userId}` === token) || authDb[0]
 
     return HttpResponse.json({
-      success: true,
       code: 'COMMON_200',
       message: '토큰 재발급 성공',
       data: {
@@ -173,62 +158,7 @@ export const authHandlers = [
           profileImageUrl: `https://i.pravatar.cc/150?u=${user.userId}`,
         },
       },
-    })
-  }),
-
-  http.post('**/api/v1/posts/:postId/like', async () => {
-    await delay(100)
-    postState.liked = true
-    postState.likeCount += 1
-    return HttpResponse.json({
-      code: 'COMMON_200',
-      message: '좋아요 성공',
-      success: true,
-      data: {
-        likeCount: postState.likeCount,
-        liked: true,
-      },
-    })
-  }),
-
-  http.delete('**/api/v1/posts/:postId/like', async () => {
-    await delay(100)
-    postState.liked = false
-    postState.likeCount = Math.max(0, postState.likeCount - 1)
-    return HttpResponse.json({
-      code: 'COMMON_200',
-      message: '좋아요 취소 성공',
-      success: true,
-      data: {
-        likeCount: postState.likeCount,
-        liked: false,
-      },
-    })
-  }),
-
-  http.post('**/api/v1/posts/:postId/bookmark', async () => {
-    await delay(100)
-    postState.bookmarked = true
-    return HttpResponse.json({
-      code: 'COMMON_200',
-      message: '북마크 성공',
-      success: true,
-      data: {
-        bookmarked: true,
-      },
-    })
-  }),
-
-  http.delete('**/api/v1/posts/:postId/bookmark', async () => {
-    await delay(100)
-    postState.bookmarked = false
-    return HttpResponse.json({
-      code: 'COMMON_200',
-      message: '북마크 취소 성공',
-      success: true,
-      data: {
-        bookmarked: false,
-      },
+      isSuccess: true,
     })
   }),
 ]

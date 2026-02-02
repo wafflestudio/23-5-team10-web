@@ -139,7 +139,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
 
     const handlePostLikeClick = async () => {
       if (!postData) return
-      const isCurrentlyLiked = postData.liked
+      const isCurrentlyLiked = postData.isLiked
       const postId = postData.id
 
       try {
@@ -151,7 +151,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
 
         const updatedData = {
           ...postData,
-          liked: !isCurrentlyLiked,
+          isLiked: !isCurrentlyLiked,
           likeCount: Math.max(
             0,
             postData.likeCount + (isCurrentlyLiked ? -1 : 1)
@@ -167,7 +167,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
 
     const handleBookmarkClick = async () => {
       if (!postData) return
-      const isCurrentlyBookmarked = postData.bookmarked
+      const isCurrentlyBookmarked = postData.isBookmarked
       const postId = postData.id
 
       try {
@@ -179,7 +179,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
 
         const updatedData = {
           ...postData,
-          bookmarked: !isCurrentlyBookmarked,
+          isBookmarked: !isCurrentlyBookmarked,
         }
 
         setPostData(updatedData)
@@ -370,8 +370,8 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
         <PostActionSection
           likeCount={postData?.likeCount || 0}
           createdAt={formattedFullDate}
-          isLiked={postData?.liked || false}
-          isBookmarked={postData?.bookmarked || false}
+          isLiked={postData?.isLiked || false}
+          isBookmarked={postData?.isBookmarked || false}
           onLikeClick={handlePostLikeClick}
           onBookmarkClick={handleBookmarkClick}
           onCommentSubmit={handleCommentSubmit}

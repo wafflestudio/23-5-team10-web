@@ -24,8 +24,8 @@ export interface PostData {
   commentCount: number
   createdAt: string
   updatedAt: string
-  liked: boolean
-  bookmarked: boolean
+  isLiked: boolean
+  isBookmarked: boolean
 }
 
 interface SearchParams {
@@ -51,8 +51,11 @@ export default function PostDetail() {
       try {
         const res = await instance
           .get(`api/v1/posts/${postId}`)
-          .json<{ data: PostData }>()
-        setPostData(res.data)
+          .json<{ data: PostData; isSuccess: boolean }>()
+
+        if (res.isSuccess) {
+          setPostData(res.data)
+        }
       } catch {
         console.error('Failed to fetch post')
       }
@@ -92,7 +95,7 @@ export default function PostDetail() {
     setRandomRotate(rotate)
     setShowHeart(true)
 
-    if (postData && !postData.liked) {
+    if (postData && !postData.isLiked) {
       await infoSectionRef.current?.handlePostLike()
     }
 
