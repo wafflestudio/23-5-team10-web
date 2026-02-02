@@ -171,6 +171,10 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     }
   }
 
+  const handleDeleteSuccess = (commentId: number) => {
+    setComments((prev) => prev.filter((c) => c.id !== commentId))
+  }
+
   const formattedFullDate = data?.createdAt
     ? new Date(data.createdAt).toLocaleDateString('ko-KR', {
         year: 'numeric',
@@ -241,6 +245,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
                     isLiked={!!likedComments[comment.id]}
                     onDoubleClick={handleDoubleClick}
                     onHeartClick={handleHeartClick}
+                    onDeleteSuccess={handleDeleteSuccess}
                   />
 
                   {replyCount > 0 && (
@@ -270,6 +275,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
                               isLiked={!!likedComments[r.id]}
                               onDoubleClick={handleDoubleClick}
                               onHeartClick={handleHeartClick}
+                              onDeleteSuccess={handleDeleteSuccess}
                             />
                           ))}
                     </div>

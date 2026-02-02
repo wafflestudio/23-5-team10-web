@@ -110,4 +110,20 @@ export const commentHandlers = [
       })
     }
   ),
+
+  http.delete('*/api/v1/posts/:postId/comments/:commentId', ({ params }) => {
+    const { commentId } = params
+    const index = comments.findIndex((c) => String(c.id) === String(commentId))
+
+    if (index !== -1) {
+      comments.splice(index, 1)
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '댓글 삭제 성공',
+      data: null,
+      success: true,
+    })
+  }),
 ]

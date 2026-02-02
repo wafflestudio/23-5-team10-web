@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react'
+import { useAuthStore } from '@/shared/auth/authStore'
 
 interface CommentMenuModalProps {
   onClose: () => void
   onDelete?: () => void
-  isMine: boolean
+  authorId: number
 }
 
 export default function CommentMenuModal({
   onClose,
   onDelete,
-  isMine,
+  authorId,
 }: CommentMenuModalProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const { user } = useAuthStore()
+  const isMine = user?.id === authorId
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setIsVisible(true))
@@ -23,6 +26,7 @@ export default function CommentMenuModal({
       className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/50 transition-opacity duration-200 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
+      onClick={onClose}
     >
       <div
         className={`w-full max-w-[560px] overflow-hidden rounded-[24px] bg-white transition-all duration-200 ease-out ${

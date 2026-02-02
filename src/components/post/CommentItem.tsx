@@ -2,11 +2,12 @@ import { useMemo, useState } from 'react'
 import { Heart, MoreHorizontal } from 'lucide-react'
 import { formatRelativeTime } from '../../utils/date.ts'
 import CommentMenuModal from './CommentMenuModal'
-import { useAuthStore } from '@/shared/auth/authStore'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar.tsx'
+import { useDeleteCommentMutation } from '@/entities/post/model/hooks/useDeleteCommentMutation'
 
 interface Comment {
   id: number
+  postId: number
   userId: number
   nickname: string
   content: string
@@ -22,6 +23,7 @@ interface CommentItemProps {
   isLiked: boolean
   onDoubleClick: (id: number) => void
   onHeartClick: (id: number, e: React.MouseEvent) => void
+  onDeleteSuccess?: (commentId: number) => void
 }
 
 export default function CommentItem({
@@ -30,9 +32,10 @@ export default function CommentItem({
   isLiked,
   onDoubleClick,
   onHeartClick,
+  onDeleteSuccess,
 }: CommentItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user } = useAuthStore()
+  const deleteMutation = useDeleteCommentMutation(comment.postId)
 
   const timeDisplay = useMemo(
     () => formatRelativeTime(comment.createdAt),
@@ -45,6 +48,13 @@ export default function CommentItem({
   }
 
   const handleDelete = () => {
+    deleteMutation.mutate(comment.id, {
+      onSuccess: () => {
+        if (onDeleteSuccess) {
+          onDeleteSuccess(comment.id)
+        }
+      },
+    })
     setIsMenuOpen(false)
   }
 
@@ -117,7 +127,7 @@ export default function CommentItem({
         <CommentMenuModal
           onClose={() => setIsMenuOpen(false)}
           onDelete={handleDelete}
-          isMine={user ? comment.userId === user.id : false}
+          authorId={comment.userId}
         />
       )}
     </>
