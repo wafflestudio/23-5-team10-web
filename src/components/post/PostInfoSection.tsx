@@ -194,11 +194,18 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
 
   const handleEditClick = (comment: Comment) => {
     setEditingComment(comment)
-    commentInputRef.current?.focus()
+    setTimeout(() => {
+      commentInputRef.current?.focus()
+    }, 0)
   }
 
   const handleCommentIconClick = () => {
-    commentInputRef.current?.focus()
+    if (editingComment) {
+      setEditingComment(null)
+    }
+    setTimeout(() => {
+      commentInputRef.current?.focus()
+    }, 0)
   }
 
   const formattedFullDate = data?.createdAt
@@ -274,7 +281,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
       </div>
 
       <PostActionSection
-        key={editingComment?.id ?? 'new-comment'}
+        key={editingComment ? `edit-${editingComment.id}` : 'new'}
         likeCount={data?.likeCount || 0}
         createdAt={formattedFullDate}
         isLiked={data?.liked || false}

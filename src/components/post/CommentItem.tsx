@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { Heart, MoreHorizontal } from 'lucide-react'
 import { formatRelativeTime } from '../../utils/date.ts'
 import CommentMenuModal from './CommentMenuModal'
-import { useAuthStore } from '@/shared/auth/authStore'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar.tsx'
+import { useDeleteCommentMutation } from '@/entities/post/model/hooks/useDeleteCommentMutation'
 
 interface Comment {
   id: number
@@ -38,7 +38,9 @@ export default function CommentItem({
   onEditClick,
 }: CommentItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { user } = useAuthStore()
+  const deleteMutation = useDeleteCommentMutation(comment.postId)
+
+  const isEdited = comment.createdAt !== comment.updatedAt
 
   const timeDisplay = useMemo(
     () => formatRelativeTime(comment.createdAt),
@@ -82,9 +84,7 @@ export default function CommentItem({
         onDoubleClick={() => onDoubleClick(comment.id)}
       >
         <div className="flex flex-1 items-start gap-3">
-          <Avatar
-            className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} mt-0.5 shrink-0`}
-          >
+          <Avatar className="mt-0.5 h-8 w-8 shrink-0">
             <AvatarImage
               src={comment.profileImageUrl}
               alt={comment.nickname}
@@ -139,7 +139,10 @@ export default function CommentItem({
         <CommentMenuModal
           onClose={() => setIsMenuOpen(false)}
           onDelete={handleDelete}
-          isMine={user ? comment.userId === user.id : false}
+          onEdit={handleEdit}
+          onHide={handleHide}
+          authorId={comment.userId}
+          nickname={comment.nickname}
         />
       )}
     </>
