@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Heart, MessageCircle, Bookmark, Smile } from 'lucide-react'
+import { Heart, MessageCircle, Bookmark, Smile, X } from 'lucide-react'
 
 interface PostActionSectionProps {
   likeCount: number
@@ -11,6 +11,8 @@ interface PostActionSectionProps {
   onCommentSubmit: (content: string) => void
   onCommentIconClick: () => void
   inputRef: React.RefObject<HTMLInputElement | null>
+  editValue?: string
+  onCancelEdit?: () => void
 }
 
 export default function PostActionSection({
@@ -23,8 +25,14 @@ export default function PostActionSection({
   onCommentSubmit,
   onCommentIconClick,
   inputRef,
+  editValue,
+  onCancelEdit,
 }: PostActionSectionProps) {
-  const [comment, setComment] = useState('')
+  const [comment, setComment] = useState(editValue ?? '')
+
+  if (editValue !== undefined && comment !== editValue && comment === '') {
+    setComment(editValue)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,6 +40,15 @@ export default function PostActionSection({
     onCommentSubmit(comment)
     setComment('')
   }
+
+  const handleCancel = () => {
+    setComment('')
+    onCancelEdit?.()
+  }
+
+  const isEditMode = editValue !== undefined
+  const isUnchanged = isEditMode && comment === editValue
+  const isSubmitDisabled = !comment.trim() || isUnchanged
 
   return (
     <div className="flex flex-col border-t border-gray-200 bg-white">
@@ -69,9 +86,23 @@ export default function PostActionSection({
         <div className="text-[10px] text-gray-500 uppercase">{createdAt}</div>
       </div>
 
+      {isEditMode && (
+        <div className="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-4 py-2">
+          <span className="text-xs font-medium text-gray-500">
+            댓글 수정 중...
+          </span>
+          <button
+            onClick={handleCancel}
+            className="p-1 transition-opacity hover:opacity-60"
+          >
+            <X className="h-4 w-4 text-gray-400" />
+          </button>
+        </div>
+      )}
+
       <form
         onSubmit={handleSubmit}
-        className="mt-2 flex items-center border-t border-gray-100 px-4 py-3"
+        className="flex items-center border-t border-gray-100 px-4 py-3"
       >
         <div className="mr-3 flex items-center">
           <button type="button" className="transition-opacity hover:opacity-60">
@@ -88,14 +119,14 @@ export default function PostActionSection({
         />
         <button
           type="submit"
-          disabled={!comment.trim()}
+          disabled={isSubmitDisabled}
           className={`ml-2 text-sm font-bold transition-opacity ${
-            comment.trim()
-              ? 'cursor-pointer text-[#0095F6]'
-              : 'cursor-default text-[#0095F6]/50'
+            isSubmitDisabled
+              ? 'cursor-default text-[#0095F6]/50'
+              : 'cursor-pointer text-[#0095F6]'
           }`}
         >
-          게시
+          {isEditMode ? '수정' : '게시'}
         </button>
       </form>
     </div>

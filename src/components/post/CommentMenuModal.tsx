@@ -5,6 +5,7 @@ import ReportModal from './ReportModal'
 interface CommentMenuModalProps {
   onClose: () => void
   onDelete?: () => void
+  onEdit?: () => void
   onHide: () => void
   authorId: number
   nickname: string
@@ -13,6 +14,7 @@ interface CommentMenuModalProps {
 export default function CommentMenuModal({
   onClose,
   onDelete,
+  onEdit,
   onHide,
   authorId,
   nickname,
@@ -52,12 +54,20 @@ export default function CommentMenuModal({
       >
         <div className="flex flex-col text-center">
           {isMine ? (
-            <button
-              onClick={onDelete}
-              className="w-full border-b border-gray-200 py-4 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
-            >
-              삭제
-            </button>
+            <>
+              <button
+                onClick={onDelete}
+                className="w-full border-b border-gray-200 py-4 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
+              >
+                삭제
+              </button>
+              <button
+                onClick={onEdit}
+                className="w-full border-b border-gray-200 py-4 text-[14px] font-normal text-black active:bg-gray-100"
+              >
+                수정
+              </button>
+            </>
           ) : (
             <button
               onClick={() => setIsReportOpen(true)}

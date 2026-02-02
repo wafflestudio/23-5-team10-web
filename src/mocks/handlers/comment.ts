@@ -55,6 +55,42 @@ export const commentHandlers = [
     })
   }),
 
+  http.put(
+    '*/api/v1/posts/:postId/comments/:commentId',
+    async ({ request, params }) => {
+      const { commentId } = params
+      const { content } = (await request.json()) as { content: string }
+
+      const commentIndex = comments.findIndex(
+        (c) => String(c.id) === String(commentId)
+      )
+
+      if (commentIndex === -1) {
+        return HttpResponse.json(
+          {
+            code: 'COMMENT_404',
+            message: '댓글을 찾을 수 없습니다.',
+            success: false,
+          },
+          { status: 404 }
+        )
+      }
+
+      comments[commentIndex] = {
+        ...comments[commentIndex],
+        content,
+        updatedAt: new Date().toISOString(),
+      }
+
+      return HttpResponse.json({
+        code: 'COMMON_200',
+        message: '댓글 수정 성공',
+        data: comments[commentIndex],
+        success: true,
+      })
+    }
+  ),
+
   http.post(
     '*/api/v1/posts/:postId/comments/:commentId/like',
     ({ request, params }) => {

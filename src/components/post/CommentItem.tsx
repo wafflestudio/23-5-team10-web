@@ -13,8 +13,11 @@ interface Comment {
   content: string
   profileImageUrl: string
   createdAt: string
+  updatedAt: string
+  parentId: number | null
   likeCount: number
   liked: boolean
+  likedUserIds: number[]
 }
 
 interface CommentItemProps {
@@ -24,6 +27,7 @@ interface CommentItemProps {
   onDoubleClick: (id: number) => void
   onHeartClick: (id: number, e: React.MouseEvent) => void
   onDeleteSuccess?: (commentId: number) => void
+  onEditClick: (comment: Comment) => void
 }
 
 export default function CommentItem({
@@ -33,9 +37,12 @@ export default function CommentItem({
   onDoubleClick,
   onHeartClick,
   onDeleteSuccess,
+  onEditClick,
 }: CommentItemProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const deleteMutation = useDeleteCommentMutation(comment.postId)
+
+  const isEdited = comment.createdAt !== comment.updatedAt
 
   const timeDisplay = useMemo(
     () => formatRelativeTime(comment.createdAt),
@@ -65,6 +72,11 @@ export default function CommentItem({
     setIsMenuOpen(false)
   }
 
+  const handleEdit = () => {
+    onEditClick(comment)
+    setIsMenuOpen(false)
+  }
+
   const displayLikeCount = comment.likeCount || 0
 
   return (
@@ -91,7 +103,10 @@ export default function CommentItem({
             <span className="break-all text-black">{comment.content}</span>
 
             <div className="mt-[7px] flex h-4 items-center gap-3 text-xs font-semibold text-gray-500">
-              <span className="font-normal">{timeDisplay}</span>
+              <span className="font-normal">
+                {timeDisplay}
+                {isEdited && ' (수정됨)'}
+              </span>
               {displayLikeCount > 0 && (
                 <span className="font-semibold text-gray-500">
                   좋아요 {displayLikeCount}개
@@ -134,6 +149,7 @@ export default function CommentItem({
         <CommentMenuModal
           onClose={() => setIsMenuOpen(false)}
           onDelete={handleDelete}
+          onEdit={handleEdit}
           onHide={handleHide}
           authorId={comment.userId}
           nickname={comment.nickname}

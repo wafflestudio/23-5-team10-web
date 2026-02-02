@@ -30,6 +30,8 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
   }>({})
   const [hasMore, setHasMore] = useState(true)
   const [showReplies, setShowReplies] = useState<{ [key: number]: boolean }>({})
+  const [editingComment, setEditingComment] = useState<Comment | null>(null)
+
   const observerTarget = useRef<HTMLDivElement>(null)
   const pageRef = useRef(1)
   const isFetching = useRef(false)
@@ -113,18 +115,33 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     if (!postId) return
 
     try {
-      const response = await instance
-        .post(`api/v1/posts/${postId}/comments`, {
-          json: { content },
-        })
-        .json<{ data: Comment; success: boolean }>()
+      if (editingComment) {
+        const response = await instance
+          .put(`api/v1/posts/${postId}/comments/${editingComment.id}`, {
+            json: { content },
+          })
+          .json<{ data: Comment; success: boolean }>()
 
-      if (response.success) {
-        setComments((prev) => [response.data, ...prev])
-        setLikedComments((prev) => ({
-          ...prev,
-          [response.data.id]: response.data.liked,
-        }))
+        if (response.success) {
+          setComments((prev) =>
+            prev.map((c) => (c.id === editingComment.id ? response.data : c))
+          )
+          setEditingComment(null)
+        }
+      } else {
+        const response = await instance
+          .post(`api/v1/posts/${postId}/comments`, {
+            json: { content },
+          })
+          .json<{ data: Comment; success: boolean }>()
+
+        if (response.success) {
+          setComments((prev) => [response.data, ...prev])
+          setLikedComments((prev) => ({
+            ...prev,
+            [response.data.id]: response.data.liked,
+          }))
+        }
       }
     } catch (error) {
       console.error(error)
@@ -174,6 +191,11 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
 
   const handleDeleteSuccess = (commentId: number) => {
     setComments((prev) => prev.filter((c) => c.id !== commentId))
+  }
+
+  const handleEditClick = (comment: Comment) => {
+    setEditingComment(comment)
+    commentInputRef.current?.focus()
   }
 
   const handleCommentIconClick = () => {
@@ -240,9 +262,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
           {comments
             .filter((c) => c.parentId === null)
             .map((comment) => {
-              const replyCount = comments.filter(
-                (r) => r.parentId === comment.id
-              ).length
+              const replies = comments.filter((r) => r.parentId === comment.id)
               return (
                 <div key={comment.id} className="mb-1">
                   <CommentItem
@@ -251,9 +271,10 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
                     onDoubleClick={handleDoubleClick}
                     onHeartClick={handleHeartClick}
                     onDeleteSuccess={handleDeleteSuccess}
+                    onEditClick={handleEditClick}
                   />
 
-                  {replyCount > 0 && (
+                  {replies.length > 0 && (
                     <div className="ml-12">
                       <button
                         onClick={() =>
@@ -267,22 +288,21 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
                         <div className="h-[1px] w-6 bg-gray-300" />
                         {showReplies[comment.id]
                           ? '답글 숨기기'
-                          : `답글 보기(${replyCount}개)`}
+                          : `답글 보기(${replies.length}개)`}
                       </button>
                       {showReplies[comment.id] &&
-                        comments
-                          .filter((r) => r.parentId === comment.id)
-                          .map((r) => (
-                            <CommentItem
-                              key={r.id}
-                              comment={r}
-                              isReply
-                              isLiked={!!likedComments[r.id]}
-                              onDoubleClick={handleDoubleClick}
-                              onHeartClick={handleHeartClick}
-                              onDeleteSuccess={handleDeleteSuccess}
-                            />
-                          ))}
+                        replies.map((r) => (
+                          <CommentItem
+                            key={r.id}
+                            comment={r}
+                            isReply
+                            isLiked={!!likedComments[r.id]}
+                            onDoubleClick={handleDoubleClick}
+                            onHeartClick={handleHeartClick}
+                            onDeleteSuccess={handleDeleteSuccess}
+                            onEditClick={handleEditClick}
+                          />
+                        ))}
                     </div>
                   )}
                 </div>
@@ -293,6 +313,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
       </div>
 
       <PostActionSection
+        key={editingComment?.id ?? 'new-comment'}
         likeCount={data?.likeCount || 0}
         createdAt={formattedFullDate}
         isLiked={data?.liked || false}
@@ -302,6 +323,8 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         onCommentSubmit={handleCommentSubmit}
         onCommentIconClick={handleCommentIconClick}
         inputRef={commentInputRef}
+        editValue={editingComment?.content}
+        onCancelEdit={() => setEditingComment(null)}
       />
 
       {isModalOpen && (
