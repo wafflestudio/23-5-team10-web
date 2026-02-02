@@ -1,5 +1,22 @@
 import { z } from 'zod'
 
+export const CurrentUserSchema = z.object({
+  userId: z.number(),
+  email: z.string(),
+  nickname: z.string(),
+  name: z.string().nullable(),
+  profileImageUrl: z.string().nullable(),
+  bio: z.string().nullable(),
+  role: z.string(),
+})
+
+export const CurrentUserResponseSchema = z.object({
+  code: z.string(),
+  message: z.string(),
+  data: CurrentUserSchema,
+  isSuccess: z.boolean(),
+})
+
 export const SearchUserSchema = z.object({
   userId: z.number(),
   nickname: z.string(),
