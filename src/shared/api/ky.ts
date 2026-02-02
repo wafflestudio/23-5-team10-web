@@ -44,7 +44,6 @@ function getDurationMs(options: NormalizedOptions) {
 
 export const instance = ky.create({
   prefixUrl: import.meta.env.VITE_API_URL,
-  credentials: 'include',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -52,7 +51,7 @@ export const instance = ky.create({
   retry: {
     limit: 2,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    statusCodes: [401, 403, 408, 429, 500, 502, 503, 504],
+    statusCodes: [408, 429, 500, 502, 503, 504],
   },
   hooks: {
     beforeRequest: [
