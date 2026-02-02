@@ -1,6 +1,8 @@
 import ky, { type NormalizedOptions } from 'ky'
 import { refreshAccessToken } from './authApi'
 import { useAuthStore } from '../auth/authStore'
+import { queryClient } from './queryClient'
+import { currentUserQueryKey } from '../auth/useCurrentUser'
 
 if (!import.meta.env.VITE_API_URL) {
   throw new Error('VITE_API_URL is not set')
@@ -9,10 +11,7 @@ if (!import.meta.env.VITE_API_URL) {
 const DEV = import.meta.env.DEV
 const requestStartTimes = new WeakMap<NormalizedOptions, number>()
 let isRefreshing = false
-let refreshPromise: Promise<{
-  accessToken: string
-  user: { id: number; nickname: string; profileImageUrl: string }
-}> | null = null
+let refreshPromise: Promise<{ accessToken: string }> | null = null
 
 function maskHeaders(headersInit: HeadersInit | undefined) {
   const headers = headersInit ? new Headers(headersInit) : undefined
@@ -53,7 +52,7 @@ export const instance = ky.create({
   retry: {
     limit: 2,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    statusCodes: [401, 408, 429, 500, 502, 503, 504],
+    statusCodes: [401, 403, 408, 429, 500, 502, 503, 504],
   },
   hooks: {
     beforeRequest: [
@@ -113,14 +112,15 @@ export const instance = ky.create({
         }
 
         const { response } = error
-        if (response?.status === 401) {
+
+        const tryRefresh = async () => {
           if (isRefreshing && refreshPromise) {
             try {
               await refreshPromise
-              return error
+              return
             } catch {
               useAuthStore.getState().setSessionExpired()
-              return error
+              return
             }
           }
 
@@ -130,21 +130,38 @@ export const instance = ky.create({
           try {
             const data = await refreshPromise
             localStorage.setItem('accessToken', data.accessToken)
-            useAuthStore.getState().setAuthenticated(true, data.user)
-            isRefreshing = false
-            refreshPromise = null
-            return error
+            void queryClient.invalidateQueries({
+              queryKey: currentUserQueryKey,
+            })
           } catch {
-            isRefreshing = false
-            refreshPromise = null
             localStorage.removeItem('accessToken')
             useAuthStore.getState().setSessionExpired()
-            return error
+          } finally {
+            isRefreshing = false
+            refreshPromise = null
           }
         }
 
-        if (response && (response.status === 401 || response.status === 403)) {
-          throw new AuthError(response.status as 401, response)
+        if (response?.status === 401) {
+          await tryRefresh()
+          return error
+        }
+
+        if (response?.status === 403) {
+          try {
+            const body = (await response.clone().json()) as { code?: string }
+            if (!body.code) {
+              await tryRefresh()
+              return error
+            }
+            if (body.code === 'ACCESS_DENIED') {
+              throw new AuthError(403, response)
+            }
+          } catch (e) {
+            if (e instanceof AuthError) throw e
+            await tryRefresh()
+            return error
+          }
         }
 
         if (DEV) {

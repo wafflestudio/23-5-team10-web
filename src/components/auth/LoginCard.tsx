@@ -3,9 +3,9 @@ import { useNavigate } from '@tanstack/react-router'
 import instagramLogo from '../../assets/instagram-logo.svg'
 import { instance } from '../../shared/api/ky'
 import { MessageCircle } from 'lucide-react'
-import { useAuthStore } from '@/shared/auth/authStore'
+import { useInvalidateCurrentUser } from '@/shared/auth/useCurrentUser'
 
-interface FloatingInputProps {
+type FloatingInputProps = {
   label: string
   value: string
   onChange: (value: string) => void
@@ -20,11 +20,6 @@ interface LoginResponse {
   message: string
   data: {
     accessToken: string
-    user: {
-      id: number
-      nickname: string
-      profileImageUrl: string
-    }
   } | null
 }
 
@@ -80,7 +75,7 @@ const LoginCard = () => {
   const [showPw, setShowPw] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
-  const setAuthenticated = useAuthStore((state) => state.setAuthenticated)
+  const invalidateCurrentUser = useInvalidateCurrentUser()
 
   const isValid = id.length > 0 && pw.length >= 6
 
@@ -97,7 +92,7 @@ const LoginCard = () => {
 
       if (res.isSuccess && res.data) {
         localStorage.setItem('accessToken', res.data.accessToken)
-        setAuthenticated(true, res.data.user)
+        await invalidateCurrentUser()
         navigate({ to: '/' })
       } else {
         setErrorMsg(res.message || '로그인에 실패했습니다.')
