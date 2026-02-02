@@ -47,7 +47,7 @@ export default function CommentMenuModal({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-[560px] overflow-hidden rounded-[24px] bg-white transition-all duration-200 ease-out ${
+        className={`w-full max-w-[400px] overflow-hidden rounded-[12px] bg-white transition-all duration-200 ease-out ${
           isVisible ? 'scale-100 opacity-100' : 'scale-110 opacity-0'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -57,13 +57,13 @@ export default function CommentMenuModal({
             <>
               <button
                 onClick={onDelete}
-                className="w-full border-b border-gray-200 py-4 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
+                className="w-full border-b border-gray-200 py-3.5 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
               >
                 삭제
               </button>
               <button
                 onClick={onEdit}
-                className="w-full border-b border-gray-200 py-4 text-[14px] font-normal text-black active:bg-gray-100"
+                className="w-full border-b border-gray-200 py-3.5 text-[14px] font-normal text-black active:bg-gray-100"
               >
                 수정
               </button>
@@ -71,14 +71,14 @@ export default function CommentMenuModal({
           ) : (
             <button
               onClick={() => setIsReportOpen(true)}
-              className="w-full border-b border-gray-200 py-4 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
+              className="w-full border-b border-gray-200 py-3.5 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
             >
               신고
             </button>
           )}
           <button
             onClick={onClose}
-            className="w-full py-4 text-[14px] font-normal text-black active:bg-gray-100"
+            className="w-full py-3.5 text-[14px] font-normal text-black active:bg-gray-100"
           >
             취소
           </button>

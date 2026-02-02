@@ -22,7 +22,6 @@ interface Comment {
 
 interface CommentItemProps {
   comment: Comment
-  isReply?: boolean
   isLiked: boolean
   onDoubleClick: (id: number) => void
   onHeartClick: (id: number, e: React.MouseEvent) => void
@@ -32,7 +31,6 @@ interface CommentItemProps {
 
 export default function CommentItem({
   comment,
-  isReply = false,
   isLiked,
   onDoubleClick,
   onHeartClick,
@@ -86,9 +84,7 @@ export default function CommentItem({
         onDoubleClick={() => onDoubleClick(comment.id)}
       >
         <div className="flex flex-1 items-start gap-3">
-          <Avatar
-            className={`${isReply ? 'h-6 w-6' : 'h-8 w-8'} mt-0.5 shrink-0`}
-          >
+          <Avatar className="mt-0.5 h-8 w-8 shrink-0">
             <AvatarImage
               src={comment.profileImageUrl}
               alt={comment.nickname}
@@ -112,12 +108,6 @@ export default function CommentItem({
                   좋아요 {displayLikeCount}개
                 </span>
               )}
-              <button
-                className="hover:text-gray-900"
-                onClick={(e) => e.stopPropagation()}
-              >
-                답글 달기
-              </button>
               <button
                 className="p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMenuClick}

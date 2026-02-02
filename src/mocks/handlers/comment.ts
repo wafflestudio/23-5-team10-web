@@ -20,9 +20,8 @@ export const commentHandlers = [
 
   http.post('*/api/v1/posts/:postId/comments', async ({ request, params }) => {
     const { postId } = params
-    const { content, parentId } = (await request.json()) as {
+    const { content } = (await request.json()) as {
       content: string
-      parentId?: number | null
     }
 
     const authHeader = request.headers.get('Authorization')
@@ -39,10 +38,10 @@ export const commentHandlers = [
       content: content,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      parentId: parentId || null,
+      parentId: null as null,
       likeCount: 0,
       liked: false,
-      likedUserIds: [],
+      likedUserIds: [] as number[],
     }
 
     comments.push(newComment)

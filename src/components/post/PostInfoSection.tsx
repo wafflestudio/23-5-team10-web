@@ -29,7 +29,6 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     [key: number]: boolean
   }>({})
   const [hasMore, setHasMore] = useState(true)
-  const [showReplies, setShowReplies] = useState<{ [key: number]: boolean }>({})
   const [editingComment, setEditingComment] = useState<Comment | null>(null)
 
   const observerTarget = useRef<HTMLDivElement>(null)
@@ -239,7 +238,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
           }}
         />
 
-        <div className="mb-2 flex gap-3 px-1 py-3">
+        <div className="mb-2 flex gap-3 border-b border-gray-50 px-1 py-3">
           {data?.profileImageUrl ? (
             <img
               src={data.profileImageUrl}
@@ -259,55 +258,17 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         </div>
 
         <div className="flex flex-col">
-          {comments
-            .filter((c) => c.parentId === null)
-            .map((comment) => {
-              const replies = comments.filter((r) => r.parentId === comment.id)
-              return (
-                <div key={comment.id} className="mb-1">
-                  <CommentItem
-                    comment={comment}
-                    isLiked={!!likedComments[comment.id]}
-                    onDoubleClick={handleDoubleClick}
-                    onHeartClick={handleHeartClick}
-                    onDeleteSuccess={handleDeleteSuccess}
-                    onEditClick={handleEditClick}
-                  />
-
-                  {replies.length > 0 && (
-                    <div className="ml-12">
-                      <button
-                        onClick={() =>
-                          setShowReplies((p) => ({
-                            ...p,
-                            [comment.id]: !p[comment.id],
-                          }))
-                        }
-                        className="flex items-center gap-2 py-2 text-xs font-semibold text-gray-500"
-                      >
-                        <div className="h-[1px] w-6 bg-gray-300" />
-                        {showReplies[comment.id]
-                          ? '답글 숨기기'
-                          : `답글 보기(${replies.length}개)`}
-                      </button>
-                      {showReplies[comment.id] &&
-                        replies.map((r) => (
-                          <CommentItem
-                            key={r.id}
-                            comment={r}
-                            isReply
-                            isLiked={!!likedComments[r.id]}
-                            onDoubleClick={handleDoubleClick}
-                            onHeartClick={handleHeartClick}
-                            onDeleteSuccess={handleDeleteSuccess}
-                            onEditClick={handleEditClick}
-                          />
-                        ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
+          {comments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              isLiked={!!likedComments[comment.id]}
+              onDoubleClick={handleDoubleClick}
+              onHeartClick={handleHeartClick}
+              onDeleteSuccess={handleDeleteSuccess}
+              onEditClick={handleEditClick}
+            />
+          ))}
           {hasMore && <div ref={observerTarget} className="h-1" />}
         </div>
       </div>
