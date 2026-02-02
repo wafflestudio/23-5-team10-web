@@ -1,18 +1,24 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/shared/auth/authStore'
+import ReportModal from './ReportModal'
 
 interface CommentMenuModalProps {
   onClose: () => void
   onDelete?: () => void
+  onHide: () => void
   authorId: number
+  nickname: string
 }
 
 export default function CommentMenuModal({
   onClose,
   onDelete,
+  onHide,
   authorId,
+  nickname,
 }: CommentMenuModalProps) {
   const [isVisible, setIsVisible] = useState(false)
+  const [isReportOpen, setIsReportOpen] = useState(false)
   const { user } = useAuthStore()
   const isMine = user?.id === authorId
 
@@ -20,6 +26,16 @@ export default function CommentMenuModal({
     const frame = requestAnimationFrame(() => setIsVisible(true))
     return () => cancelAnimationFrame(frame)
   }, [])
+
+  if (isReportOpen) {
+    return (
+      <ReportModal
+        onClose={onClose}
+        onHideComment={onHide}
+        nickname={nickname}
+      />
+    )
+  }
 
   return (
     <div
@@ -43,7 +59,10 @@ export default function CommentMenuModal({
               삭제
             </button>
           ) : (
-            <button className="w-full border-b border-gray-200 py-4 text-[14px] font-bold text-[#ED4956] active:bg-gray-100">
+            <button
+              onClick={() => setIsReportOpen(true)}
+              className="w-full border-b border-gray-200 py-4 text-[14px] font-bold text-[#ED4956] active:bg-gray-100"
+            >
               신고
             </button>
           )}

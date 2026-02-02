@@ -58,6 +58,13 @@ export default function CommentItem({
     setIsMenuOpen(false)
   }
 
+  const handleHide = () => {
+    if (onDeleteSuccess) {
+      onDeleteSuccess(comment.id)
+    }
+    setIsMenuOpen(false)
+  }
+
   const displayLikeCount = comment.likeCount || 0
 
   return (
@@ -127,7 +134,9 @@ export default function CommentItem({
         <CommentMenuModal
           onClose={() => setIsMenuOpen(false)}
           onDelete={handleDelete}
+          onHide={handleHide}
           authorId={comment.userId}
+          nickname={comment.nickname}
         />
       )}
     </>
