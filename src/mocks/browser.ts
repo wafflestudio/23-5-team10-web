@@ -21,6 +21,10 @@ worker.start({
       return
     }
 
+    if (url.pathname === '/login') {
+      return
+    }
+
     print.warning()
   },
 })

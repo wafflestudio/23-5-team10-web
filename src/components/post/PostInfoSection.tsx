@@ -29,10 +29,12 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     [key: number]: boolean
   }>({})
   const [hasMore, setHasMore] = useState(true)
-  const [showReplies, setShowReplies] = useState<{ [key: number]: boolean }>({})
+  const [editingComment, setEditingComment] = useState<Comment | null>(null)
+
   const observerTarget = useRef<HTMLDivElement>(null)
   const pageRef = useRef(1)
   const isFetching = useRef(false)
+  const commentInputRef = useRef<HTMLInputElement>(null)
 
   const fetchComments = useCallback(
     async (pageNum: number) => {
@@ -112,18 +114,33 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     if (!postId) return
 
     try {
-      const response = await instance
-        .post(`api/v1/posts/${postId}/comments`, {
-          json: { content },
-        })
-        .json<{ data: Comment; success: boolean }>()
+      if (editingComment) {
+        const response = await instance
+          .put(`api/v1/posts/${postId}/comments/${editingComment.id}`, {
+            json: { content },
+          })
+          .json<{ data: Comment; success: boolean }>()
 
-      if (response.success) {
-        setComments((prev) => [response.data, ...prev])
-        setLikedComments((prev) => ({
-          ...prev,
-          [response.data.id]: response.data.liked,
-        }))
+        if (response.success) {
+          setComments((prev) =>
+            prev.map((c) => (c.id === editingComment.id ? response.data : c))
+          )
+          setEditingComment(null)
+        }
+      } else {
+        const response = await instance
+          .post(`api/v1/posts/${postId}/comments`, {
+            json: { content },
+          })
+          .json<{ data: Comment; success: boolean }>()
+
+        if (response.success) {
+          setComments((prev) => [response.data, ...prev])
+          setLikedComments((prev) => ({
+            ...prev,
+            [response.data.id]: response.data.liked,
+          }))
+        }
       }
     } catch (error) {
       console.error(error)
@@ -171,6 +188,34 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     }
   }
 
+  const handleDeleteSuccess = (commentId: number) => {
+    setComments((prev) => prev.filter((c) => c.id !== commentId))
+  }
+
+  const handleEditClick = (comment: Comment) => {
+    setEditingComment(comment)
+    setTimeout(() => {
+      commentInputRef.current?.focus()
+    }, 0)
+  }
+
+  const handleCommentIconClick = () => {
+    if (editingComment) {
+      setEditingComment(null)
+    }
+    setTimeout(() => {
+      commentInputRef.current?.focus()
+    }, 0)
+  }
+
+  const formattedFullDate = data?.createdAt
+    ? new Date(data.createdAt).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : ''
+
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
@@ -200,7 +245,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
           }}
         />
 
-        <div className="mb-2 flex gap-3 px-1 py-3">
+        <div className="mb-2 flex gap-3 border-b border-gray-50 px-1 py-3">
           {data?.profileImageUrl ? (
             <img
               src={data.profileImageUrl}
@@ -220,70 +265,42 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         </div>
 
         <div className="flex flex-col">
-          {comments
-            .filter((c) => c.parentId === null)
-            .map((comment) => {
-              const replyCount = comments.filter(
-                (r) => r.parentId === comment.id
-              ).length
-              return (
-                <div key={comment.id} className="mb-1">
-                  <CommentItem
-                    comment={comment}
-                    isLiked={!!likedComments[comment.id]}
-                    onDoubleClick={handleDoubleClick}
-                    onHeartClick={handleHeartClick}
-                  />
-
-                  {replyCount > 0 && (
-                    <div className="ml-12">
-                      <button
-                        onClick={() =>
-                          setShowReplies((p) => ({
-                            ...p,
-                            [comment.id]: !p[comment.id],
-                          }))
-                        }
-                        className="flex items-center gap-2 py-2 text-xs font-semibold text-gray-500"
-                      >
-                        <div className="h-[1px] w-6 bg-gray-300" />
-                        {showReplies[comment.id]
-                          ? '답글 숨기기'
-                          : `답글 보기(${replyCount}개)`}
-                      </button>
-                      {showReplies[comment.id] &&
-                        comments
-                          .filter((r) => r.parentId === comment.id)
-                          .map((r) => (
-                            <CommentItem
-                              key={r.id}
-                              comment={r}
-                              isReply
-                              isLiked={!!likedComments[r.id]}
-                              onDoubleClick={handleDoubleClick}
-                              onHeartClick={handleHeartClick}
-                            />
-                          ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
+          {comments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              isLiked={!!likedComments[comment.id]}
+              onDoubleClick={handleDoubleClick}
+              onHeartClick={handleHeartClick}
+              onDeleteSuccess={handleDeleteSuccess}
+              onEditClick={handleEditClick}
+            />
+          ))}
           {hasMore && <div ref={observerTarget} className="h-1" />}
         </div>
       </div>
 
       <PostActionSection
+        key={editingComment ? `edit-${editingComment.id}` : 'new'}
         likeCount={data?.likeCount || 0}
-        createdAt={data?.createdAt ? formatRelativeTime(data.createdAt) : ''}
+        createdAt={formattedFullDate}
         isLiked={data?.liked || false}
         isBookmarked={data?.bookmarked || false}
         onLikeClick={() => {}}
         onBookmarkClick={() => {}}
         onCommentSubmit={handleCommentSubmit}
+        onCommentIconClick={handleCommentIconClick}
+        inputRef={commentInputRef}
+        editValue={editingComment?.content}
+        onCancelEdit={() => setEditingComment(null)}
       />
 
-      {isModalOpen && <PostMenuModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <PostMenuModal
+          onClose={() => setIsModalOpen(false)}
+          nickname={data?.nickname || ''}
+        />
+      )}
     </div>
   )
 }
