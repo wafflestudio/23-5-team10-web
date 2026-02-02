@@ -2,12 +2,34 @@ import { useState } from 'react'
 import { X, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import ReportCompleteModal from './ReportCompleteModal'
+import type { ReportType } from './ReportCompleteModal'
+import ReportBullyingModal from './ReportBullyingModal'
+import ReportSelfHarmModal from './ReportSelfHarmModal'
+import ReportNudityModal from './ReportNudityModal'
+import ReportViolenceModal from './ReportViolenceModal'
+import ReportSalesModal from './ReportSalesModal'
+import ReportSpamModal from './ReportSpamModal'
+import ReportAgeCheckModal from './ReportAgeCheckModal'
+import ReportOtherAgeCheckModal from './ReportOtherAgeCheckModal'
+import ReportTargetModal from './ReportTargetModal'
 
 interface ReportModalProps {
   onClose: () => void
   onHideComment: () => void
   nickname: string
 }
+
+type Step =
+  | 'main'
+  | 'bullying'
+  | 'age_check'
+  | 'other_age_check'
+  | 'target_select'
+  | 'self_harm'
+  | 'nudity'
+  | 'violence'
+  | 'sales'
+  | 'spam'
 
 const REPORT_REASONS = [
   '마음에 들지 않습니다',
@@ -26,7 +48,14 @@ export default function ReportModal({
   onHideComment,
   nickname,
 }: ReportModalProps) {
+  const [step, setStep] = useState<Step>('main')
   const [isComplete, setIsComplete] = useState(false)
+  const [reportType, setReportType] = useState<ReportType>('default')
+
+  const handleComplete = (type: ReportType = 'default') => {
+    setReportType(type)
+    setIsComplete(true)
+  }
 
   if (isComplete) {
     return (
@@ -34,6 +63,100 @@ export default function ReportModal({
         onClose={onClose}
         onHideComment={onHideComment}
         nickname={nickname}
+        type={reportType}
+      />
+    )
+  }
+
+  if (step === 'bullying') {
+    return (
+      <ReportBullyingModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onNext={(next: 'age_check' | 'target_select') => setStep(next)}
+        onSubmit={handleComplete}
+      />
+    )
+  }
+
+  if (step === 'age_check') {
+    return (
+      <ReportAgeCheckModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onSubmit={handleComplete}
+      />
+    )
+  }
+
+  if (step === 'other_age_check') {
+    return (
+      <ReportOtherAgeCheckModal
+        onClose={onClose}
+        onBack={() => setStep('target_select')}
+        onSubmit={handleComplete}
+      />
+    )
+  }
+
+  if (step === 'target_select') {
+    return (
+      <ReportTargetModal
+        onClose={onClose}
+        onBack={() => setStep('bullying')}
+        onNext={(next: 'age_check' | 'other_age_check') => setStep(next)}
+        onSubmit={handleComplete}
+      />
+    )
+  }
+
+  if (step === 'self_harm') {
+    return (
+      <ReportSelfHarmModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onSubmit={() => handleComplete('default')}
+      />
+    )
+  }
+
+  if (step === 'nudity') {
+    return (
+      <ReportNudityModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onNext={(next: 'age_check') => setStep(next)}
+        onSubmit={handleComplete}
+      />
+    )
+  }
+
+  if (step === 'violence') {
+    return (
+      <ReportViolenceModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onSubmit={() => handleComplete('default')}
+      />
+    )
+  }
+
+  if (step === 'sales') {
+    return (
+      <ReportSalesModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onSubmit={() => handleComplete('default')}
+      />
+    )
+  }
+
+  if (step === 'spam') {
+    return (
+      <ReportSpamModal
+        onClose={onClose}
+        onBack={() => setStep('main')}
+        onSubmit={handleComplete}
       />
     )
   }
@@ -73,7 +196,21 @@ export default function ReportModal({
             {REPORT_REASONS.map((reason, index) => (
               <div key={reason}>
                 <button
-                  onClick={() => setIsComplete(true)}
+                  onClick={() => {
+                    if (reason === '마음에 들지 않습니다')
+                      handleComplete('dislike')
+                    else if (reason === '따돌림 또는 원치 않는 연락')
+                      setStep('bullying')
+                    else if (reason === '자살, 자해 및 섭식 장애')
+                      setStep('self_harm')
+                    else if (reason === '나체 이미지 또는 성적 행위')
+                      setStep('nudity')
+                    else if (reason === '폭력 또는 학대') setStep('violence')
+                    else if (reason === '규제 품목의 판매 또는 홍보')
+                      setStep('sales')
+                    else if (reason === '스캠, 사기 또는 스팸') setStep('spam')
+                    else handleComplete('default')
+                  }}
                   className="flex w-full items-center justify-between px-5 py-[14px] transition-colors hover:bg-gray-50 active:bg-gray-100"
                 >
                   <span className="text-[14px] text-black">{reason}</span>

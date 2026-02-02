@@ -297,7 +297,12 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         onCommentSubmit={handleCommentSubmit}
       />
 
-      {isModalOpen && <PostMenuModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <PostMenuModal
+          onClose={() => setIsModalOpen(false)}
+          nickname={data?.nickname || ''}
+        />
+      )}
     </div>
   )
 }
