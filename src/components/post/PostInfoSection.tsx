@@ -33,6 +33,7 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
   const observerTarget = useRef<HTMLDivElement>(null)
   const pageRef = useRef(1)
   const isFetching = useRef(false)
+  const commentInputRef = useRef<HTMLInputElement>(null)
 
   const fetchComments = useCallback(
     async (pageNum: number) => {
@@ -175,6 +176,10 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
     setComments((prev) => prev.filter((c) => c.id !== commentId))
   }
 
+  const handleCommentIconClick = () => {
+    commentInputRef.current?.focus()
+  }
+
   const formattedFullDate = data?.createdAt
     ? new Date(data.createdAt).toLocaleDateString('ko-KR', {
         year: 'numeric',
@@ -295,6 +300,8 @@ export default function PostInfoSection({ data }: { data: PostData | null }) {
         onLikeClick={() => {}}
         onBookmarkClick={() => {}}
         onCommentSubmit={handleCommentSubmit}
+        onCommentIconClick={handleCommentIconClick}
+        inputRef={commentInputRef}
       />
 
       {isModalOpen && (

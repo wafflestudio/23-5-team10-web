@@ -9,6 +9,8 @@ interface PostActionSectionProps {
   onLikeClick: () => void
   onBookmarkClick: () => void
   onCommentSubmit: (content: string) => void
+  onCommentIconClick: () => void
+  inputRef: React.RefObject<HTMLInputElement | null>
 }
 
 export default function PostActionSection({
@@ -19,6 +21,8 @@ export default function PostActionSection({
   onLikeClick,
   onBookmarkClick,
   onCommentSubmit,
+  onCommentIconClick,
+  inputRef,
 }: PostActionSectionProps) {
   const [comment, setComment] = useState('')
 
@@ -41,7 +45,10 @@ export default function PostActionSection({
               className={`h-6 w-6 ${isLiked ? 'fill-[#ED4956] text-[#ED4956]' : 'text-black'}`}
             />
           </button>
-          <button className="transition-opacity hover:opacity-60">
+          <button
+            onClick={onCommentIconClick}
+            className="transition-opacity hover:opacity-60"
+          >
             <MessageCircle className="h-6 w-6 text-black" />
           </button>
         </div>
@@ -73,6 +80,7 @@ export default function PostActionSection({
         </div>
         <input
           type="text"
+          ref={inputRef}
           placeholder="댓글 달기..."
           className="flex-1 text-sm outline-none placeholder:text-gray-500"
           value={comment}
