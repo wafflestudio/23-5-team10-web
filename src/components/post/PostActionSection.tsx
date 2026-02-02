@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Heart, MessageCircle, Bookmark, Smile, X } from 'lucide-react'
+import { Heart, MessageCircle, Send, Bookmark, Smile } from 'lucide-react'
+import { useAuthStore } from '@/shared/auth/authStore'
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar.tsx'
 
 interface PostActionSectionProps {
   likeCount: number
@@ -28,11 +30,8 @@ export default function PostActionSection({
   editValue,
   onCancelEdit,
 }: PostActionSectionProps) {
-  const [comment, setComment] = useState(editValue ?? '')
-
-  if (editValue !== undefined && comment !== editValue && comment === '') {
-    setComment(editValue)
-  }
+  const [comment, setComment] = useState('')
+  const { user } = useAuthStore()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -104,10 +103,16 @@ export default function PostActionSection({
         onSubmit={handleSubmit}
         className="flex items-center border-t border-gray-100 px-4 py-3"
       >
-        <div className="mr-3 flex items-center">
+        <div className="mr-3 flex items-center gap-3">
           <button type="button" className="transition-opacity hover:opacity-60">
             <Smile className="h-6 w-6 text-black" />
           </button>
+          {user && (
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={user.profileImageUrl} alt={user.nickname} />
+              <AvatarFallback>{user.nickname[0]}</AvatarFallback>
+            </Avatar>
+          )}
         </div>
         <input
           type="text"

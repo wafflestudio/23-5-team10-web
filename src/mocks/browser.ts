@@ -21,7 +21,7 @@ worker.start({
       return
     }
 
-    if (url.pathname === '/login' || url.pathname.startsWith('/p/')) {
+    if (url.pathname === '/login') {
       return
     }
 
