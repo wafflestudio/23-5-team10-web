@@ -160,6 +160,7 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
       {isMenuOpen && (
         <PostMenuModal
           onClose={() => setIsMenuOpen(false)}
+          postId={item.postId}
           nickname={item.author.nickname}
           authorId={item.author.userId}
           profileImageUrl={item.author.profileImageUrl}

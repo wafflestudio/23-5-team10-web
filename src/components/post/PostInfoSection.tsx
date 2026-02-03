@@ -407,6 +407,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
         {isModalOpen && (
           <PostMenuModal
             onClose={() => setIsModalOpen(false)}
+            postId={Number(postData?.id) || 0}
             nickname={postData?.nickname || ''}
             authorId={postData?.userId || 0}
             profileImageUrl={postData?.profileImageUrl || null}

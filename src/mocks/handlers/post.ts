@@ -56,6 +56,27 @@ export const postHandlers = [
     })
   }),
 
+  http.delete('*/api/v1/posts/:postId', async ({ params }) => {
+    await delay(500)
+    const { postId } = params
+    const idNum = Number(postId)
+
+    const index = posts.findIndex((p) => String(p.id) === String(postId))
+    if (index !== -1) {
+      posts.splice(index, 1)
+      likedPostIds.delete(idNum)
+      bookmarkedPostIds.delete(idNum)
+      delete postAlbumMap[idNum]
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '게시글이 삭제되었습니다.',
+      isSuccess: true,
+      data: null,
+    })
+  }),
+
   http.post('*/api/v1/posts/:postId/like', async ({ params }) => {
     await delay(100)
     const { postId } = params

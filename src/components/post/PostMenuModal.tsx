@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import ReportModal from './ReportModal'
 import AccountInfoModal from './AccountInfoModal'
 import EmbedModal from './EmbedModal'
 import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 import { useFollowing } from '@/features/follow-user/model/useFollowing'
 import { useToggleFollow } from '@/features/follow-user/model/useToggleFollow'
+import { instance } from '@/shared/api/ky'
 
 interface PostMenuModalProps {
   onClose: () => void
@@ -22,9 +24,10 @@ export default function PostMenuModal({
   profileImageUrl,
 }: PostMenuModalProps) {
   const [activeModal, setActiveModal] = useState<
-    'menu' | 'report' | 'account' | 'embed'
+    'menu' | 'report' | 'account' | 'embed' | 'delete_confirm'
   >('menu')
   const [showToast, setShowToast] = useState(false)
+  const navigate = useNavigate()
   const currentUserId = useCurrentUserId()
 
   const { data: followingList } = useFollowing({ userId: currentUserId ?? 0 })
@@ -47,11 +50,6 @@ export default function PostMenuModal({
     }
   }, [showToast, onClose])
 
-  const handleFollowClick = () => {
-    toggleFollow()
-    onClose()
-  }
-
   const handleCopyLink = async () => {
     const postUrl = `${window.location.origin}/p/${postId}`
     try {
@@ -59,6 +57,22 @@ export default function PostMenuModal({
       setShowToast(true)
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  const handleDeletePost = async () => {
+    try {
+      const response = await instance
+        .delete(`api/v1/posts/${postId}`)
+        .json<{ isSuccess: boolean; code: string; message: string }>()
+
+      if (response.isSuccess) {
+        onClose()
+        // 삭제 후 내 프로필 페이지나 홈으로 이동
+        navigate({ to: `/${authorId}` })
+      }
+    } catch (err) {
+      console.error('게시글 삭제 실패:', err)
     }
   }
 
@@ -87,16 +101,57 @@ export default function PostMenuModal({
     return <EmbedModal onClose={onClose} postId={postId} nickname={nickname} />
   }
 
+  if (activeModal === 'delete_confirm') {
+    return (
+      <div
+        className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4"
+        onClick={onClose}
+      >
+        <div
+          className="w-full max-w-[400px] overflow-hidden rounded-[12px] bg-white text-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="px-8 py-6">
+            <h2 className="mb-2 text-[18px] font-bold text-black">
+              게시물을 삭제할까요?
+            </h2>
+            <p className="text-[14px] text-gray-500">
+              지금 삭제하면 이 게시물을 다시 볼 수 없습니다.
+            </p>
+          </div>
+          <button
+            onClick={handleDeletePost}
+            className="w-full border-t border-gray-200 py-3 text-[14px] font-bold text-red-500 active:bg-gray-50"
+          >
+            삭제
+          </button>
+          <button
+            onClick={() => setActiveModal('menu')}
+            className="w-full border-t border-gray-200 py-3 text-[14px] active:bg-gray-50"
+          >
+            취소
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4">
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4"
+        onClick={onClose}
+      >
         <div
           className="w-full max-w-[400px] overflow-hidden rounded-[12px] bg-white text-center text-[14px]"
           onClick={(e) => e.stopPropagation()}
         >
           {isMe ? (
             <>
-              <button className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100">
+              <button
+                onClick={() => setActiveModal('delete_confirm')}
+                className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100"
+              >
                 삭제
               </button>
               <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
@@ -113,7 +168,10 @@ export default function PostMenuModal({
               </button>
               {isFollowing && (
                 <button
-                  onClick={handleFollowClick}
+                  onClick={() => {
+                    toggleFollow()
+                    onClose()
+                  }}
                   className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100"
                 >
                   팔로우 취소
@@ -146,7 +204,6 @@ export default function PostMenuModal({
             취소
           </button>
         </div>
-        <div className="absolute inset-0 -z-10" onClick={onClose} />
       </div>
 
       {showToast && (
