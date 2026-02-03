@@ -8,7 +8,7 @@ import {
   ApiResponseSchema,
   CreateAlbumRequestSchema,
   CreateAlbumResponseSchema,
-  MyAlbumsResponseSchema,
+  UserAlbumsResponseSchema,
 } from './schema'
 
 export type CreateAlbumRequest = z.infer<typeof CreateAlbumRequestSchema>
@@ -19,7 +19,7 @@ export type AlbumDetail = z.infer<typeof AlbumDetailSchema>
 export type AlbumSummary = z.infer<typeof AlbumSummarySchema>
 
 export type AlbumDetailResponse = z.infer<typeof AlbumDetailResponseSchema>
-export type MyAlbumsResponse = z.infer<typeof MyAlbumsResponseSchema>
+export type UserAlbumsResponse = z.infer<typeof UserAlbumsResponseSchema>
 
 export type ApiResponse<T> = z.infer<
   ReturnType<typeof ApiResponseSchema<z.ZodType<T>>>

@@ -32,6 +32,6 @@ export const ApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
 
 export const CreateAlbumResponseSchema = ApiResponseSchema(z.number())
 export const AlbumDetailResponseSchema = ApiResponseSchema(AlbumDetailSchema)
-export const MyAlbumsResponseSchema = ApiResponseSchema(
+export const UserAlbumsResponseSchema = ApiResponseSchema(
   z.array(AlbumSummarySchema)
 )

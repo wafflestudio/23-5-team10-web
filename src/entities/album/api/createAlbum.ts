@@ -8,13 +8,24 @@ import type {
   CreateAlbumResponse,
 } from '@/entities/album/model/types'
 
-export async function createAlbum(
+type CreateAlbumParams = {
   payload: CreateAlbumRequest
-): Promise<number> {
+  loggedInUser: number | null
+}
+
+export async function createAlbum({
+  payload,
+  loggedInUser,
+}: CreateAlbumParams): Promise<number> {
   const parsedRequest = CreateAlbumRequestSchema.parse(payload)
 
+  const searchParams = new URLSearchParams()
+  if (loggedInUser !== null) {
+    searchParams.set('loggedInUser', String(loggedInUser))
+  }
   const response = await instance.post('api/v1/albums', {
     json: parsedRequest,
+    searchParams,
   })
 
   const raw = await response.json()

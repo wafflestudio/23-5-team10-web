@@ -2,14 +2,26 @@ import { instance } from '@/shared/api/ky'
 import { CreateAlbumRequestSchema } from '@/entities/album/model/schema'
 import type { CreateAlbumRequest } from '@/entities/album/model/types'
 
-export async function updateAlbumTitle(
-  albumId: number,
+type UpdateAlbumTitleParams = {
+  albumId: number
   payload: CreateAlbumRequest
-): Promise<void> {
+  loggedInUser: number | null
+}
+
+export async function updateAlbumTitle({
+  albumId,
+  payload,
+  loggedInUser,
+}: UpdateAlbumTitleParams): Promise<void> {
   const parsedRequest = CreateAlbumRequestSchema.parse(payload)
 
+  const searchParams = new URLSearchParams()
+  if (loggedInUser !== null) {
+    searchParams.set('loggedInUser', String(loggedInUser))
+  }
   const response = await instance.patch(`api/v1/albums/${albumId}`, {
     json: parsedRequest,
+    searchParams,
   })
 
   if (!response.ok) {

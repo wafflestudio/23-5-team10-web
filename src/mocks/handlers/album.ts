@@ -8,7 +8,7 @@ import {
   type CreateAlbumRequest,
   type CreateAlbumResponse,
   type AlbumDetailResponse,
-  type MyAlbumsResponse,
+  type UserAlbumsResponse,
 } from '../../entities/album/model/types'
 import { CreateAlbumRequestSchema } from '../../entities/album/model/schema'
 
@@ -56,7 +56,33 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.get('*/api/v1/albums/my', () => {
+  http.get('*/api/v1/albums/users/:userId', () => {
+    const mappedPostIds = new Set(
+      Object.keys(postAlbumMap).map((key) => Number(key))
+    )
+    const postsWithoutAlbum = posts.filter(
+      (p) => !mappedPostIds.has(Number(p.id))
+    )
+
+    const noAlbumThumbnail =
+      postsWithoutAlbum.length > 0
+        ? (() => {
+            const firstPost = postsWithoutAlbum[0] as Post & {
+              images?: string[]
+            }
+            return Array.isArray(firstPost.images)
+              ? firstPost.images[0]
+              : firstPost.imageUrl
+          })()
+        : ''
+
+    const noAlbumItem = {
+      albumId: -1,
+      title: '앨범 없음',
+      thumbnailImageUrl: noAlbumThumbnail,
+      postCount: postsWithoutAlbum.length,
+    }
+
     const albumSummaries = albums.map((album) => {
       const postsInAlbum = Object.entries(postAlbumMap)
         .filter(([, mappedAlbumId]) => mappedAlbumId === album.id)
@@ -87,10 +113,10 @@ export const albumHandlers = [
       }
     })
 
-    const body: MyAlbumsResponse = {
+    const body: UserAlbumsResponse = {
       code: '200',
-      message: '내 앨범 목록 조회 성공',
-      data: albumSummaries,
+      message: '앨범 목록 조회 성공',
+      data: [noAlbumItem, ...albumSummaries],
       isSuccess: true,
     }
 
