@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 import {
   bookmarkPost,
@@ -28,6 +29,9 @@ export function useToggleBookmarkMutation({
       queryClient.invalidateQueries({ queryKey: ['posts', 'bookmarks'] })
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       queryClient.invalidateQueries({ queryKey: ['posts', 'explore'] })
+    },
+    onError: () => {
+      toast.error('북마크 처리에 실패했습니다.')
     },
     meta: {
       postId,

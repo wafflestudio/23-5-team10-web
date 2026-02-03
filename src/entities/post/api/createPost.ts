@@ -8,7 +8,7 @@ import {
 
 export type CreatePostParams = {
   content: string
-  albumId?: number | null
+  albumId?: number
   imageUrls: string[]
 }
 
@@ -20,7 +20,10 @@ export async function createPost(
   params: CreatePostParams
 ): Promise<CreatePostResponse> {
   const response = await instance.post('api/v1/posts', {
-    json: params,
+    json: {
+      ...params,
+      albumId: params.albumId === -1 ? null : params.albumId,
+    },
   })
 
   const raw = await response.json()
