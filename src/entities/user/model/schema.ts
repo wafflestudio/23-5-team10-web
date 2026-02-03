@@ -43,7 +43,7 @@ export const ProfileUserSchema = z.object({
   postsCount: z.number(),
   followerCount: z.number(),
   followingCount: z.number(),
-  me: z.boolean(),
+  isMe: z.boolean(),
   isFollowed: z.boolean(),
 })
 
