@@ -109,7 +109,7 @@ export function ProfilePage() {
       <ProfileRouteTabs
         value={activeTabValue}
         onValueChange={handleTabChange}
-        showSavedTab={profile.me}
+        showSavedTab={profile.isMe}
       />
 
       <Outlet />

@@ -107,7 +107,7 @@ export const userHandlers = [
         postsCount,
         followerCount,
         followingCount,
-        me: userId === CURRENT_USER_ID,
+        isMe: userId === CURRENT_USER_ID,
         isFollowed: followed,
       },
       isSuccess: true,

@@ -51,18 +51,18 @@ export const postHandlers = [
       commentCount: newPost.commentCount,
       createdAt: newPost.createdAt,
       updatedAt: newPost.createdAt,
-      liked: false,
-      bookmarked: false,
+      isLiked: false,
+      isBookmarked: false,
     }
 
     return HttpResponse.json(
       {
-        code: '201',
+        code: '200',
         message: '게시글을 생성했습니다.',
         data: responsePost,
-        success: true,
+        isSuccess: true,
       },
-      { status: 201 }
+      { status: 200 }
     )
   }),
 
