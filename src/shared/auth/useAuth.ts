@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useAuthStore } from './authStore'
-import { authInstance } from '../api/authApi'
+import { instance } from '../api/ky'
 import { useInvalidateCurrentUser, useClearCurrentUser } from './useCurrentUser'
 
 type LoginCredentials = {
@@ -13,6 +13,7 @@ type LoginResponse = {
   success: boolean
   data: {
     accessToken: string
+    refreshToken: string
   }
 }
 
@@ -23,7 +24,7 @@ export function useAuth() {
   const clearCurrentUser = useClearCurrentUser()
 
   const login = async (credentials: LoginCredentials) => {
-    const response = await authInstance
+    const response = await instance
       .post('api/v1/auth/login', {
         json: credentials,
       })
@@ -31,6 +32,7 @@ export function useAuth() {
 
     if (response.success) {
       localStorage.setItem('accessToken', response.data.accessToken)
+      localStorage.setItem('refreshToken', response.data.refreshToken)
       await invalidateCurrentUser()
       navigate({ to: '/' })
     }
@@ -39,9 +41,10 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await authInstance.post('api/v1/auth/logout')
+      await instance.post('api/v1/auth/logout')
     } finally {
       localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
       clearCurrentUser()
       reset()
       navigate({ to: '/login' })
