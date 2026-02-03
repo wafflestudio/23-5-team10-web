@@ -1,5 +1,8 @@
+import { useRef } from 'react'
+
 import { Button } from '@/shared/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RefreshCw, AlertCircle } from 'lucide-react'
+import { CREATE_POST_IMAGE_ACCEPT } from '@/features/create-post/constants'
 
 type PreviewPaneProps = {
   activePreviewUrl: string | null | undefined
@@ -10,6 +13,8 @@ type PreviewPaneProps = {
   dots: number[]
   goPrev: () => void
   goNext: () => void
+  isUploadError?: boolean
+  onSelectFiles?: (files: File[]) => void
 }
 
 export function PreviewPane({
@@ -21,7 +26,22 @@ export function PreviewPane({
   dots,
   goPrev,
   goNext,
+  isUploadError,
+  onSelectFiles,
 }: PreviewPaneProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleRetryClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      onSelectFiles?.(Array.from(files))
+    }
+    e.target.value = ''
+  }
   const hasMultipleFiles = filesCount > 1
 
   return (
@@ -43,6 +63,32 @@ export function PreviewPane({
             alt="업로드된 이미지 미리보기"
             className="absolute inset-0 h-full w-full object-cover"
           />
+        ) : null}
+
+        {isUploadError ? (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-black/60">
+            <AlertCircle className="size-12 text-red-400" />
+            <p className="text-center text-sm text-white">
+              이미지 업로드에 실패했습니다.
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={CREATE_POST_IMAGE_ACCEPT}
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              className="gap-2 text-white"
+              onClick={handleRetryClick}
+            >
+              <RefreshCw className="size-4" />
+              다시 시도
+            </Button>
+          </div>
         ) : null}
 
         {hasMultipleFiles ? (

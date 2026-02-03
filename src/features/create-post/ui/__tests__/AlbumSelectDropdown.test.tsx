@@ -66,7 +66,7 @@ describe('AlbumSelectDropdown', () => {
   describe('초기 렌더링', () => {
     it('앨범이 선택되지 않았을 때 "앨범 없음"을 표시한다', async () => {
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -77,7 +77,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json(
             {
               code: '200',
@@ -122,7 +122,7 @@ describe('AlbumSelectDropdown', () => {
     it('트리거 버튼을 클릭하면 드롭다운이 열린다', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -140,10 +140,10 @@ describe('AlbumSelectDropdown', () => {
   })
 
   describe('앨범 선택', () => {
-    it('"앨범 없음"을 선택하면 onSelect(null)이 호출된다', async () => {
+    it('"앨범 없음"을 선택하면 onSelect(-1)이 호출된다', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -160,7 +160,7 @@ describe('AlbumSelectDropdown', () => {
       })
       await user.click(noAlbumItem)
 
-      expect(mockOnSelect).toHaveBeenCalledWith(null)
+      expect(mockOnSelect).toHaveBeenCalledWith(-1)
     })
 
     it('기존 앨범을 선택하면 onSelect(albumId)가 호출된다', async () => {
@@ -168,7 +168,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json(
             {
               code: '200',
@@ -195,17 +195,12 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
       await user.click(trigger)
-
-      await waitFor(() => {
-        const queryState = queryClient.getQueryState(['albums', 'my'])
-        expect(queryState?.status).toBe('success')
-      })
 
       await waitFor(
         () => {
@@ -229,7 +224,7 @@ describe('AlbumSelectDropdown', () => {
     it('"앨범 추가" 버튼을 클릭하면 input 필드가 나타난다', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -262,7 +257,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -281,7 +276,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 
@@ -327,7 +322,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -346,7 +341,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 
@@ -397,7 +392,7 @@ describe('AlbumSelectDropdown', () => {
     it('X 버튼을 클릭하면 input이 사라지고 "앨범 추가" 버튼으로 돌아간다', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -445,7 +440,7 @@ describe('AlbumSelectDropdown', () => {
     it('Escape 키를 누르면 input이 사라지고 "앨범 추가" 버튼으로 돌아간다', async () => {
       const user = userEvent.setup()
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -486,7 +481,7 @@ describe('AlbumSelectDropdown', () => {
     it('연필 아이콘을 클릭하면 input 필드가 나타나고 기존 제목이 입력되어 있다', async () => {
       const user = userEvent.setup()
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -504,7 +499,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -542,7 +537,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -567,7 +562,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 
@@ -615,7 +610,7 @@ describe('AlbumSelectDropdown', () => {
     it('수정 모드에서 X 버튼을 클릭하면 수정이 취소되고 원래 상태로 돌아간다', async () => {
       const user = userEvent.setup()
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -633,7 +628,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -685,7 +680,7 @@ describe('AlbumSelectDropdown', () => {
     it('수정 모드에서 Escape 키를 누르면 수정이 취소된다', async () => {
       const user = userEvent.setup()
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -703,7 +698,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />
       )
 
       const trigger = screen.getByRole('button', { name: /앨범 없음/i })
@@ -751,7 +746,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -770,7 +765,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 
@@ -812,7 +807,7 @@ describe('AlbumSelectDropdown', () => {
       const queryClient = createTestQueryClient()
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -837,7 +832,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 
@@ -887,7 +882,7 @@ describe('AlbumSelectDropdown', () => {
       let createCallCount = 0
 
       server.use(
-        http.get('*/api/v1/albums/my', () => {
+        http.get('*/api/v1/albums/users/*', () => {
           return HttpResponse.json({
             code: '200',
             message: 'Success',
@@ -907,7 +902,7 @@ describe('AlbumSelectDropdown', () => {
       )
 
       renderWithProviders(
-        <AlbumSelectDropdown selectedAlbumId={null} onSelect={mockOnSelect} />,
+        <AlbumSelectDropdown selectedAlbumId={-1} onSelect={mockOnSelect} />,
         queryClient
       )
 

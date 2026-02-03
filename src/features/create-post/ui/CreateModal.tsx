@@ -39,6 +39,7 @@ function CreateModalInner({
     isUploaded,
     isDetails,
     isUploading,
+    isUploadError,
     isUploadComplete,
     uploadedUrls,
     caption,
@@ -69,9 +70,16 @@ function CreateModalInner({
     onOpenChange(false)
   }, [onOpenChange, resetDraft])
 
+  const isCaptionValid = caption.trim().length > 0
+
   const handleShare = useCallback(() => {
     if (!isUploadComplete) {
       toast.error('이미지 업로드가 완료될 때까지 기다려주세요.')
+      return
+    }
+
+    if (!isCaptionValid) {
+      toast.error('내용을 입력해주세요.')
       return
     }
 
@@ -87,11 +95,18 @@ function CreateModalInner({
         },
       }
     )
-  }, [isUploadComplete, caption, selectedAlbumId, uploadedUrls, createPost])
+  }, [
+    isUploadComplete,
+    isCaptionValid,
+    caption,
+    selectedAlbumId,
+    uploadedUrls,
+    createPost,
+  ])
 
   const isSharing = createPost.isPending
   const isShareSuccess = createPost.isSuccess
-  const isShareDisabled = !isUploadComplete || isSharing
+  const isShareDisabled = !isUploadComplete || isSharing || !isCaptionValid
   const showDetailsPane = isDetails && !isSharing && !isShareSuccess
 
   const {
@@ -124,6 +139,7 @@ function CreateModalInner({
             onShare={handleShare}
             isShareDisabled={isShareDisabled}
             isUploading={isUploading}
+            isUploadError={isUploadError}
             isSharing={isSharing}
             isShareSuccess={isShareSuccess}
           />
@@ -153,6 +169,8 @@ function CreateModalInner({
                     dots={carousel.dots}
                     goPrev={carousel.goPrev}
                     goNext={carousel.goNext}
+                    isUploadError={isUploadError}
+                    onSelectFiles={handleDropFiles}
                   />
                 </div>
 
@@ -177,6 +195,8 @@ function CreateModalInner({
                   dots={carousel.dots}
                   goPrev={carousel.goPrev}
                   goNext={carousel.goNext}
+                  isUploadError={isUploadError}
+                  onSelectFiles={handleDropFiles}
                 />
               </div>
             )

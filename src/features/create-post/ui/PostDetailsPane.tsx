@@ -6,8 +6,8 @@ type PostDetailsPaneProps = {
   profileImageUrl?: string
   caption: string
   onCaptionChange: (caption: string) => void
-  selectedAlbumId: number | null
-  onAlbumSelect: (albumId: number | null) => void
+  selectedAlbumId: number
+  onAlbumSelect: (albumId: number) => void
 }
 
 export function PostDetailsPane({
