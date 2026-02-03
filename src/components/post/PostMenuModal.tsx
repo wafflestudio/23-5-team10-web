@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ReportModal from './ReportModal'
+import AccountInfoModal from './AccountInfoModal'
 import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 import { useFollowing } from '@/features/follow-user/model/useFollowing'
 import { useToggleFollow } from '@/features/follow-user/model/useToggleFollow'
@@ -8,14 +9,18 @@ interface PostMenuModalProps {
   onClose: () => void
   nickname: string
   authorId: number
+  profileImageUrl: string | null
 }
 
 export default function PostMenuModal({
   onClose,
   nickname,
   authorId,
+  profileImageUrl,
 }: PostMenuModalProps) {
-  const [isReportOpen, setIsReportOpen] = useState(false)
+  const [activeModal, setActiveModal] = useState<'menu' | 'report' | 'account'>(
+    'menu'
+  )
   const currentUserId = useCurrentUserId()
 
   const { data: followingList } = useFollowing({ userId: currentUserId ?? 0 })
@@ -33,12 +38,22 @@ export default function PostMenuModal({
     onClose()
   }
 
-  if (isReportOpen) {
+  if (activeModal === 'report') {
     return (
       <ReportModal
         onClose={onClose}
         nickname={nickname}
         onHideComment={() => {}}
+      />
+    )
+  }
+
+  if (activeModal === 'account') {
+    return (
+      <AccountInfoModal
+        onClose={onClose}
+        nickname={nickname}
+        profileImageUrl={profileImageUrl}
       />
     )
   }
@@ -64,42 +79,41 @@ export default function PostMenuModal({
               댓글 기능 해제
             </button>
           </>
-        ) : isFollowing ? (
-          <>
-            <button
-              onClick={() => setIsReportOpen(true)}
-              className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100"
-            >
-              신고
-            </button>
-            <button
-              onClick={handleFollowClick}
-              className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100"
-            >
-              팔로우 취소
-            </button>
-          </>
         ) : (
           <>
             <button
-              onClick={() => setIsReportOpen(true)}
+              onClick={() => setActiveModal('report')}
               className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100"
             >
               신고
             </button>
-            <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
-              공유 대상...
-            </button>
+            {isFollowing ? (
+              <button
+                onClick={handleFollowClick}
+                className="w-full border-b border-gray-200 py-3 font-bold text-red-500 active:bg-gray-100"
+              >
+                팔로우 취소
+              </button>
+            ) : (
+              <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
+                공유 대상...
+              </button>
+            )}
             <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
               링크 복사
             </button>
-            <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
-              퍼가기
-            </button>
+            {!isFollowing && (
+              <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
+                퍼가기
+              </button>
+            )}
           </>
         )}
 
-        <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
+        <button
+          onClick={() => setActiveModal('account')}
+          className="w-full border-b border-gray-200 py-3 active:bg-gray-100"
+        >
           이 계정 정보
         </button>
         <button onClick={onClose} className="w-full py-3 active:bg-gray-100">

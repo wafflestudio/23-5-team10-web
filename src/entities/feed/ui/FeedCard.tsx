@@ -162,6 +162,7 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
           onClose={() => setIsMenuOpen(false)}
           nickname={item.author.nickname}
           authorId={item.author.userId}
+          profileImageUrl={item.author.profileImageUrl}
         />
       )}
     </>

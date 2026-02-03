@@ -409,6 +409,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
             onClose={() => setIsModalOpen(false)}
             nickname={postData?.nickname || ''}
             authorId={postData?.userId || 0}
+            profileImageUrl={postData?.profileImageUrl || null}
           />
         )}
       </div>

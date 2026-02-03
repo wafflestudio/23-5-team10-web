@@ -28,6 +28,7 @@ export const postHandlers = [
     const idNum = Number(post.id)
     const author = users.find((u) => u.nickname === post.username)
     const authorId = author ? author.userId : 999
+    const profileImageUrl = author?.profileImageUrl || post.userImage
 
     return HttpResponse.json({
       code: 'COMMON_200',
@@ -37,7 +38,7 @@ export const postHandlers = [
         id: idNum,
         userId: authorId,
         nickname: post.username,
-        profileImageUrl: post.userImage,
+        profileImageUrl: profileImageUrl,
         content: post.caption,
         albumId: postAlbumMap[idNum] ?? null,
         images: post.images.map((url, index) => ({
