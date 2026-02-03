@@ -1,5 +1,6 @@
 import { http, HttpResponse, delay } from 'msw'
 import { posts } from '../db/post.db'
+import { users } from '../db/user.db'
 import {
   bookmarkedPostIds,
   likedPostIds,
@@ -25,13 +26,16 @@ export const postHandlers = [
     }
 
     const idNum = Number(post.id)
+    const author = users.find((u) => u.nickname === post.username)
+    const authorId = author ? author.userId : 999
+
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '게시글 상세 조회 성공',
       isSuccess: true,
       data: {
         id: idNum,
-        userId: 1,
+        userId: authorId,
         nickname: post.username,
         profileImageUrl: post.userImage,
         content: post.caption,

@@ -1,4 +1,6 @@
-import { Heart, Bookmark } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, Bookmark, MessageCircle, MoreHorizontal } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 import type { FeedItem } from '@/entities/feed/model/types'
 import { useToggleLikeMutation } from '@/entities/post/model/hooks/useToggleLikeMutation'
@@ -7,6 +9,7 @@ import { Button } from '@/shared/ui/button'
 import { Card, CardFooter, CardHeader } from '@/shared/ui/card'
 import { cn } from '@/shared/lib/utils'
 import LazyImage from '@/shared/ui/lazyImage'
+import PostMenuModal from '@/components/post/PostMenuModal'
 
 type FeedCardProps = {
   item: FeedItem
@@ -15,6 +18,8 @@ type FeedCardProps = {
 }
 
 export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   const toggleLikeMutation = useToggleLikeMutation({
     postId: item.postId,
     initiallyLiked: item.liked,
@@ -40,89 +45,125 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
   }
 
   return (
-    <Card
-      className={cn(
-        'mx-auto w-full max-w-sm gap-2 overflow-hidden rounded-lg border-none bg-transparent p-0',
-        className
-      )}
-    >
-      <button
-        type="button"
-        onClick={handleOpenPost}
-        className="block w-full focus-visible:outline-none"
+    <>
+      <Card
+        className={cn(
+          'mx-auto w-full max-w-sm gap-2 overflow-hidden rounded-lg border-none bg-transparent p-0',
+          className
+        )}
       >
-        <LazyImage
-          src={item.thumbnailImageUrl}
-          alt={`Post by ${item.author.nickname}`}
-          wrapperClassName="w-full bg-black/5 aspect-square"
-        />
-      </button>
-
-      <CardHeader className="flex flex-row items-center gap-3 px-3 py-2">
-        <div className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200">
-          {item.author.profileImageUrl ? (
-            <img
-              src={item.author.profileImageUrl}
-              alt={`${item.author.nickname} 프로필`}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-gray-500">
-              {item.author.nickname.trim().slice(0, 1).toUpperCase() || '?'}
+        <CardHeader className="flex flex-row items-center justify-between px-3 py-2">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/$userId"
+              params={{ userId: String(item.author.userId) }}
+              className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200 transition-opacity hover:opacity-80"
+            >
+              {item.author.profileImageUrl ? (
+                <img
+                  src={item.author.profileImageUrl}
+                  alt={`${item.author.nickname} 프로필`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-gray-500">
+                  {item.author.nickname.trim().slice(0, 1).toUpperCase() || '?'}
+                </div>
+              )}
+            </Link>
+            <div className="flex flex-col">
+              <Link
+                to="/$userId"
+                params={{ userId: String(item.author.userId) }}
+                className="text-sm leading-tight font-semibold text-black transition-opacity hover:opacity-60"
+              >
+                {item.author.nickname}
+              </Link>
+              <span className="text-muted-foreground text-[11px]">
+                {new Date(item.createdAt).toLocaleDateString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </span>
             </div>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <span className="text-sm leading-tight font-semibold">
-            {item.author.nickname}
-          </span>
-          <span className="text-muted-foreground text-[11px]">
-            {new Date(item.createdAt).toLocaleDateString('ko-KR', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </span>
-        </div>
-      </CardHeader>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(true)}
+            className="p-1 transition-colors hover:text-gray-600"
+          >
+            <MoreHorizontal className="size-5" />
+          </button>
+        </CardHeader>
 
-      <CardFooter className="flex px-2 py-1">
-        <div className="flex">
+        <button
+          type="button"
+          onClick={handleOpenPost}
+          className="block w-full focus-visible:outline-none"
+        >
+          <LazyImage
+            src={item.thumbnailImageUrl}
+            alt={`Post by ${item.author.nickname}`}
+            wrapperClassName="w-full bg-black/5 aspect-square"
+          />
+        </button>
+
+        <CardFooter className="flex items-center justify-between px-2 py-1">
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              aria-pressed={item.liked}
+              disabled={toggleLikeMutation.isPending}
+              onClick={handleToggleLike}
+            >
+              <Heart
+                className={cn(
+                  'size-6 transition-colors',
+                  item.liked ? 'fill-red-500 text-red-500' : 'text-foreground'
+                )}
+              />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={handleOpenPost}
+            >
+              <MessageCircle className="text-foreground size-6 scale-x-[-1]" />
+            </Button>
+          </div>
+
           <Button
             type="button"
             variant="ghost"
             size="icon"
             className="h-9 w-9"
-            aria-pressed={item.liked}
-            disabled={toggleLikeMutation.isPending}
-            onClick={handleToggleLike}
+            aria-pressed={item.bookmarked}
+            disabled={toggleBookmarkMutation.isPending}
+            onClick={handleToggleBookmark}
           >
-            <Heart
+            <Bookmark
               className={cn(
                 'size-6 transition-colors',
-                item.liked ? 'fill-red-500 text-red-500' : 'text-foreground'
+                item.bookmarked ? 'fill-black text-black' : 'text-foreground'
               )}
             />
           </Button>
-        </div>
+        </CardFooter>
+      </Card>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9"
-          aria-pressed={item.bookmarked}
-          disabled={toggleBookmarkMutation.isPending}
-          onClick={handleToggleBookmark}
-        >
-          <Bookmark
-            className={cn(
-              'size-6 transition-colors',
-              item.bookmarked ? 'fill-black text-black' : 'text-foreground'
-            )}
-          />
-        </Button>
-      </CardFooter>
-    </Card>
+      {isMenuOpen && (
+        <PostMenuModal
+          onClose={() => setIsMenuOpen(false)}
+          nickname={item.author.nickname}
+          authorId={item.author.userId}
+        />
+      )}
+    </>
   )
 }

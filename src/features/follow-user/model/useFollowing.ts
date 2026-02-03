@@ -11,6 +11,6 @@ export function useFollowing({ userId, enabled = true }: UseFollowingParams) {
     queryKey: ['following', userId],
     queryFn: () => getFollowing({ userId }),
     enabled: enabled && userId > 0,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
   })
 }
