@@ -1,5 +1,8 @@
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import { useCreateAlbumMutation } from '@/entities/album/model/hooks/useCreateAlbumMutation'
+import { useUserAlbumsQuery } from '@/entities/album/model/hooks/useUserAlbumsQuery'
+import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
+import { toast } from 'sonner'
 
 type UseAlbumAddArgs = {
   newAlbumTitle: string
@@ -14,58 +17,56 @@ export function useAlbumAdd({
   onCancel,
   onError,
 }: UseAlbumAddArgs) {
+  const currentUserId = useCurrentUserId()
   const createAlbumMutation = useCreateAlbumMutation()
-  const isCreatingRef = useRef(false)
 
-  const handleCreate = useCallback(async () => {
-    if (
-      !newAlbumTitle.trim() ||
-      createAlbumMutation.isPending ||
-      isCreatingRef.current
-    ) {
+  const { data: albums } = useUserAlbumsQuery({
+    userId: currentUserId ?? 0,
+    enabled: !!currentUserId,
+  })
+
+  const handleCreate = useCallback(() => {
+    const trimmedTitle = newAlbumTitle.trim()
+    if (!trimmedTitle) return
+
+    const isDuplicate = albums?.some(
+      (album) => album.title.toLowerCase() === trimmedTitle.toLowerCase()
+    )
+
+    if (isDuplicate) {
+      toast.error('이미 동일한 이름의 앨범이 존재합니다.')
+      onError(trimmedTitle)
       return
     }
 
-    isCreatingRef.current = true
-    const titleToCreate = newAlbumTitle.trim()
-
-    try {
-      await createAlbumMutation.mutateAsync({
-        title: titleToCreate,
-      })
-      onComplete()
-    } catch (error) {
-      console.error('Failed to create album:', error)
-      onError(titleToCreate)
-    } finally {
-      isCreatingRef.current = false
-    }
-  }, [newAlbumTitle, createAlbumMutation, onComplete, onError])
+    createAlbumMutation.mutate(
+      { title: trimmedTitle },
+      {
+        onSuccess: () => {
+          onComplete()
+        },
+        onError: () => {
+          onError(trimmedTitle)
+        },
+      }
+    )
+  }, [newAlbumTitle, albums, createAlbumMutation, onComplete, onError])
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') {
         e.preventDefault()
-        e.stopPropagation()
         handleCreate()
       } else if (e.key === 'Escape') {
-        e.preventDefault()
-        e.stopPropagation()
         onCancel()
       }
     },
     [handleCreate, onCancel]
   )
 
-  const handleKeyUp = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        e.stopPropagation()
-      }
-    },
-    []
-  )
+  const handleKeyUp = useCallback((e: React.KeyboardEvent) => {
+    e.stopPropagation()
+  }, [])
 
   return {
     createAlbumMutation,
