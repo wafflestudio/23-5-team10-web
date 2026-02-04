@@ -3,6 +3,7 @@ import { useSearch, useNavigate } from '@tanstack/react-router'
 import { useFeedQuery } from '@/entities/feed/model/hooks/useFeedQuery'
 import { FeedList } from '@/entities/feed/ui/FeedList'
 import { FeedPagination } from '@/entities/feed/ui/FeedPagination'
+import { EmptyFeedState } from '@/entities/feed/ui/EmptyFeedState'
 
 export function HomeFeedSection() {
   const { page } = useSearch({ from: '/_app/' })
@@ -35,7 +36,9 @@ export function HomeFeedSection() {
         </div>
       )}
 
-      {data && <FeedList items={data.items} />}
+      {data && data.items.length === 0 && <EmptyFeedState />}
+
+      {data && data.items.length > 0 && <FeedList items={data.items} />}
 
       {data && (
         <FeedPagination
