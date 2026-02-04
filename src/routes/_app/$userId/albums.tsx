@@ -10,7 +10,9 @@ import { ContentContainer } from '@/widgets/profile-layout'
 import { AlbumSummaryCard } from '@/entities/album/ui/AlbumSummaryCard'
 import { useUserAlbumsQuery } from '@/entities/album/model/hooks/useUserAlbumsQuery'
 import { useAlbumDetailQuery } from '@/entities/album/model/hooks/useAlbumDetailQuery'
+import { useProfile } from '@/entities/user/model/hooks/useProfile'
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
+import { EmptyAlbumsState } from '@/features/profile-posts/ui/EmptyAlbumsState'
 import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePostsGrid'
 
 export const Route = createFileRoute('/_app/$userId/albums')({
@@ -24,10 +26,12 @@ function RouteComponent() {
   const navigate = useNavigate()
   const { userId } = useParams({ from: '/_app/$userId/albums' })
   const { albumId } = useSearch({ from: '/_app/$userId/albums' })
+  const numericUserId = Number(userId)
 
   const { data: albums = [], isLoading } = useUserAlbumsQuery({
-    userId: Number(userId),
+    userId: numericUserId,
   })
+  const { data: profile } = useProfile(numericUserId)
   const selectedAlbumId = albumId ?? null
 
   const { data: albumDetail, isLoading: isAlbumLoading } =
@@ -59,9 +63,7 @@ function RouteComponent() {
           앨범을 불러오는 중입니다...
         </div>
       ) : albums.length === 0 ? (
-        <div className="flex justify-center text-sm text-gray-500">
-          아직 만든 앨범이 없습니다.
-        </div>
+        <EmptyAlbumsState isMe={profile?.isMe ?? false} />
       ) : selectedAlbumId == null ? (
         <div className="grid grid-cols-1 place-items-center gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {albums.map((album) => (

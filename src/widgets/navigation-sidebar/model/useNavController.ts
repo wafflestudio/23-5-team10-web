@@ -2,17 +2,16 @@ import { useMatchRoute, useNavigate } from '@tanstack/react-router'
 import { useActionState, useCallback } from 'react'
 
 import type { NavigationSidebarItem } from './navItems'
-import { MOCK_USER_ID } from './navItems'
 import { useEffect } from 'react'
 import { useSidebar } from '@/shared/ui/sidebar'
 import { useXlBreakpoint } from '@/shared/lib/hooks/useXlBreakpoint'
+import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 
 type NavAction =
   | { type: 'search_toggle' }
   | { type: 'search_set'; open: boolean }
   | { type: 'create_post_open' }
   | { type: 'create_story_open' }
-  | { type: 'profile_open' }
 
 type NavUiState = {
   isSearchOpen: boolean
@@ -37,6 +36,7 @@ export function useNavController({
   const navigate = useNavigate()
   const isBelowXl = useXlBreakpoint()
   const { setOpen, setLockGapWidth } = useSidebar()
+  const currentUserId = useCurrentUserId()
 
   const [uiState, dispatchNavAction] = useActionState<NavUiState, NavAction>(
     (prev, action) => {
@@ -50,12 +50,6 @@ export function useNavController({
           return prev
         case 'create_story_open':
           onCreateStoryClick()
-          return prev
-        case 'profile_open':
-          navigate({
-            to: '/$userId',
-            params: { userId: String(MOCK_USER_ID) },
-          })
           return prev
         default:
           return assertNever(action)
@@ -82,18 +76,19 @@ export function useNavController({
   }, [uiState.isSearchOpen, setLockGapWidth])
 
   const isMyProfileRouteActive =
-    Boolean(
+    currentUserId !== null &&
+    (Boolean(
       matchRoute({
         to: '/$userId',
-        params: { userId: String(MOCK_USER_ID) },
+        params: { userId: String(currentUserId) },
       })
     ) ||
-    Boolean(
-      matchRoute({
-        to: '/$userId/saved',
-        params: { userId: String(MOCK_USER_ID) },
-      })
-    )
+      Boolean(
+        matchRoute({
+          to: '/$userId/saved',
+          params: { userId: String(currentUserId) },
+        })
+      ))
 
   const getIsItemActive = useCallback(
     (item: NavigationSidebarItem) => {
@@ -131,13 +126,18 @@ export function useNavController({
           dispatchNavAction({ type: 'create_story_open' })
           return
         case 'profile':
-          dispatchNavAction({ type: 'profile_open' })
+          if (currentUserId) {
+            navigate({
+              to: '/$userId',
+              params: { userId: String(currentUserId) },
+            })
+          }
           return
         default:
           return assertNever(item.action)
       }
     },
-    [dispatchNavAction]
+    [currentUserId, dispatchNavAction, navigate]
   )
 
   const closeSearchIfOpen = useCallback(() => {

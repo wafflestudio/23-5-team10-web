@@ -8,7 +8,48 @@ import {
 } from '../db/postRelations.db'
 
 export const postHandlers = [
-  http.post('*/api/v1/posts', async ({ request }) => {
+  http.get('**/api/v1/posts/bookmarks', async () => {
+    await delay(100)
+
+    const bookmarkedPosts = posts.filter((p) =>
+      bookmarkedPostIds.has(Number(p.id))
+    )
+
+    const data = bookmarkedPosts.map((post) => {
+      const idNum = Number(post.id)
+      const author = users.find((u) => u.nickname === post.username)
+      const authorId = author ? author.userId : 999
+
+      return {
+        id: idNum,
+        userId: authorId,
+        nickname: post.username,
+        profileImageUrl: author?.profileImageUrl || post.userImage,
+        content: post.caption,
+        albumId: postAlbumMap[idNum] ?? null,
+        images: post.images.map((url, index) => ({
+          id: idNum * 100 + index,
+          url,
+          orderIndex: index,
+        })),
+        likeCount: post.likeCount,
+        commentCount: post.commentCount,
+        createdAt: post.createdAt,
+        updatedAt: post.createdAt,
+        isLiked: likedPostIds.has(idNum),
+        isBookmarked: true,
+      }
+    })
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '북마크 목록 조회 성공',
+      isSuccess: true,
+      data,
+    })
+  }),
+
+  http.post('**/api/v1/posts', async ({ request }) => {
     const body = (await request.json()) as {
       content: string
       albumId?: number | null
@@ -66,7 +107,7 @@ export const postHandlers = [
     )
   }),
 
-  http.get('*/api/v1/posts/:postId', async ({ params }) => {
+  http.get('**/api/v1/posts/:postId', async ({ params }) => {
     await delay(100)
     const { postId } = params
     const post = posts.find((p) => String(p.id) === String(postId))
@@ -114,7 +155,74 @@ export const postHandlers = [
     })
   }),
 
-  http.delete('*/api/v1/posts/:postId', async ({ params }) => {
+  http.put('**/api/v1/posts/:postId', async ({ params, request }) => {
+    await delay(100)
+    const { postId } = params
+    const idNum = Number(postId)
+    const body = (await request.json()) as {
+      content: string
+      albumId?: number | null
+      imageUrls?: string[]
+    }
+
+    const postIndex = posts.findIndex((p) => String(p.id) === String(postId))
+
+    if (postIndex === -1) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '수정할 게시글을 찾을 수 없습니다.',
+          isSuccess: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    posts[postIndex] = {
+      ...posts[postIndex],
+      caption: body.content,
+    }
+
+    if (body.albumId !== undefined) {
+      if (body.albumId === null || body.albumId === -1) {
+        delete postAlbumMap[idNum]
+      } else {
+        postAlbumMap[idNum] = body.albumId
+      }
+    }
+
+    const updatedPost = posts[postIndex]
+    const author = users.find((u) => u.nickname === updatedPost.username)
+    const authorId = author ? author.userId : 999
+    const profileImageUrl = author?.profileImageUrl || updatedPost.userImage
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '게시글 수정 성공',
+      isSuccess: true,
+      data: {
+        id: idNum,
+        userId: authorId,
+        nickname: updatedPost.username,
+        profileImageUrl: profileImageUrl,
+        content: updatedPost.caption,
+        albumId: postAlbumMap[idNum] ?? null,
+        images: updatedPost.images.map((url, index) => ({
+          id: idNum * 100 + index,
+          url: url,
+          orderIndex: index,
+        })),
+        likeCount: updatedPost.likeCount,
+        commentCount: updatedPost.commentCount,
+        createdAt: updatedPost.createdAt,
+        updatedAt: new Date().toISOString(),
+        isLiked: likedPostIds.has(idNum),
+        isBookmarked: bookmarkedPostIds.has(idNum),
+      },
+    })
+  }),
+
+  http.delete('**/api/v1/posts/:postId', async ({ params }) => {
     await delay(500)
     const { postId } = params
     const idNum = Number(postId)
@@ -135,7 +243,7 @@ export const postHandlers = [
     })
   }),
 
-  http.post('*/api/v1/posts/:postId/like', async ({ params }) => {
+  http.post('**/api/v1/posts/:postId/like', async ({ params }) => {
     await delay(100)
     const { postId } = params
     const idNum = Number(postId)
@@ -152,7 +260,7 @@ export const postHandlers = [
     })
   }),
 
-  http.delete('*/api/v1/posts/:postId/like', async ({ params }) => {
+  http.delete('**/api/v1/posts/:postId/like', async ({ params }) => {
     await delay(100)
     const { postId } = params
     const idNum = Number(postId)
@@ -169,7 +277,7 @@ export const postHandlers = [
     })
   }),
 
-  http.post('*/api/v1/posts/:postId/bookmark', async ({ params }) => {
+  http.post('**/api/v1/posts/:postId/bookmark', async ({ params }) => {
     await delay(100)
     const { postId } = params
     const idNum = Number(postId)
@@ -186,7 +294,7 @@ export const postHandlers = [
     })
   }),
 
-  http.delete('*/api/v1/posts/:postId/bookmark', async ({ params }) => {
+  http.delete('**/api/v1/posts/:postId/bookmark', async ({ params }) => {
     await delay(100)
     const { postId } = params
     const idNum = Number(postId)

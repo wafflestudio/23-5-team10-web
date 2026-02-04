@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { posts } from '../db/post.db'
+import { users } from '../db/user.db'
 import { bookmarkedPostIds, likedPostIds } from '../db/postRelations.db'
 import {
   FeedItemSchema,
@@ -21,13 +22,14 @@ export const feedHandlers = [
 
     const items = pageItems.map((p) => {
       const postId = Number(p.id)
+      const user = users.find((u) => u.nickname === p.username)
 
       return FeedItemSchema.parse({
         postId,
         author: {
-          userId: 1,
+          userId: user?.userId ?? 1,
           nickname: p.username,
-          profileImageUrl: p.userImage,
+          profileImageUrl: user?.profileImageUrl ?? p.userImage,
         },
         thumbnailImageUrl: p.images?.[0],
         likeCount: p.likeCount,

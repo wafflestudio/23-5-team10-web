@@ -117,7 +117,7 @@ export function AlbumSelectDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="w-80 border-none bg-white p-0 shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
+        className="z-[130] w-80 border-none bg-white p-0 shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
       >
         <DropdownMenuRadioGroup
           value={state.value}
@@ -126,6 +126,10 @@ export function AlbumSelectDropdown({
           <DropdownMenuRadioItem
             value={NO_ALBUM_VALUE}
             className="border-none px-4 py-2.5 text-sm text-black hover:bg-zinc-50 data-[state=checked]:bg-zinc-50"
+            onSelect={(e) => {
+              e.preventDefault()
+              handleValueChange(NO_ALBUM_VALUE)
+            }}
           >
             앨범 없음
           </DropdownMenuRadioItem>

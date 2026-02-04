@@ -54,7 +54,7 @@ export default function PostDetail() {
           .json<{ data: PostData; isSuccess: boolean }>()
 
         if (res.isSuccess) {
-          setPostData(res.data)
+          setPostData({ ...res.data })
         }
       } catch {
         console.error('Failed to fetch post')
@@ -105,7 +105,7 @@ export default function PostDetail() {
   }
 
   const handlePostDataChange = (newData: PostData) => {
-    setPostData(newData)
+    setPostData({ ...newData })
   }
 
   return (

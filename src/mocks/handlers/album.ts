@@ -2,6 +2,8 @@ import { http, HttpResponse } from 'msw'
 import { albums, nextAlbumId } from '../db/album.db'
 import { postAlbumMap } from '../db/postRelations.db'
 import { posts } from '../db/post.db'
+import { users } from '../db/user.db'
+import { MOCK_USER_ID } from '../db/session.db'
 import {
   type CreateAlbumRequest,
   type CreateAlbumResponse,
@@ -10,6 +12,11 @@ import {
 } from '../../entities/album/model/types'
 import { CreateAlbumRequestSchema } from '../../entities/album/model/schema'
 
+function getUserIdByNickname(nickname: string): number | null {
+  const user = users.find((u) => u.nickname === nickname)
+  return user?.userId ?? null
+}
+
 type AlbumActionResponse = {
   code: string
   message: string
@@ -17,7 +24,7 @@ type AlbumActionResponse = {
 }
 
 export const albumHandlers = [
-  http.post('*/api/v1/albums', async ({ request }) => {
+  http.post('**/api/v1/albums', async ({ request }) => {
     const json = await request.json().catch(() => null)
 
     const result = (
@@ -43,7 +50,7 @@ export const albumHandlers = [
     const { title } = result.data
 
     const id = nextAlbumId.value++
-    albums.push({ id, title })
+    albums.push({ id, userId: MOCK_USER_ID, title })
 
     const body: CreateAlbumResponse = {
       code: '200',
@@ -55,7 +62,10 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.get('*/api/v1/albums/users/:userId', () => {
+  http.get('**/api/v1/albums/users/:userId', ({ params }) => {
+    const userId = Number(params.userId)
+    const userAlbums = albums.filter((album) => album.userId === userId)
+
     const mappedPostIds = new Set(
       Object.keys(postAlbumMap).map((key) => Number(key))
     )
@@ -78,7 +88,7 @@ export const albumHandlers = [
       postCount: postsWithoutAlbum.length,
     }
 
-    const albumSummaries = albums.map((album) => {
+    const albumSummaries = userAlbums.map((album) => {
       const postsInAlbum = Object.entries(postAlbumMap)
         .filter(([, mappedAlbumId]) => mappedAlbumId === album.id)
         .map(([postIdKey]) => Number(postIdKey))
@@ -113,7 +123,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.post('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
+  http.post('**/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
 
@@ -150,7 +160,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.get('*/api/v1/albums/:albumId', ({ params }) => {
+  http.get('**/api/v1/albums/:albumId', ({ params, request }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -161,6 +171,49 @@ export const albumHandlers = [
       }
 
       return HttpResponse.json(body, { status: 400 })
+    }
+
+    if (albumId === -1) {
+      const url = new URL(request.url)
+      const ownerIdParam = url.searchParams.get('ownerId')
+      const ownerId = ownerIdParam ? Number(ownerIdParam) : null
+
+      const mappedPostIds = new Set(
+        Object.keys(postAlbumMap).map((key) => Number(key))
+      )
+      let postsWithoutAlbum = posts.filter(
+        (p) => !mappedPostIds.has(Number(p.id))
+      )
+
+      if (ownerId !== null) {
+        postsWithoutAlbum = postsWithoutAlbum.filter(
+          (p) => getUserIdByNickname(p.username) === ownerId
+        )
+      }
+
+      const postSummaries = postsWithoutAlbum
+        .map((post) => {
+          if (!post.images || post.images.length === 0) return null
+
+          return {
+            postId: Number(post.id),
+            imageUrl: post.images[0],
+          }
+        })
+        .filter((p): p is { postId: number; imageUrl: string } => p !== null)
+
+      const body: AlbumDetailResponse = {
+        code: '200',
+        message: '앨범 상세 조회 성공',
+        data: {
+          albumId: -1,
+          title: '앨범 없음',
+          posts: postSummaries,
+        },
+        isSuccess: true,
+      }
+
+      return HttpResponse.json(body, { status: 200 })
     }
 
     const album = albums.find((a) => a.id === albumId)
@@ -205,7 +258,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.delete('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
+  http.delete('**/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
 
@@ -242,7 +295,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.delete('*/api/v1/albums/:albumId', ({ params }) => {
+  http.delete('**/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -284,7 +337,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.patch('*/api/v1/albums/:albumId', async ({ params, request }) => {
+  http.patch('**/api/v1/albums/:albumId', async ({ params, request }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {

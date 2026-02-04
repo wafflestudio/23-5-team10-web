@@ -107,7 +107,7 @@ export const authHandlers = [
     })
   }),
 
-  http.post('**/auth/login', async ({ request }) => {
+  http.post('*/api/v1/auth/login', async ({ request }) => {
     const { loginId, password } = (await request.json()) as LoginRequest
 
     const userExists = authDb.find(
@@ -141,7 +141,20 @@ export const authHandlers = [
     })
   }),
 
-  http.post('*/auth/refresh', async ({ request }) => {
+  http.post('*/api/v1/auth/refresh', async ({ request }) => {
+    const FORCE_REFRESH_FAILURE = false
+    if (FORCE_REFRESH_FAILURE) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_401',
+          message: '리프레시 토큰이 만료되었습니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 401 }
+      )
+    }
+
     const authHeader = request.headers.get('Authorization')
     const token = authHeader?.split('Bearer ')[1]
     const user =
