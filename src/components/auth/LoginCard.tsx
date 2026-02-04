@@ -20,6 +20,7 @@ interface LoginResponse {
   message: string
   data: {
     accessToken: string
+    refreshToken: string
   } | null
 }
 
@@ -92,6 +93,7 @@ const LoginCard = () => {
 
       if (res.isSuccess && res.data) {
         localStorage.setItem('accessToken', res.data.accessToken)
+        localStorage.setItem('refreshToken', res.data.refreshToken)
         await invalidateCurrentUser()
         navigate({ to: '/' })
       } else {

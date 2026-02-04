@@ -34,11 +34,11 @@ export function UserCard({ user, type, onRemove, onClick }: UserCardProps) {
         )}
         <div>
           <h3 className="text-sm font-bold">{user.nickname}</h3>
-          {(user.name || (type === 'recent' && user.followed)) && (
+          {(user.name || (type === 'recent' && user.isFollowed)) && (
             <p className="text-xs text-gray-500">
               {user.name}
               {type === 'recent' &&
-                user.followed &&
+                user.isFollowed &&
                 (user.name ? ' · 팔로잉' : '팔로잉')}
             </p>
           )}

@@ -17,6 +17,7 @@ interface ReportModalProps {
   onClose: () => void
   onHideComment: () => void
   nickname: string
+  type?: 'post' | 'comment'
 }
 
 type Step =
@@ -47,6 +48,7 @@ export default function ReportModal({
   onClose,
   onHideComment,
   nickname,
+  type = 'comment',
 }: ReportModalProps) {
   const [step, setStep] = useState<Step>('main')
   const [isComplete, setIsComplete] = useState(false)
@@ -186,7 +188,9 @@ export default function ReportModal({
         <div className="scrollbar-hide max-h-[600px] overflow-x-hidden overflow-y-auto">
           <div className="px-5 py-[18px]">
             <h3 className="text-[16px] font-bold text-black">
-              이 댓글을 신고하는 이유
+              {type === 'post'
+                ? '이 게시물을 신고하는 이유'
+                : '이 댓글을 신고하는 이유'}
             </h3>
           </div>
 

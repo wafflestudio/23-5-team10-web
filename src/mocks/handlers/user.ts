@@ -107,8 +107,8 @@ export const userHandlers = [
         postsCount,
         followerCount,
         followingCount,
-        me: userId === CURRENT_USER_ID,
-        followed,
+        isMe: userId === CURRENT_USER_ID,
+        isFollowed: followed,
       },
       isSuccess: true,
     })
@@ -133,7 +133,7 @@ export const userHandlers = [
         nickname: u.nickname,
         profileImageUrl: u.profileImageUrl,
         name: u.name,
-        followed,
+        isFollowed: followed,
       }
     })
 

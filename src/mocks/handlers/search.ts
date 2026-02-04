@@ -58,7 +58,7 @@ export const searchHandlers = [
         nickname: user?.nickname ?? 'unknown',
         profileImageUrl: user?.profileImageUrl ?? null,
         name: user?.name ?? null,
-        followed,
+        isFollowed: followed,
       }
     })
 

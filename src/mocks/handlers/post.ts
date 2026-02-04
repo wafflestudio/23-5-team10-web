@@ -1,11 +1,11 @@
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, delay } from 'msw'
 import { posts } from '../db/post.db'
+import { users } from '../db/user.db'
 import {
   bookmarkedPostIds,
   likedPostIds,
   postAlbumMap,
 } from '../db/postRelations.db'
-import { users } from '../db/user.db'
 
 export const postHandlers = [
   http.post('*/api/v1/posts', async ({ request }) => {
@@ -51,22 +51,23 @@ export const postHandlers = [
       commentCount: newPost.commentCount,
       createdAt: newPost.createdAt,
       updatedAt: newPost.createdAt,
-      liked: false,
-      bookmarked: false,
+      isLiked: false,
+      isBookmarked: false,
     }
 
     return HttpResponse.json(
       {
-        code: '201',
+        code: '200',
         message: '게시글을 생성했습니다.',
         data: responsePost,
-        success: true,
+        isSuccess: true,
       },
-      { status: 201 }
+      { status: 200 }
     )
   }),
 
-  http.get('*/api/v1/posts/:postId', ({ params }) => {
+  http.get('*/api/v1/posts/:postId', async ({ params }) => {
+    await delay(100)
     const { postId } = params
     const post = posts.find((p) => String(p.id) === String(postId))
 
@@ -75,190 +76,130 @@ export const postHandlers = [
         {
           code: '404',
           message: '게시글을 찾을 수 없습니다.',
-          success: false,
+          data: null,
+          isSuccess: false,
         },
         { status: 404 }
       )
     }
 
     const idNum = Number(post.id)
-
-    const responseData = {
-      id: idNum,
-      userId: 1,
-      nickname: post.username,
-      profileImageUrl: post.userImage,
-      content: post.caption,
-      albumId: postAlbumMap[idNum] ?? null,
-      images: post.images.map((url, index) => ({
-        id: idNum * 100 + index,
-        url: url,
-        orderIndex: index,
-      })),
-      likeCount: post.likeCount,
-      commentCount: post.commentCount,
-      createdAt: post.createdAt,
-      updatedAt: post.createdAt,
-      liked: likedPostIds.has(idNum),
-      bookmarked: bookmarkedPostIds.has(idNum),
-    }
+    const author = users.find((u) => u.nickname === post.username)
+    const authorId = author ? author.userId : 999
+    const profileImageUrl = author?.profileImageUrl || post.userImage
 
     return HttpResponse.json({
       code: 'COMMON_200',
       message: '게시글 상세 조회 성공',
-      data: responseData,
-      success: true,
-    })
-  }),
-
-  http.post('*/api/v1/posts/:postId/like', ({ params }) => {
-    const postId = Number(params.postId)
-    const post = posts.find((p) => Number(p.id) === postId)
-
-    if (!post) return new HttpResponse(null, { status: 404 })
-
-    if (!likedPostIds.has(postId)) {
-      likedPostIds.add(postId)
-      post.likeCount += 1
-    }
-
-    return HttpResponse.json({
-      code: '200',
-      message: '좋아요 성공',
-      success: true,
-    })
-  }),
-
-  http.delete('*/api/v1/posts/:postId/like', ({ params }) => {
-    const postId = Number(params.postId)
-    const post = posts.find((p) => Number(p.id) === postId)
-
-    if (!post) return new HttpResponse(null, { status: 404 })
-
-    if (likedPostIds.has(postId)) {
-      likedPostIds.delete(postId)
-      post.likeCount = Math.max(0, post.likeCount - 1)
-    }
-
-    return HttpResponse.json({
-      code: '200',
-      message: '좋아요 취소 성공',
-      success: true,
-    })
-  }),
-
-  http.post('*/api/v1/posts/:postId/bookmark', ({ params }) => {
-    const postId = Number(params.postId)
-    bookmarkedPostIds.add(postId)
-    return HttpResponse.json({
-      code: '200',
-      message: '북마크 성공',
-      success: true,
-    })
-  }),
-
-  http.delete('*/api/v1/posts/:postId/bookmark', ({ params }) => {
-    const postId = Number(params.postId)
-    bookmarkedPostIds.delete(postId)
-    return HttpResponse.json({
-      code: '200',
-      message: '북마크 취소 성공',
-      success: true,
-    })
-  }),
-
-  http.get('*/api/v1/posts/search', () => {
-    const searchResults = posts.map((p) => {
-      const postId = Number(p.id)
-      return {
-        id: postId,
-        userId: 1,
-        nickname: p.username,
-        profileImageUrl: p.userImage,
-        content: p.caption,
-        albumId: postAlbumMap[postId] ?? null,
-        images: p.images.map((url, index) => ({
-          id: postId * 100 + index,
-          url,
+      isSuccess: true,
+      data: {
+        id: idNum,
+        userId: authorId,
+        nickname: post.username,
+        profileImageUrl: profileImageUrl,
+        content: post.caption,
+        albumId: postAlbumMap[idNum] ?? null,
+        images: post.images.map((url, index) => ({
+          id: idNum * 100 + index,
+          url: url,
           orderIndex: index,
         })),
-        likeCount: p.likeCount,
-        commentCount: p.commentCount,
-        createdAt: p.createdAt,
-        updatedAt: p.createdAt,
-        liked: likedPostIds.has(postId),
-        bookmarked: bookmarkedPostIds.has(postId),
-      }
-    })
-
-    return HttpResponse.json({
-      code: '200',
-      message: '성공',
-      data: searchResults,
-      success: true,
+        likeCount: post.likeCount,
+        commentCount: post.commentCount,
+        createdAt: post.createdAt,
+        updatedAt: post.createdAt,
+        isLiked: likedPostIds.has(idNum),
+        isBookmarked: bookmarkedPostIds.has(idNum),
+      },
     })
   }),
 
-  http.get('*/api/v1/users/:userId/posts', ({ params }) => {
-    const userId = Number(params.userId)
+  http.delete('*/api/v1/posts/:postId', async ({ params }) => {
+    await delay(500)
+    const { postId } = params
+    const idNum = Number(postId)
 
-    if (!Number.isInteger(userId) || userId < 1) {
-      return HttpResponse.json(
-        {
-          code: '400',
-          message: '유효하지 않은 경로 파라미터입니다.',
-          success: false,
-        },
-        { status: 400 }
-      )
+    const index = posts.findIndex((p) => String(p.id) === String(postId))
+    if (index !== -1) {
+      posts.splice(index, 1)
+      likedPostIds.delete(idNum)
+      bookmarkedPostIds.delete(idNum)
+      delete postAlbumMap[idNum]
     }
 
-    const user = users.find((u) => u.userId === userId)
-
-    const sortedPosts = [...posts].sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-
-    const grouped: Record<string, unknown[]> = {}
-
-    sortedPosts.forEach((p) => {
-      const postId = Number(p.id)
-      const albumId = (postAlbumMap[postId] ?? null) as number | null
-      const key = String(albumId ?? 0)
-
-      const item = {
-        id: postId,
-        userId,
-        nickname: user?.nickname ?? p.username,
-        profileImageUrl: user?.profileImageUrl ?? p.userImage,
-        content: p.caption,
-        albumId,
-        images: (p.images ?? []).map((url, imgIndex) => ({
-          id: postId * 100 + imgIndex,
-          url,
-          orderIndex: imgIndex,
-        })),
-        likeCount: p.likeCount,
-        commentCount: p.commentCount,
-        createdAt: p.createdAt,
-        updatedAt: p.createdAt,
-        liked: likedPostIds.has(postId),
-        bookmarked: bookmarkedPostIds.has(postId),
-      }
-
-      if (!grouped[key]) {
-        grouped[key] = []
-      }
-
-      grouped[key] = [...grouped[key], item]
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '게시글이 삭제되었습니다.',
+      isSuccess: true,
+      data: null,
     })
+  }),
+
+  http.post('*/api/v1/posts/:postId/like', async ({ params }) => {
+    await delay(100)
+    const { postId } = params
+    const idNum = Number(postId)
+
+    likedPostIds.add(idNum)
 
     return HttpResponse.json({
-      code: '200',
-      message: '요청에 성공하였습니다.',
-      data: grouped,
-      success: true,
+      code: 'COMMON_200',
+      message: '좋아요 성공',
+      isSuccess: true,
+      data: {
+        isLiked: true,
+      },
+    })
+  }),
+
+  http.delete('*/api/v1/posts/:postId/like', async ({ params }) => {
+    await delay(100)
+    const { postId } = params
+    const idNum = Number(postId)
+
+    likedPostIds.delete(idNum)
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '좋아요 취소 성공',
+      isSuccess: true,
+      data: {
+        isLiked: false,
+      },
+    })
+  }),
+
+  http.post('*/api/v1/posts/:postId/bookmark', async ({ params }) => {
+    await delay(100)
+    const { postId } = params
+    const idNum = Number(postId)
+
+    bookmarkedPostIds.add(idNum)
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '북마크 성공',
+      isSuccess: true,
+      data: {
+        isBookmarked: true,
+      },
+    })
+  }),
+
+  http.delete('*/api/v1/posts/:postId/bookmark', async ({ params }) => {
+    await delay(100)
+    const { postId } = params
+    const idNum = Number(postId)
+
+    bookmarkedPostIds.delete(idNum)
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '북마크 취소 성공',
+      isSuccess: true,
+      data: {
+        isBookmarked: false,
+      },
     })
   }),
 ]

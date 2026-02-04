@@ -33,8 +33,8 @@ export const feedHandlers = [
         likeCount: p.likeCount,
         commentCount: p.commentCount,
         createdAt: p.createdAt,
-        liked: likedPostIds.has(postId),
-        bookmarked: bookmarkedPostIds.has(postId),
+        isLiked: likedPostIds.has(postId),
+        isBookmarked: bookmarkedPostIds.has(postId),
       })
     })
 

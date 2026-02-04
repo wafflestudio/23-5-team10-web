@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 import { toggleFollow } from '../api/toggleFollow'
 
 type UseToggleFollowParams = {
@@ -13,9 +14,10 @@ export function useToggleFollow({
   invalidateFollowList = true,
 }: UseToggleFollowParams) {
   const queryClient = useQueryClient()
+  const loggedInUser = useCurrentUserId()
 
   return useMutation({
-    mutationFn: () => toggleFollow({ userId }),
+    mutationFn: () => toggleFollow({ userId, loggedInUser }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['profile', userId] })
       if (profileUserId && profileUserId !== userId) {
