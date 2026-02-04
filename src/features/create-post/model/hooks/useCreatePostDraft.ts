@@ -22,7 +22,7 @@ export function useCreatePostDraft({
   const [step, setStep] = useState<CreatePostStep>('select')
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([])
   const [caption, setCaption] = useState('')
-  const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null)
+  const [selectedAlbumId, setSelectedAlbumId] = useState<number>(-1)
 
   const imageUpload = useImageUpload()
 
@@ -30,6 +30,7 @@ export function useCreatePostDraft({
   const isUploaded = useMemo(() => files.length > 0, [files.length])
   const isDetails = isUploaded && step === 'details'
   const isUploading = imageUpload.isPending
+  const isUploadError = imageUpload.isError
   const isUploadComplete =
     uploadedUrls.length > 0 && uploadedUrls.length === files.length
 
@@ -38,7 +39,7 @@ export function useCreatePostDraft({
     setStep('select')
     setUploadedUrls([])
     setCaption('')
-    setSelectedAlbumId(null)
+    setSelectedAlbumId(-1)
     carousel.reset()
     imageUpload.reset()
   }, [carousel, imageUpload])
@@ -73,6 +74,7 @@ export function useCreatePostDraft({
     isUploaded,
     isDetails,
     isUploading,
+    isUploadError,
     isUploadComplete,
     uploadedUrls,
     caption,
