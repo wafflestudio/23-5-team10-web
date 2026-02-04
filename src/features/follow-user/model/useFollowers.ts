@@ -14,6 +14,5 @@ export function useFollowers({ userId, enabled = true }: UseFollowersParams) {
     queryKey: ['followers', userId, loggedInUser],
     queryFn: () => getFollowers({ userId, loggedInUser }),
     enabled: enabled && userId > 0,
-    staleTime: Infinity,
   })
 }
