@@ -119,11 +119,10 @@ export const instance = ky.create({
           if (isRefreshing && refreshPromise) {
             try {
               await refreshPromise
-              return
             } catch {
-              useAuthStore.getState().setSessionExpired()
-              return
+              // ignore
             }
+            return
           }
 
           isRefreshing = true

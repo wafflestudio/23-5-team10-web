@@ -3,10 +3,12 @@ import { useNavigate } from '@tanstack/react-router'
 import ReportModal from './ReportModal'
 import AccountInfoModal from './AccountInfoModal'
 import EmbedModal from './EmbedModal'
+import { EditPostModal } from './EditPostModal'
 import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 import { useFollowing } from '@/features/follow-user/model/useFollowing'
 import { useToggleFollow } from '@/features/follow-user/model/useToggleFollow'
 import { instance } from '@/shared/api/ky'
+import type { PostData } from './PostDetail'
 
 interface PostMenuModalProps {
   onClose: () => void
@@ -14,6 +16,8 @@ interface PostMenuModalProps {
   authorId: number
   postId: number
   profileImageUrl: string | null
+  initialPostData?: PostData
+  onUpdateSuccess?: (updatedData: PostData) => void
 }
 
 export default function PostMenuModal({
@@ -22,9 +26,11 @@ export default function PostMenuModal({
   authorId,
   postId,
   profileImageUrl,
+  initialPostData,
+  onUpdateSuccess,
 }: PostMenuModalProps) {
   const [activeModal, setActiveModal] = useState<
-    'menu' | 'report' | 'account' | 'embed' | 'delete_confirm'
+    'menu' | 'report' | 'account' | 'embed' | 'delete_confirm' | 'edit'
   >('menu')
   const [showToast, setShowToast] = useState(false)
   const navigate = useNavigate()
@@ -68,12 +74,22 @@ export default function PostMenuModal({
 
       if (response.isSuccess) {
         onClose()
-        // 삭제 후 내 프로필 페이지나 홈으로 이동
         navigate({ to: `/${authorId}` })
       }
     } catch (err) {
       console.error('게시글 삭제 실패:', err)
     }
+  }
+
+  const handleEditSuccess = (updatedData: PostData) => {
+    if (onUpdateSuccess && initialPostData) {
+      const finalData = {
+        ...initialPostData,
+        ...updatedData,
+      }
+      onUpdateSuccess(finalData)
+    }
+    onClose()
   }
 
   if (activeModal === 'report') {
@@ -99,6 +115,17 @@ export default function PostMenuModal({
 
   if (activeModal === 'embed') {
     return <EmbedModal onClose={onClose} postId={postId} nickname={nickname} />
+  }
+
+  if (activeModal === 'edit' && initialPostData) {
+    return (
+      <EditPostModal
+        open={true}
+        onOpenChange={(open) => !open && onClose()}
+        initialData={initialPostData}
+        onSuccess={handleEditSuccess}
+      />
+    )
   }
 
   if (activeModal === 'delete_confirm') {
@@ -154,7 +181,10 @@ export default function PostMenuModal({
               >
                 삭제
               </button>
-              <button className="w-full border-b border-gray-200 py-3 active:bg-gray-100">
+              <button
+                onClick={() => setActiveModal('edit')}
+                className="w-full border-b border-gray-200 py-3 active:bg-gray-100"
+              >
                 수정
               </button>
             </>

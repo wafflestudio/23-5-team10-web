@@ -56,7 +56,9 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
     const commentInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-      setPostData(initialData)
+      if (initialData) {
+        setPostData({ ...initialData })
+      }
     }, [initialData])
 
     useImperativeHandle(ref, () => ({
@@ -294,6 +296,12 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
       }, 0)
     }
 
+    const handleUpdateSuccess = (updatedData: PostData) => {
+      const clonedData = { ...updatedData }
+      setPostData(clonedData)
+      onDataChange?.(clonedData)
+    }
+
     const formattedFullDate = postData?.createdAt
       ? new Date(postData.createdAt).toLocaleDateString('ko-KR', {
           year: 'numeric',
@@ -301,6 +309,12 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
           day: 'numeric',
         })
       : ''
+
+    const isEdited =
+      postData?.updatedAt &&
+      postData?.createdAt &&
+      new Date(postData.updatedAt).getTime() >
+        new Date(postData.createdAt).getTime() + 1000
 
     return (
       <div className="flex h-full flex-col bg-white">
@@ -368,7 +382,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
               <span className="whitespace-pre-wrap">{postData?.content}</span>
               <div className="mt-2 text-xs font-normal text-gray-500">
                 {postData?.createdAt
-                  ? formatRelativeTime(postData.createdAt)
+                  ? `${formatRelativeTime(postData.createdAt)}${isEdited ? ' • 수정됨' : ''}`
                   : ''}
               </div>
             </div>
@@ -411,6 +425,8 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
             nickname={postData?.nickname || ''}
             authorId={postData?.userId || 0}
             profileImageUrl={postData?.profileImageUrl || null}
+            initialPostData={postData ?? undefined}
+            onUpdateSuccess={handleUpdateSuccess}
           />
         )}
       </div>
