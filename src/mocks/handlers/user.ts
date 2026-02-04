@@ -13,8 +13,22 @@ function getUserIdFromToken(request: Request): number | null {
   return Number.isInteger(userId) ? userId : null
 }
 
+const FORCE_AUTH_FAILURE = false
+
 export const userHandlers = [
   http.get('*/api/v1/users/me', ({ request }) => {
+    if (FORCE_AUTH_FAILURE) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_401',
+          message: '세션이 만료되었습니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 401 }
+      )
+    }
+
     const userId = getUserIdFromToken(request)
     if (!userId) {
       return HttpResponse.json(
