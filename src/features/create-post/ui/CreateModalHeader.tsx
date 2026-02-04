@@ -7,6 +7,7 @@ import { ChevronLeft, Loader2, XIcon } from 'lucide-react'
 type CreateModalHeaderProps = {
   isUploaded: boolean
   step?: 'select' | 'details'
+  title?: string
   onBack?: () => void
   onNext?: () => void
   onShare?: () => void
@@ -20,6 +21,7 @@ type CreateModalHeaderProps = {
 export function CreateModalHeader({
   isUploaded,
   step = 'select',
+  title,
   onBack,
   onNext,
   onShare,
@@ -31,10 +33,10 @@ export function CreateModalHeader({
 }: CreateModalHeaderProps) {
   const isDetails = isUploaded && step === 'details'
 
-  const getTitle = () => {
+  const getDisplayTitle = () => {
     if (isSharing) return '공유 중...'
     if (isShareSuccess) return '게시물이 공유됨'
-    return '새 게시물 만들기'
+    return title || '새 게시물 만들기'
   }
 
   const showBackButton = isUploaded && !isSharing && !isShareSuccess
@@ -57,7 +59,7 @@ export function CreateModalHeader({
       ) : null}
 
       <DialogTitle className="text-base font-semibold">
-        {getTitle()}
+        {getDisplayTitle()}
       </DialogTitle>
 
       {showActionButton ? (

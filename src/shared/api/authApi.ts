@@ -1,4 +1,4 @@
-import { instance } from './ky'
+import ky from 'ky'
 
 type RefreshResponse = {
   code: string
@@ -10,9 +10,18 @@ type RefreshResponse = {
   success: boolean
 }
 
+const authInstance = ky.create({
+  prefixUrl: import.meta.env.VITE_API_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  retry: 0,
+})
+
 export async function refreshAccessToken() {
   const refreshToken = localStorage.getItem('refreshToken')
-  const response = await instance.post('api/v1/auth/refresh', {
+  const response = await authInstance.post('api/v1/auth/refresh', {
     json: { refreshToken },
   })
   const result = await response.json<RefreshResponse>()

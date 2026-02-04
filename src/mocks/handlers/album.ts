@@ -17,7 +17,7 @@ type AlbumActionResponse = {
 }
 
 export const albumHandlers = [
-  http.post('*/api/v1/albums', async ({ request }) => {
+  http.post('**/api/v1/albums', async ({ request }) => {
     const json = await request.json().catch(() => null)
 
     const result = (
@@ -55,7 +55,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.get('*/api/v1/albums/users/:userId', () => {
+  http.get('**/api/v1/albums/users/:userId', () => {
     const mappedPostIds = new Set(
       Object.keys(postAlbumMap).map((key) => Number(key))
     )
@@ -113,7 +113,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.post('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
+  http.post('**/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
 
@@ -150,7 +150,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.get('*/api/v1/albums/:albumId', ({ params }) => {
+  http.get('**/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -205,7 +205,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.delete('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
+  http.delete('**/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
 
@@ -242,7 +242,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.delete('*/api/v1/albums/:albumId', ({ params }) => {
+  http.delete('**/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {
@@ -284,7 +284,7 @@ export const albumHandlers = [
     return HttpResponse.json(body, { status: 200 })
   }),
 
-  http.patch('*/api/v1/albums/:albumId', async ({ params, request }) => {
+  http.patch('**/api/v1/albums/:albumId', async ({ params, request }) => {
     const albumId = Number(params.albumId)
 
     if (!Number.isInteger(albumId)) {

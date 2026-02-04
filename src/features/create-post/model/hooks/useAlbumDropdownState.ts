@@ -13,6 +13,7 @@ type AlbumDropdownAction =
   | { type: 'edit_title_change'; title: string }
   | { type: 'open_change'; open: boolean }
   | { type: 'reset_edit' }
+  | { type: 'sync_initial_value'; albumId: number }
 
 type AlbumDropdownState = {
   value: string
@@ -59,7 +60,6 @@ export function useAlbumDropdownState({
   >((prev, action) => {
     switch (action.type) {
       case 'value_change': {
-        // 수정 중이거나 추가 중일 때는 선택만 변경하지 않음
         if (prev.editingAlbumId !== null || prev.isAddingAlbum) {
           return prev
         }
@@ -132,8 +132,6 @@ export function useAlbumDropdownState({
         }
 
       case 'open_change': {
-        // 추가 모드나 수정 모드일 때는 드롭다운이 닫히지 않도록 방지
-        // (mutation pending은 handleOpenChange에서 별도로 체크)
         if (
           !action.open &&
           (prev.isAddingAlbum || prev.editingAlbumId !== null)
@@ -143,12 +141,12 @@ export function useAlbumDropdownState({
 
         const newState = { ...prev, isOpen: action.open }
 
-        // 드롭다운이 닫힐 때 수정 모드 초기화
         if (!action.open) {
           return {
             ...newState,
             editingAlbumId: null,
             editingAlbumTitle: '',
+            isAddingAlbum: false,
           }
         }
 
@@ -162,6 +160,13 @@ export function useAlbumDropdownState({
           editingAlbumTitle: '',
         }
 
+      case 'sync_initial_value':
+        return {
+          ...prev,
+          value:
+            action.albumId === -1 ? NO_ALBUM_VALUE : String(action.albumId),
+        }
+
       default:
         return assertNever(action)
     }
@@ -170,7 +175,10 @@ export function useAlbumDropdownState({
   const addInputRef = useRef<HTMLInputElement>(null)
   const editInputRef = useRef<HTMLInputElement>(null)
 
-  // input 모드로 전환 시 포커스
+  useEffect(() => {
+    dispatch({ type: 'sync_initial_value', albumId: initialSelectedAlbumId })
+  }, [initialSelectedAlbumId])
+
   useEffect(() => {
     if (state.isAddingAlbum && addInputRef.current) {
       addInputRef.current.focus()
