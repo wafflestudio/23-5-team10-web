@@ -4,12 +4,13 @@ import type { CurrentUser } from '@/entities/user/model/types'
 
 export const currentUserQueryKey = ['currentUser'] as const
 
-export function useCurrentUser() {
+export function useCurrentUser(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: currentUserQueryKey,
     queryFn: getCurrentUser,
     retry: 1,
     staleTime: 5 * 60 * 1000,
+    enabled: options?.enabled ?? true,
   })
 }
 
