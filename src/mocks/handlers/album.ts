@@ -1,14 +1,12 @@
 import { http, HttpResponse } from 'msw'
-
 import { albums, nextAlbumId } from '../db/album.db'
 import { postAlbumMap } from '../db/postRelations.db'
-import type { Post } from '../db/post.db'
 import { posts } from '../db/post.db'
 import {
   type CreateAlbumRequest,
   type CreateAlbumResponse,
   type AlbumDetailResponse,
-  type MyAlbumsResponse,
+  type UserAlbumsResponse,
 } from '../../entities/album/model/types'
 import { CreateAlbumRequestSchema } from '../../entities/album/model/schema'
 
@@ -56,26 +54,44 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
-  http.get('*/api/v1/albums/my', () => {
+
+  http.get('*/api/v1/albums/users/:userId', () => {
+    const mappedPostIds = new Set(
+      Object.keys(postAlbumMap).map((key) => Number(key))
+    )
+    const postsWithoutAlbum = posts.filter(
+      (p) => !mappedPostIds.has(Number(p.id))
+    )
+
+    const noAlbumThumbnail =
+      postsWithoutAlbum.length > 0
+        ? (() => {
+            const firstPost = postsWithoutAlbum[0]
+            return firstPost.images?.[0] ?? ''
+          })()
+        : ''
+
+    const noAlbumItem = {
+      albumId: -1,
+      title: '앨범 없음',
+      thumbnailImageUrl: noAlbumThumbnail,
+      postCount: postsWithoutAlbum.length,
+    }
+
     const albumSummaries = albums.map((album) => {
       const postsInAlbum = Object.entries(postAlbumMap)
         .filter(([, mappedAlbumId]) => mappedAlbumId === album.id)
         .map(([postIdKey]) => Number(postIdKey))
 
       const postCount = postsInAlbum.length
-
       let thumbnailImageUrl = ''
 
       if (postCount > 0) {
         const firstPostId = postsInAlbum[0]
         const post = posts.find((p) => p.id === String(firstPostId))
 
-        if (post) {
-          const postWithImages = post as Post & { images?: string[] }
-
-          thumbnailImageUrl = Array.isArray(postWithImages.images)
-            ? postWithImages.images[0]
-            : postWithImages.imageUrl
+        if (post && post.images && post.images.length > 0) {
+          thumbnailImageUrl = post.images[0]
         }
       }
 
@@ -87,15 +103,16 @@ export const albumHandlers = [
       }
     })
 
-    const body: MyAlbumsResponse = {
+    const body: UserAlbumsResponse = {
       code: '200',
-      message: '내 앨범 목록 조회 성공',
-      data: albumSummaries,
+      message: '앨범 목록 조회 성공',
+      data: [noAlbumItem, ...albumSummaries],
       isSuccess: true,
     }
 
     return HttpResponse.json(body, { status: 200 })
   }),
+
   http.post('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
@@ -132,6 +149,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
+
   http.get('*/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
@@ -164,19 +182,11 @@ export const albumHandlers = [
     const postSummaries = postsInAlbum
       .map((postId) => {
         const post = posts.find((p) => p.id === String(postId))
-        if (!post) return null
-
-        const postWithImages = post as Post & { images?: string[] }
-
-        const imageUrl = Array.isArray(postWithImages.images)
-          ? postWithImages.images[0]
-          : postWithImages.imageUrl
-
-        if (!imageUrl) return null
+        if (!post || !post.images || post.images.length === 0) return null
 
         return {
           postId,
-          imageUrl,
+          imageUrl: post.images[0],
         }
       })
       .filter((p): p is { postId: number; imageUrl: string } => p !== null)
@@ -194,6 +204,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
+
   http.delete('*/api/v1/albums/:albumId/posts/:postId', ({ params }) => {
     const albumId = Number(params.albumId)
     const postId = Number(params.postId)
@@ -230,6 +241,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
+
   http.delete('*/api/v1/albums/:albumId', ({ params }) => {
     const albumId = Number(params.albumId)
 
@@ -255,10 +267,8 @@ export const albumHandlers = [
       return HttpResponse.json(body, { status: 404 })
     }
 
-    // 앨범 삭제
     albums.splice(albumIndex, 1)
 
-    // 이 앨범에 속한 게시글 매핑 제거 (앨범 없음 상태)
     Object.entries(postAlbumMap).forEach(([postIdKey, mappedAlbumId]) => {
       if (mappedAlbumId === albumId) {
         delete postAlbumMap[Number(postIdKey)]
@@ -273,6 +283,7 @@ export const albumHandlers = [
 
     return HttpResponse.json(body, { status: 200 })
   }),
+
   http.patch('*/api/v1/albums/:albumId', async ({ params, request }) => {
     const albumId = Number(params.albumId)
 

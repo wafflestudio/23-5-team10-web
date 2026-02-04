@@ -102,14 +102,14 @@ export function ProfilePage() {
         postsCount={profile.postsCount}
         followersCount={profile.followerCount}
         followingCount={profile.followingCount}
-        defaultIsFollowing={profile.followed}
+        defaultIsFollowing={profile.isFollowed}
         onFollowToggle={handleFollowToggle}
       />
 
       <ProfileRouteTabs
         value={activeTabValue}
         onValueChange={handleTabChange}
-        showSavedTab={profile.me}
+        showSavedTab={profile.isMe}
       />
 
       <Outlet />

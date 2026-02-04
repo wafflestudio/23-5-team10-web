@@ -1,3 +1,5 @@
+import { toast } from 'sonner'
+
 import { Button } from '@/shared/ui/button'
 import { DialogClose, DialogTitle } from '@/shared/ui/dialog'
 import { ChevronLeft, Loader2, XIcon } from 'lucide-react'
@@ -10,6 +12,7 @@ type CreateModalHeaderProps = {
   onShare?: () => void
   isShareDisabled?: boolean
   isUploading?: boolean
+  isUploadError?: boolean
   isSharing?: boolean
   isShareSuccess?: boolean
 }
@@ -22,6 +25,7 @@ export function CreateModalHeader({
   onShare,
   isShareDisabled,
   isUploading,
+  isUploadError,
   isSharing,
   isShareSuccess,
 }: CreateModalHeaderProps) {
@@ -61,7 +65,20 @@ export function CreateModalHeader({
           type="button"
           variant="ghost"
           className="absolute top-1/2 right-4 -translate-y-1/2"
-          onClick={isDetails ? onShare : onNext}
+          onClick={
+            isDetails
+              ? onShare
+              : () => {
+                  if (isUploadError) {
+                    toast.error(
+                      '이미지 업로드에 실패했습니다. 다시 시도해주세요.'
+                    )
+                    return
+                  }
+                  if (isUploading) return
+                  onNext?.()
+                }
+          }
           disabled={isDetails ? isShareDisabled : isUploading}
         >
           {isUploading ? (

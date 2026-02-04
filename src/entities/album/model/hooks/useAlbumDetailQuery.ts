@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
+import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 
 import { getAlbumDetail } from '@/entities/album/api/getAlbumDetail'
 import type { AlbumDetail } from '@/entities/album/model/types'
 
 export function useAlbumDetailQuery(albumId: number | null) {
+  const loggedInUser = useCurrentUserId()
+
   return useQuery<AlbumDetail>({
-    queryKey: ['album', albumId],
+    queryKey: ['album', albumId, loggedInUser],
     queryKeyHashFn: (key) => JSON.stringify(key),
     enabled: albumId != null,
     queryFn: () => {
@@ -13,7 +16,7 @@ export function useAlbumDetailQuery(albumId: number | null) {
         throw new Error('albumId is required')
       }
 
-      return getAlbumDetail(albumId)
+      return getAlbumDetail({ albumId, loggedInUser })
     },
   })
 }

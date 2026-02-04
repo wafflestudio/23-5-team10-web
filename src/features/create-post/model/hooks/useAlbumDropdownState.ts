@@ -37,8 +37,8 @@ function assertNever(value: never): never {
 }
 
 type UseAlbumDropdownStateArgs = {
-  initialSelectedAlbumId: number | null
-  onSelect: (albumId: number | null) => void
+  initialSelectedAlbumId: number
+  onSelect: (albumId: number) => void
 }
 
 export function useAlbumDropdownState({
@@ -47,9 +47,10 @@ export function useAlbumDropdownState({
 }: UseAlbumDropdownStateArgs) {
   const initialState: AlbumDropdownState = {
     ...INITIAL_STATE,
-    value: initialSelectedAlbumId
-      ? String(initialSelectedAlbumId)
-      : NO_ALBUM_VALUE,
+    value:
+      initialSelectedAlbumId === -1
+        ? NO_ALBUM_VALUE
+        : String(initialSelectedAlbumId),
   }
 
   const [state, dispatch] = useActionState<
@@ -66,7 +67,7 @@ export function useAlbumDropdownState({
         const newState = { ...prev, value: action.value }
 
         if (action.value === NO_ALBUM_VALUE) {
-          onSelect(null)
+          onSelect(-1)
           return { ...newState, isOpen: false }
         } else if (action.value === ADD_ALBUM_VALUE) {
           return {
@@ -97,9 +98,10 @@ export function useAlbumDropdownState({
           ...prev,
           isAddingAlbum: false,
           newAlbumTitle: '',
-          value: initialSelectedAlbumId
-            ? String(initialSelectedAlbumId)
-            : NO_ALBUM_VALUE,
+          value:
+            initialSelectedAlbumId === -1
+              ? NO_ALBUM_VALUE
+              : String(initialSelectedAlbumId),
         }
 
       case 'add_title_change':

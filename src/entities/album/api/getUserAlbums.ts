@@ -5,8 +5,14 @@ import {
 } from '@/entities/album/model/schema'
 import type { AlbumSummary } from '@/entities/album/model/types'
 
-export async function getMyAlbums(): Promise<AlbumSummary[]> {
-  const response = await instance.get('api/v1/albums/my')
+type GetUserAlbumsParams = {
+  userId: number
+}
+
+export async function getUserAlbums({
+  userId,
+}: GetUserAlbumsParams): Promise<AlbumSummary[]> {
+  const response = await instance.get(`api/v1/albums/users/${userId}`)
 
   const raw = await response.json()
 

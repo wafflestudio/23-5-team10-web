@@ -6,7 +6,8 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { Button } from '@/shared/ui/button'
-import { useMyAlbumsQuery } from '@/entities/album/model/hooks/useMyAlbumsQuery'
+import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
+import { useUserAlbumsQuery } from '@/entities/album/model/hooks/useUserAlbumsQuery'
 import {
   useAlbumDropdownState,
   NO_ALBUM_VALUE,
@@ -19,15 +20,19 @@ import { AlbumEditItem } from '@/features/create-post/ui/AlbumEditItem'
 import { AlbumAddItem } from '@/features/create-post/ui/AlbumAddItem'
 
 type AlbumSelectDropdownProps = {
-  selectedAlbumId: number | null
-  onSelect: (albumId: number | null) => void
+  selectedAlbumId: number
+  onSelect: (albumId: number) => void
 }
 
 export function AlbumSelectDropdown({
   selectedAlbumId,
   onSelect,
 }: AlbumSelectDropdownProps) {
-  const { data: albums, isLoading } = useMyAlbumsQuery()
+  const currentUserId = useCurrentUserId()
+  const { data: albums, isLoading } = useUserAlbumsQuery({
+    userId: currentUserId ?? 0,
+    enabled: currentUserId !== null,
+  })
 
   const {
     state,
@@ -95,7 +100,7 @@ export function AlbumSelectDropdown({
   }
 
   const displayText =
-    selectedAlbumId === null
+    selectedAlbumId === -1
       ? '앨범 없음'
       : (albums?.find((album) => album.albumId === selectedAlbumId)?.title ??
         '앨범 없음')
@@ -128,30 +133,32 @@ export function AlbumSelectDropdown({
           {isLoading ? (
             <div className="px-4 py-2.5 text-sm text-zinc-400">로딩 중...</div>
           ) : (
-            albums?.map((album) => {
-              const isEditing = state.editingAlbumId === album.albumId
+            albums
+              ?.filter((album) => album.albumId !== -1)
+              .map((album) => {
+                const isEditing = state.editingAlbumId === album.albumId
 
-              return isEditing ? (
-                <AlbumEditItem
-                  key={album.albumId}
-                  title={state.editingAlbumTitle}
-                  inputRef={editInputRef}
-                  isPending={updateAlbumTitleMutation.isPending}
-                  onTitleChange={handleEditTitleChange}
-                  onUpdate={handleUpdateAlbum}
-                  onCancel={handleEditCancel}
-                  onKeyDown={(e) => handleEditKeyDown(e, handleEditCancel)}
-                />
-              ) : (
-                <AlbumItem
-                  key={album.albumId}
-                  albumId={album.albumId}
-                  title={album.title}
-                  onSelect={() => handleValueChange(String(album.albumId))}
-                  onEdit={(e) => handleEditClick(e, album.albumId)}
-                />
-              )
-            })
+                return isEditing ? (
+                  <AlbumEditItem
+                    key={album.albumId}
+                    title={state.editingAlbumTitle}
+                    inputRef={editInputRef}
+                    isPending={updateAlbumTitleMutation.isPending}
+                    onTitleChange={handleEditTitleChange}
+                    onUpdate={handleUpdateAlbum}
+                    onCancel={handleEditCancel}
+                    onKeyDown={(e) => handleEditKeyDown(e, handleEditCancel)}
+                  />
+                ) : (
+                  <AlbumItem
+                    key={album.albumId}
+                    albumId={album.albumId}
+                    title={album.title}
+                    onSelect={() => handleValueChange(String(album.albumId))}
+                    onEdit={(e) => handleEditClick(e, album.albumId)}
+                  />
+                )
+              })
           )}
 
           {state.isAddingAlbum ? (
