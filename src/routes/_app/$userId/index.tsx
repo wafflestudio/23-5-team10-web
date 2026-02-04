@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
+import { EmptyPostsState } from '@/features/profile-posts/ui/EmptyPostsState'
 import { ContentContainer } from '@/widgets/profile-layout'
 import { useUserPostsQuery } from '@/entities/post/model/hooks/useUserPostsQuery'
+import { useProfile } from '@/entities/user/model/hooks/useProfile'
 
 export const Route = createFileRoute('/_app/$userId/')({
   component: RouteComponent,
@@ -10,9 +12,11 @@ export const Route = createFileRoute('/_app/$userId/')({
 
 function RouteComponent() {
   const { userId } = Route.useParams()
+  const numericUserId = Number(userId)
   const { data: posts, isLoading } = useUserPostsQuery({
-    userId: Number(userId),
+    userId: numericUserId,
   })
+  const { data: profile } = useProfile(numericUserId)
 
   if (isLoading) {
     return (
@@ -33,6 +37,14 @@ function RouteComponent() {
       likeCount: post.likeCount,
       commentCount: post.commentCount,
     })) ?? []
+
+  if (items.length === 0) {
+    return (
+      <ContentContainer className="py-6">
+        <EmptyPostsState isMe={profile?.isMe ?? false} />
+      </ContentContainer>
+    )
+  }
 
   return (
     <ContentContainer className="py-6">

@@ -1,5 +1,6 @@
 import { FollowButton } from '@/features/follow-user/ui/FollowButton'
 import { cn } from '@/shared/lib/utils'
+import { Button } from '@/shared/ui/button'
 import { PROFILE_CONTAINER_CLASSNAME } from './constants'
 import { ProfileAvatar } from './ProfileAvatar'
 import { ProfileStat } from './ProfileStat'
@@ -18,6 +19,7 @@ interface ProfileHeaderProps {
   defaultIsFollowing?: boolean
   onFollowToggle?: (nextIsFollowing: boolean) => Promise<void> | void
   userId: number
+  isMe?: boolean
 }
 
 export function ProfileHeader({
@@ -31,6 +33,7 @@ export function ProfileHeader({
   defaultIsFollowing = false,
   onFollowToggle,
   userId,
+  isMe = false,
 }: ProfileHeaderProps) {
   const [modalState, setModalState] = useState<{
     open: boolean
@@ -78,10 +81,19 @@ export function ProfileHeader({
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-4">
               <h1 className="text-xl font-normal text-gray-900">{nickname}</h1>
-              <FollowButton
-                defaultIsFollowing={defaultIsFollowing}
-                onToggle={onFollowToggle}
-              />
+              {isMe ? (
+                <Button
+                  variant="secondary"
+                  className="h-8 rounded-lg bg-gray-200 px-4 text-sm font-semibold text-gray-900 hover:bg-gray-300"
+                >
+                  프로필 수정
+                </Button>
+              ) : (
+                <FollowButton
+                  defaultIsFollowing={defaultIsFollowing}
+                  onToggle={onFollowToggle}
+                />
+              )}
             </div>
 
             <div className="mt-6 flex gap-10 text-base">

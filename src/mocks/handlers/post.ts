@@ -8,6 +8,47 @@ import {
 } from '../db/postRelations.db'
 
 export const postHandlers = [
+  http.get('**/api/v1/posts/bookmarks', async () => {
+    await delay(100)
+
+    const bookmarkedPosts = posts.filter((p) =>
+      bookmarkedPostIds.has(Number(p.id))
+    )
+
+    const data = bookmarkedPosts.map((post) => {
+      const idNum = Number(post.id)
+      const author = users.find((u) => u.nickname === post.username)
+      const authorId = author ? author.userId : 999
+
+      return {
+        id: idNum,
+        userId: authorId,
+        nickname: post.username,
+        profileImageUrl: author?.profileImageUrl || post.userImage,
+        content: post.caption,
+        albumId: postAlbumMap[idNum] ?? null,
+        images: post.images.map((url, index) => ({
+          id: idNum * 100 + index,
+          url,
+          orderIndex: index,
+        })),
+        likeCount: post.likeCount,
+        commentCount: post.commentCount,
+        createdAt: post.createdAt,
+        updatedAt: post.createdAt,
+        isLiked: likedPostIds.has(idNum),
+        isBookmarked: true,
+      }
+    })
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '북마크 목록 조회 성공',
+      isSuccess: true,
+      data,
+    })
+  }),
+
   http.post('**/api/v1/posts', async ({ request }) => {
     const body = (await request.json()) as {
       content: string
