@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 import { likePost, unlikePost } from '@/entities/post/api/toggleLike'
 
@@ -25,6 +26,9 @@ export function useToggleLikeMutation({
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       queryClient.invalidateQueries({ queryKey: ['posts', 'explore'] })
       queryClient.invalidateQueries({ queryKey: ['posts', 'bookmarks'] })
+    },
+    onError: () => {
+      toast.error('좋아요 처리에 실패했습니다.')
     },
     meta: {
       postId,

@@ -6,7 +6,7 @@ export const RecentSearchItemSchema = z.object({
   nickname: z.string(),
   profileImageUrl: z.string().nullable(),
   name: z.string().nullable(),
-  followed: z.boolean(),
+  isFollowed: z.boolean(),
 })
 
 export const RecentSearchListResponseSchema = z.object({

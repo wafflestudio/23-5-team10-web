@@ -1,8 +1,5 @@
-import ky from 'ky'
-
+import { instance } from '@/shared/api/ky'
 import { cropImageToStoryRatio } from '@/features/create-story/lib/cropImageToStoryRatio'
-
-const API_URL = import.meta.env.VITE_API_URL
 
 export async function uploadStoryImage(file: File): Promise<string> {
   const croppedFile = await cropImageToStoryRatio(file)
@@ -10,9 +7,11 @@ export async function uploadStoryImage(file: File): Promise<string> {
   const formData = new FormData()
   formData.append('image', croppedFile)
 
-  const response = await ky.post(`${API_URL}/api/images/upload`, {
+  const response = await instance.post('api/images/upload', {
     body: formData,
-    credentials: 'include',
+    headers: {
+      'Content-Type': undefined,
+    },
     timeout: 60000,
   })
 

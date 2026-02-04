@@ -8,7 +8,7 @@ import { z } from 'zod'
 
 import { ContentContainer } from '@/widgets/profile-layout'
 import { AlbumSummaryCard } from '@/entities/album/ui/AlbumSummaryCard'
-import { useMyAlbumsQuery } from '@/entities/album/model/hooks/useMyAlbumsQuery'
+import { useUserAlbumsQuery } from '@/entities/album/model/hooks/useUserAlbumsQuery'
 import { useAlbumDetailQuery } from '@/entities/album/model/hooks/useAlbumDetailQuery'
 import { ProfilePostsGrid } from '@/features/profile-posts/ui/ProfilePostsGrid'
 import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePostsGrid'
@@ -25,7 +25,9 @@ function RouteComponent() {
   const { userId } = useParams({ from: '/_app/$userId/albums' })
   const { albumId } = useSearch({ from: '/_app/$userId/albums' })
 
-  const { data: albums = [], isLoading } = useMyAlbumsQuery()
+  const { data: albums = [], isLoading } = useUserAlbumsQuery({
+    userId: Number(userId),
+  })
   const selectedAlbumId = albumId ?? null
 
   const { data: albumDetail, isLoading: isAlbumLoading } =

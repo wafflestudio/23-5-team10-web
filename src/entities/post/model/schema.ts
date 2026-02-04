@@ -18,8 +18,8 @@ export const PostListItemSchema = z.object({
   commentCount: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  liked: z.boolean(),
-  bookmarked: z.boolean(),
+  isLiked: z.boolean(),
+  isBookmarked: z.boolean(),
 })
 
 export const ApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>

@@ -22,12 +22,12 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
 
   const toggleLikeMutation = useToggleLikeMutation({
     postId: item.postId,
-    initiallyLiked: item.liked,
+    initiallyLiked: item.isLiked,
   })
 
   const toggleBookmarkMutation = useToggleBookmarkMutation({
     postId: item.postId,
-    initiallyBookmarked: item.bookmarked,
+    initiallyBookmarked: item.isBookmarked,
   })
 
   const handleOpenPost = () => {
@@ -36,12 +36,12 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
 
   const handleToggleLike = () => {
     if (toggleLikeMutation.isPending) return
-    toggleLikeMutation.mutate(!item.liked)
+    toggleLikeMutation.mutate(!item.isLiked)
   }
 
   const handleToggleBookmark = () => {
     if (toggleBookmarkMutation.isPending) return
-    toggleBookmarkMutation.mutate(!item.bookmarked)
+    toggleBookmarkMutation.mutate(!item.isBookmarked)
   }
 
   return (
@@ -116,14 +116,14 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
               variant="ghost"
               size="icon"
               className="h-9 w-9"
-              aria-pressed={item.liked}
+              aria-pressed={item.isLiked}
               disabled={toggleLikeMutation.isPending}
               onClick={handleToggleLike}
             >
               <Heart
                 className={cn(
                   'size-6 transition-colors',
-                  item.liked ? 'fill-red-500 text-red-500' : 'text-foreground'
+                  item.isLiked ? 'fill-red-500 text-red-500' : 'text-foreground'
                 )}
               />
             </Button>
@@ -143,14 +143,14 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
             variant="ghost"
             size="icon"
             className="h-9 w-9"
-            aria-pressed={item.bookmarked}
+            aria-pressed={item.isBookmarked}
             disabled={toggleBookmarkMutation.isPending}
             onClick={handleToggleBookmark}
           >
             <Bookmark
               className={cn(
                 'size-6 transition-colors',
-                item.bookmarked ? 'fill-black text-black' : 'text-foreground'
+                item.isBookmarked ? 'fill-black text-black' : 'text-foreground'
               )}
             />
           </Button>

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 import { getFollowing } from '../api/getFollowing'
 
 type UseFollowingParams = {
@@ -7,9 +8,11 @@ type UseFollowingParams = {
 }
 
 export function useFollowing({ userId, enabled = true }: UseFollowingParams) {
+  const loggedInUser = useCurrentUserId()
+
   return useQuery({
-    queryKey: ['following', userId],
-    queryFn: () => getFollowing({ userId }),
+    queryKey: ['following', userId, loggedInUser],
+    queryFn: () => getFollowing({ userId, loggedInUser }),
     enabled: enabled && userId > 0,
     staleTime: 1000 * 60 * 5,
   })

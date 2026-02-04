@@ -13,8 +13,8 @@ export const FeedItemSchema = z.object({
   likeCount: z.number().nonnegative(),
   commentCount: z.number().nonnegative(),
   createdAt: z.string(),
-  liked: z.boolean(),
-  bookmarked: z.boolean(),
+  isLiked: z.boolean().default(false),
+  isBookmarked: z.boolean().default(false),
 })
 
 export const FeedPageSchema = z.object({
