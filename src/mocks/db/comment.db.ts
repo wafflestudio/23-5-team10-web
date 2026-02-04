@@ -10,7 +10,7 @@ export const comments = [
     updatedAt: '2025-07-15T14:30:00.000Z',
     parentId: null,
     likeCount: 156,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 2, 3, 4, 10, 22, 35, 40],
   },
   {
@@ -24,7 +24,7 @@ export const comments = [
     updatedAt: '2025-07-15T15:00:00.000Z',
     parentId: null,
     likeCount: 12,
-    liked: false,
+    isLiked: false,
     likedUserIds: [10, 15, 20],
   },
   {
@@ -38,7 +38,7 @@ export const comments = [
     updatedAt: '2025-07-15T15:20:00.000Z',
     parentId: null,
     likeCount: 5,
-    liked: false,
+    isLiked: false,
     likedUserIds: [11],
   },
   {
@@ -52,7 +52,7 @@ export const comments = [
     updatedAt: '2025-10-10T05:45:00.000Z',
     parentId: null,
     likeCount: 89,
-    liked: false,
+    isLiked: false,
     likedUserIds: [1, 5, 8, 12],
   },
   {
@@ -66,7 +66,7 @@ export const comments = [
     updatedAt: '2025-10-10T09:12:00.000Z',
     parentId: null,
     likeCount: 3,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 20],
   },
   {
@@ -80,7 +80,7 @@ export const comments = [
     updatedAt: '2025-12-24T22:00:00.000Z',
     parentId: null,
     likeCount: 245,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 2, 3, 30, 45, 60, 70],
   },
   {
@@ -94,7 +94,7 @@ export const comments = [
     updatedAt: '2025-12-24T23:15:00.000Z',
     parentId: null,
     likeCount: 1,
-    liked: false,
+    isLiked: false,
     likedUserIds: [],
   },
   {
@@ -108,7 +108,7 @@ export const comments = [
     updatedAt: '2026-01-05T11:20:00.000Z',
     parentId: null,
     likeCount: 42,
-    liked: false,
+    isLiked: false,
     likedUserIds: [1, 10, 15],
   },
   {
@@ -122,7 +122,7 @@ export const comments = [
     updatedAt: '2026-01-05T13:40:00.000Z',
     parentId: null,
     likeCount: 2,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1],
   },
   {
@@ -136,7 +136,7 @@ export const comments = [
     updatedAt: '2026-01-15T10:05:00.000Z',
     parentId: null,
     likeCount: 67,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 5, 10, 20, 50],
   },
   {
@@ -150,7 +150,7 @@ export const comments = [
     updatedAt: '2026-01-15T12:30:00.000Z',
     parentId: null,
     likeCount: 15,
-    liked: false,
+    isLiked: false,
     likedUserIds: [50],
   },
   {
@@ -164,7 +164,7 @@ export const comments = [
     updatedAt: '2026-01-28T08:50:00.000Z',
     parentId: null,
     likeCount: 312,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 2, 3, 60, 100, 120, 150],
   },
   {
@@ -178,7 +178,7 @@ export const comments = [
     updatedAt: '2026-01-28T10:15:00.000Z',
     parentId: null,
     likeCount: 24,
-    liked: false,
+    isLiked: false,
     likedUserIds: [60],
   },
   {
@@ -192,7 +192,7 @@ export const comments = [
     updatedAt: '2026-01-30T09:00:00.000Z',
     parentId: null,
     likeCount: 18,
-    liked: false,
+    isLiked: false,
     likedUserIds: [1, 2, 5],
   },
   {
@@ -206,7 +206,7 @@ export const comments = [
     updatedAt: '2026-01-30T14:45:00.000Z',
     parentId: null,
     likeCount: 0,
-    liked: false,
+    isLiked: false,
     likedUserIds: [],
   },
   {
@@ -220,7 +220,7 @@ export const comments = [
     updatedAt: '2025-07-16T09:20:00.000Z',
     parentId: null,
     likeCount: 34,
-    liked: false,
+    isLiked: false,
     likedUserIds: [1, 10],
   },
   {
@@ -234,7 +234,7 @@ export const comments = [
     updatedAt: '2025-10-11T12:00:00.000Z',
     parentId: null,
     likeCount: 56,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 15, 20],
   },
   {
@@ -248,7 +248,7 @@ export const comments = [
     updatedAt: '2025-10-11T13:30:00.000Z',
     parentId: null,
     likeCount: 10,
-    liked: false,
+    isLiked: false,
     likedUserIds: [15],
   },
   {
@@ -262,7 +262,7 @@ export const comments = [
     updatedAt: '2025-12-25T10:20:00.000Z',
     parentId: null,
     likeCount: 22,
-    liked: false,
+    isLiked: false,
     likedUserIds: [30],
   },
   {
@@ -276,7 +276,7 @@ export const comments = [
     updatedAt: '2026-01-29T15:40:00.000Z',
     parentId: null,
     likeCount: 95,
-    liked: true,
+    isLiked: true,
     likedUserIds: [1, 60, 65],
   },
 ]
