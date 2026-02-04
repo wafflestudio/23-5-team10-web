@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import ReportModal from './ReportModal'
 import AccountInfoModal from './AccountInfoModal'
 import EmbedModal from './EmbedModal'
@@ -42,6 +43,7 @@ export default function PostMenuModal({
     profileUserId: authorId,
   })
 
+  const queryClient = useQueryClient()
   const isMe = currentUserId === authorId
   const isFollowing =
     followingList?.some((user) => user.userId === authorId) ?? false
@@ -73,6 +75,7 @@ export default function PostMenuModal({
         .json<{ isSuccess: boolean; code: string; message: string }>()
 
       if (response.isSuccess) {
+        void queryClient.invalidateQueries({ queryKey: ['albums', 'user'] })
         onClose()
         navigate({ to: `/${authorId}` })
       }

@@ -95,7 +95,7 @@ function RouteComponent() {
                 </button>
               </div>
               {albumDetail.posts.length === 0 ? (
-                <div className="flex flex-col items-center gap-2 text-sm text-gray-500">
+                <div className="flex h-96 flex-col items-center justify-center gap-2 text-sm text-gray-500">
                   <span>이 앨범에는 아직 게시글이 없습니다.</span>
                 </div>
               ) : (

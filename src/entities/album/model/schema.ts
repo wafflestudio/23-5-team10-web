@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const CreateAlbumRequestSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1).max(50),
 })
 
 export const AlbumPostSchema = z.object({
@@ -18,7 +18,10 @@ export const AlbumDetailSchema = z.object({
 export const AlbumSummarySchema = z.object({
   albumId: z.number(),
   title: z.string(),
-  thumbnailImageUrl: z.string().default(''),
+  thumbnailImageUrl: z
+    .string()
+    .nullable()
+    .transform((val) => val ?? ''),
   postCount: z.number().int().nonnegative(),
 })
 
