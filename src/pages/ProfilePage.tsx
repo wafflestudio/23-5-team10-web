@@ -13,6 +13,7 @@ import {
   type ProfileRouteTabValue,
 } from '@/widgets/profile-route-tabs'
 import { useProfile } from '@/entities/user/model/hooks/useProfile'
+import { AppFooter } from '@/shared/ui/app-footer'
 
 export function ProfilePage() {
   const navigate = useNavigate()
@@ -104,6 +105,7 @@ export function ProfilePage() {
         followingCount={profile.followingCount}
         defaultIsFollowing={profile.isFollowed}
         onFollowToggle={handleFollowToggle}
+        isMe={profile.isMe}
       />
 
       <ProfileRouteTabs
@@ -113,6 +115,8 @@ export function ProfilePage() {
       />
 
       <Outlet />
+
+      <AppFooter />
     </div>
   )
 }
