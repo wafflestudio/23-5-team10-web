@@ -6,7 +6,9 @@ export const CreateAlbumRequestSchema = z.object({
 
 export const AlbumPostSchema = z.object({
   postId: z.number(),
-  imageUrl: z.string().min(1),
+  imageUrl: z.string(),
+  likeCount: z.number(),
+  commentCount: z.number(),
 })
 
 export const AlbumDetailSchema = z.object({

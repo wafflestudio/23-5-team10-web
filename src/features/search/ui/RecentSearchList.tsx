@@ -44,8 +44,8 @@ export function RecentSearchList({
                 userId: item.userId,
                 nickname: item.nickname,
                 profileImageUrl: item.profileImageUrl,
-                name: item.name,
-                isFollowed: item.isFollowed,
+                name: null,
+                isFollowed: false,
               }}
               type="recent"
               onRemove={() => onRemoveItem(item.userId)}

@@ -102,11 +102,15 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
           onClick={handleOpenPost}
           className="block w-full focus-visible:outline-none"
         >
-          <LazyImage
-            src={item.thumbnailImageUrl}
-            alt={`Post by ${item.author.nickname}`}
-            wrapperClassName="w-full bg-black/5 aspect-square"
-          />
+          {item.thumbnailImageUrl ? (
+            <LazyImage
+              src={item.thumbnailImageUrl}
+              alt={`Post by ${item.author.nickname}`}
+              wrapperClassName="w-full bg-black/5 aspect-square"
+            />
+          ) : (
+            <div className="aspect-square w-full bg-black/5" />
+          )}
         </button>
 
         <CardFooter className="flex items-center justify-between px-2 py-1">

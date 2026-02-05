@@ -100,7 +100,7 @@ export function ProfilePage() {
         nickname={profile.nickname}
         avatarUrl={profile.profileImageUrl}
         bio={profile.bio}
-        postsCount={profile.postsCount}
+        postsCount={profile.postCount}
         followersCount={profile.followerCount}
         followingCount={profile.followingCount}
         defaultIsFollowing={profile.isFollowed}

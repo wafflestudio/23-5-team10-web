@@ -11,7 +11,6 @@ import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 type User = {
   userId: number
   nickname: string
-  name: string | null
   profileImageUrl: string | null
   isFollowing?: boolean
 }
@@ -115,9 +114,6 @@ export function FollowListItem({
             <p className="truncate text-sm font-semibold text-gray-900">
               {user.nickname}
             </p>
-            {user.name && (
-              <p className="truncate text-sm text-gray-500">{user.name}</p>
-            )}
           </div>
         </Link>
 

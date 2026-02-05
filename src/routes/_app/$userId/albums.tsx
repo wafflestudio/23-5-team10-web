@@ -104,8 +104,8 @@ function RouteComponent() {
                   items={albumDetail.posts.map<ProfilePostGridItem>((post) => ({
                     id: String(post.postId),
                     imageSrc: post.imageUrl,
-                    likeCount: 0,
-                    commentCount: 0,
+                    likeCount: post.likeCount,
+                    commentCount: post.commentCount,
                   }))}
                 />
               )}
