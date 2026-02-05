@@ -13,7 +13,6 @@ export function toFollowUser(targetUserId: number): FollowUser {
   return {
     userId: user.userId,
     nickname: user.nickname,
-    name: user.name,
     profileImageUrl: user.profileImageUrl,
     isFollowing: follows.some(
       (f) => f.fromUserId === MOCK_USER_ID && f.toUserId === targetUserId

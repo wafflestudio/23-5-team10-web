@@ -11,7 +11,7 @@ export function useCreateAlbumMutation() {
     mutationFn: (payload: CreateAlbumRequest) =>
       createAlbum({ payload, loggedInUser }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['albums', 'my'] })
+      queryClient.invalidateQueries({ queryKey: ['albums', 'user'] })
     },
   })
 }

@@ -16,7 +16,9 @@ export function useUpdateAlbumTitleMutation() {
       payload: CreateAlbumRequest
     }) => updateAlbumTitle({ albumId, payload, loggedInUser }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['albums', 'my'] })
+      queryClient.invalidateQueries({
+        queryKey: ['albums', 'user', loggedInUser],
+      })
     },
   })
 }

@@ -2,6 +2,7 @@ import instagramLogo from '@/assets/instagram-logo.svg'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
 } from '@/shared/ui/sidebar'
@@ -9,6 +10,7 @@ import { NAV_ITEMS } from '../model/navItems'
 import { useNavController } from '../model/useNavController'
 import { SidebarNavLink } from './SidebarNavItem/SidebarNavLink'
 import { SidebarNavButton } from './SidebarNavItem/SidebarNavButton'
+import { SidebarMoreMenu } from './SidebarMoreMenu'
 import { useRef } from 'react'
 import { SearchDrawer } from '@/features/search/ui/SearchDrawer'
 
@@ -86,6 +88,10 @@ export function NavigationSidebar({
             })}
           </SidebarMenu>
         </SidebarContent>
+
+        <SidebarFooter className="mt-auto px-4 pb-8">
+          <SidebarMoreMenu />
+        </SidebarFooter>
       </Sidebar>
     </>
   )

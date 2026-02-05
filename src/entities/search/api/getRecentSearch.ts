@@ -11,5 +11,5 @@ export async function getRecentSearch(): Promise<RecentSearchItem[]> {
     throw new Error(parsed.message || 'Failed to load recent searches')
   }
 
-  return parsed.data.items
+  return parsed.data.items ?? []
 }
