@@ -31,7 +31,7 @@ export const feedHandlers = [
           nickname: p.username,
           profileImageUrl: user?.profileImageUrl ?? p.userImage,
         },
-        thumbnailImageUrl: p.images?.[0],
+        thumbnailImageUrl: p.images?.[0] ?? null,
         likeCount: p.likeCount,
         commentCount: p.commentCount,
         createdAt: p.createdAt,
