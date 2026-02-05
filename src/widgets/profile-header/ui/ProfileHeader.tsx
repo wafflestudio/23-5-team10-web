@@ -7,6 +7,7 @@ import { ProfileStat } from './ProfileStat'
 import { FollowListModal } from '@/features/follow-user/ui/FollowListModal'
 import { useState } from 'react'
 import { type FollowListType } from '@/features/follow-user/ui/FollowListModal'
+import { Link } from '@tanstack/react-router'
 
 interface ProfileHeaderProps {
   className?: string
@@ -85,8 +86,9 @@ export function ProfileHeader({
                 <Button
                   variant="secondary"
                   className="h-8 rounded-lg bg-gray-200 px-4 text-sm font-semibold text-gray-900 hover:bg-gray-300"
+                  asChild
                 >
-                  프로필 수정
+                  <Link to="/accounts/edit">프로필 수정</Link>
                 </Button>
               ) : (
                 <FollowButton
