@@ -29,6 +29,7 @@ import { Route as AccountsEmailsignupBirthdayRouteImport } from './routes/accoun
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppUserIdSavedRouteImport } from './routes/_app/$userId/saved'
 import { Route as AppUserIdAlbumsRouteImport } from './routes/_app/$userId/albums'
+import { Route as AppAccountsEditIndexRouteImport } from './routes/_app/accounts/edit/index'
 import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
 const LoginRoute = LoginRouteImport.update({
@@ -136,6 +137,11 @@ const AppUserIdAlbumsRoute = AppUserIdAlbumsRouteImport.update({
   path: '/albums',
   getParentRoute: () => AppUserIdRoute,
 } as any)
+const AppAccountsEditIndexRoute = AppAccountsEditIndexRouteImport.update({
+  id: '/accounts/edit/',
+  path: '/accounts/edit/',
+  getParentRoute: () => AppRoute,
+} as any)
 const ExploreLocationsCountryCodeCountryNameRoute =
   ExploreLocationsCountryCodeCountryNameRouteImport.update({
     id: '/explore/locations/$countryCode/$countryName',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/accounts/emailsignup': typeof AccountsEmailsignupIndexRoute
   '/explore/locations': typeof ExploreLocationsIndexRoute
   '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
+  '/accounts/edit': typeof AppAccountsEditIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/accounts/emailsignup': typeof AccountsEmailsignupIndexRoute
   '/explore/locations': typeof ExploreLocationsIndexRoute
   '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
+  '/accounts/edit': typeof AppAccountsEditIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/accounts/emailsignup/': typeof AccountsEmailsignupIndexRoute
   '/explore/locations/': typeof ExploreLocationsIndexRoute
   '/explore/locations/$countryCode/$countryName': typeof ExploreLocationsCountryCodeCountryNameRoute
+  '/_app/accounts/edit/': typeof AppAccountsEditIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/explore/locations'
     | '/explore/locations/$countryCode/$countryName'
+    | '/accounts/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup'
     | '/explore/locations'
     | '/explore/locations/$countryCode/$countryName'
+    | '/accounts/edit'
   id:
     | '__root__'
     | '/_app'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/accounts/emailsignup/'
     | '/explore/locations/'
     | '/explore/locations/$countryCode/$countryName'
+    | '/_app/accounts/edit/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -437,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUserIdAlbumsRouteImport
       parentRoute: typeof AppUserIdRoute
     }
+    '/_app/accounts/edit/': {
+      id: '/_app/accounts/edit/'
+      path: '/accounts/edit'
+      fullPath: '/accounts/edit'
+      preLoaderRoute: typeof AppAccountsEditIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/explore/locations/$countryCode/$countryName': {
       id: '/explore/locations/$countryCode/$countryName'
       path: '/explore/locations/$countryCode/$countryName'
@@ -469,6 +488,7 @@ interface AppRouteChildren {
   AppTestRoute: typeof AppTestRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPPost_idRoute: typeof AppPPost_idRoute
+  AppAccountsEditIndexRoute: typeof AppAccountsEditIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -477,6 +497,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTestRoute: AppTestRoute,
   AppIndexRoute: AppIndexRoute,
   AppPPost_idRoute: AppPPost_idRoute,
+  AppAccountsEditIndexRoute: AppAccountsEditIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
