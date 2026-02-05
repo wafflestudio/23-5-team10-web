@@ -6,7 +6,7 @@ import {
   // useInvalidateCurrentUser,
 } from '@/shared/auth/useCurrentUser'
 import { cn } from '@/shared/lib/utils'
-import { uploadProfileImage } from '../api/uploadProfileImage'
+import { uploadImages } from '@/features/create-post/api/uploadImages'
 // import { updateProfile } from '../api/updateProfile'
 import { ProfileEditCard } from './ProfileEditCard'
 import { WebsiteField } from './WebsiteField'
@@ -28,9 +28,9 @@ export function ProfileEditForm() {
   const hasChanges = bio !== originalBio || avatarUrl !== originalAvatarUrl
 
   const uploadMutation = useMutation({
-    mutationFn: uploadProfileImage,
-    onSuccess: (url) => {
-      setAvatarUrl(url)
+    mutationFn: uploadImages,
+    onSuccess: (urls) => {
+      setAvatarUrl(urls[0])
     },
   })
 
@@ -59,7 +59,7 @@ export function ProfileEditForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      uploadMutation.mutate(file)
+      uploadMutation.mutate([file])
     }
     e.target.value = ''
   }
