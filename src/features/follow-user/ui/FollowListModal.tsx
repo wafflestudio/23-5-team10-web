@@ -40,11 +40,7 @@ export function FollowListModal({
   const filteredUsers = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
     if (!query) return users
-    return users.filter(
-      (user) =>
-        user.nickname.toLowerCase().includes(query) ||
-        (user.name?.toLowerCase().includes(query) ?? false)
-    )
+    return users.filter((user) => user.nickname.toLowerCase().includes(query))
   }, [users, searchQuery])
 
   const handleOpenChange = (newOpen: boolean) => {

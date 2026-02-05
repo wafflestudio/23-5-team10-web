@@ -198,9 +198,11 @@ export const albumHandlers = [
           return {
             postId: Number(post.id),
             imageUrl: post.images[0],
+            likeCount: post.likeCount,
+            commentCount: post.commentCount,
           }
         })
-        .filter((p): p is { postId: number; imageUrl: string } => p !== null)
+        .filter((p): p is NonNullable<typeof p> => p !== null)
 
       const body: AlbumDetailResponse = {
         code: '200',
@@ -240,9 +242,11 @@ export const albumHandlers = [
         return {
           postId,
           imageUrl: post.images[0],
+          likeCount: post.likeCount,
+          commentCount: post.commentCount,
         }
       })
-      .filter((p): p is { postId: number; imageUrl: string } => p !== null)
+      .filter((p): p is NonNullable<typeof p> => p !== null)
 
     const body: AlbumDetailResponse = {
       code: '200',

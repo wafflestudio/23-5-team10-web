@@ -3,7 +3,6 @@ import { z } from 'zod'
 export const FollowUserSchema = z.object({
   userId: z.number(),
   nickname: z.string(),
-  name: z.string().nullable(),
   profileImageUrl: z.string().nullable(),
   isFollowing: z.boolean(),
 })

@@ -9,7 +9,7 @@ export const FeedAuthorSchema = z.object({
 export const FeedItemSchema = z.object({
   postId: z.number(),
   author: FeedAuthorSchema,
-  thumbnailImageUrl: z.string().min(1),
+  thumbnailImageUrl: z.string().nullable(),
   likeCount: z.number().nonnegative(),
   commentCount: z.number().nonnegative(),
   createdAt: z.string(),
