@@ -20,13 +20,13 @@ interface Comment {
   postId: number
   userId: number
   nickname: string
-  profileImageUrl: string
+  profileImageUrl: string | null
   content: string
   createdAt: string
   updatedAt: string
   parentId: number | null
   likeCount: number
-  liked: boolean
+  isLiked: boolean
   likedUserIds: number[]
 }
 
@@ -78,15 +78,15 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
             .get(`api/v1/posts/${postId}/comments`, {
               searchParams: { page: pageNum },
             })
-            .json<{ data: Comment[]; success: boolean }>()
+            .json<{ data: Comment[]; isSuccess: boolean }>()
 
-          if (response.success && response.data.length > 0) {
+          if (response.isSuccess && response.data.length > 0) {
             const newComments = response.data
 
             setLikedComments((prev) => {
               const nextLiked = { ...prev }
               newComments.forEach((c: Comment) => {
-                nextLiked[c.id] = c.liked
+                nextLiked[c.id] = c.isLiked
               })
               return nextLiked
             })
@@ -202,9 +202,9 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
             .put(`api/v1/posts/${postId}/comments/${editingComment.id}`, {
               json: { content },
             })
-            .json<{ data: Comment; success: boolean }>()
+            .json<{ data: Comment; isSuccess: boolean }>()
 
-          if (response.success) {
+          if (response.isSuccess) {
             setComments((prev) =>
               prev.map((c) => (c.id === editingComment.id ? response.data : c))
             )
@@ -215,13 +215,13 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
             .post(`api/v1/posts/${postId}/comments`, {
               json: { content },
             })
-            .json<{ data: Comment; success: boolean }>()
+            .json<{ data: Comment; isSuccess: boolean }>()
 
-          if (response.success) {
+          if (response.isSuccess) {
             setComments((prev) => [response.data, ...prev])
             setLikedComments((prev) => ({
               ...prev,
-              [response.data.id]: response.data.liked,
+              [response.data.id]: response.data.isLiked,
             }))
           }
         }

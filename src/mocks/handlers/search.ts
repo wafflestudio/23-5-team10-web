@@ -5,9 +5,6 @@ import {
   type MockRecentSearch,
 } from '../db/recentSearch.db'
 import { users } from '../db/user.db'
-import { follows } from '../db/follow.db'
-
-const CURRENT_USER_ID = 1
 
 interface PostRecentSearchRequest {
   toUserId: number
@@ -49,16 +46,11 @@ export const searchHandlers = [
   http.get('*/api/v1/search/recent', () => {
     const items = recentSearchDb.map((r) => {
       const user = findUserByUserId(r.userId)
-      const followed = follows.some(
-        (f) => f.fromUserId === CURRENT_USER_ID && f.toUserId === r.userId
-      )
       return {
         searchId: r.searchId,
         userId: r.userId,
         nickname: user?.nickname ?? 'unknown',
         profileImageUrl: user?.profileImageUrl ?? null,
-        name: user?.name ?? null,
-        isFollowed: followed,
       }
     })
 

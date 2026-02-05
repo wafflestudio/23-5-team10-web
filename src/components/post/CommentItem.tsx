@@ -12,12 +12,12 @@ interface Comment {
   userId: number
   nickname: string
   content: string
-  profileImageUrl: string
+  profileImageUrl: string | null
   createdAt: string
   updatedAt: string
   parentId: number | null
   likeCount: number
-  liked: boolean
+  isLiked: boolean
   likedUserIds: number[]
 }
 
@@ -93,7 +93,7 @@ export default function CommentItem({
           >
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={comment.profileImageUrl}
+                src={comment.profileImageUrl ?? undefined}
                 alt={comment.nickname}
                 className="object-cover"
               />

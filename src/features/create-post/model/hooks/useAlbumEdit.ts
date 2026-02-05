@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { toast } from 'sonner'
 import { useUpdateAlbumTitleMutation } from '@/entities/album/model/hooks/useUpdateAlbumTitleMutation'
 
 type UseAlbumEditArgs = {
@@ -15,14 +16,20 @@ export function useAlbumEdit({
   const updateAlbumTitleMutation = useUpdateAlbumTitleMutation()
 
   const handleUpdate = useCallback(async () => {
-    if (!editingTitle.trim() || albumId === null) {
+    const trimmedTitle = editingTitle.trim()
+    if (!trimmedTitle || albumId === null) {
+      return
+    }
+
+    if (trimmedTitle.length > 50) {
+      toast.error('앨범 이름은 50자를 초과할 수 없습니다.')
       return
     }
 
     try {
       await updateAlbumTitleMutation.mutateAsync({
         albumId,
-        payload: { title: editingTitle.trim() },
+        payload: { title: trimmedTitle },
       })
       onComplete()
     } catch (error) {

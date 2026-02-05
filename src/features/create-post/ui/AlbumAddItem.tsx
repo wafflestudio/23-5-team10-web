@@ -32,6 +32,7 @@ export function AlbumAddItem({
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
         placeholder="앨범 제목 입력..."
+        maxLength={50}
         className="h-8 flex-1 border-none bg-zinc-50 text-sm focus-visible:ring-0"
         disabled={isPending}
       />

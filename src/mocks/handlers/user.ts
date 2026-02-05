@@ -115,7 +115,7 @@ export const userHandlers = [
 
     const followerCount = follows.filter((f) => f.toUserId === userId).length
     const followingCount = follows.filter((f) => f.fromUserId === userId).length
-    const postsCount = getPostsByUserId(userId).length
+    const postCount = getPostsByUserId(userId).length
 
     const followed = follows.some(
       (f) => f.fromUserId === CURRENT_USER_ID && f.toUserId === userId
@@ -130,7 +130,7 @@ export const userHandlers = [
         name: user.name,
         bio: user.bio,
         profileImageUrl: user.profileImageUrl,
-        postsCount,
+        postCount,
         followerCount,
         followingCount,
         isMe: userId === CURRENT_USER_ID,
