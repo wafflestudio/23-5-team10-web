@@ -8,9 +8,14 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import { useNavigate, Link } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import type { StoryFeedItem, Story } from '@/entities/story/model/types'
 import { useStoryViewer } from '../model/useStoryViewer'
 import { STORY_VIEWER_UI } from './constants'
+import { StoryOptionsModal } from './StoryOptionsModal'
+import ReportModal from '@/components/post/ReportModal'
+import AccountInfoModal from '@/components/post/AccountInfoModal'
+import { instance } from '@/shared/api/ky'
 
 import instagramLogo from '@/assets/instagram-black-logo.png'
 
@@ -35,7 +40,12 @@ const formatRelativeTime = (createdAt: string) => {
 
 export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [imageError, setImageError] = useState(false)
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false)
+  const [isReportOpen, setIsReportOpen] = useState(false)
+  const [isAccountInfoOpen, setIsAccountInfoOpen] = useState(false)
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 
   const {
     currentUser,
@@ -56,6 +66,51 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const isLastStoryOfLastUser =
     currentUserIndex === feed.length - 1 &&
     currentStoryIndex === currentUser.stories.length - 1
+
+  const isMine = String(currentUser.userId) === '1'
+
+  const handleOpenOptions = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isPaused) togglePause()
+    setIsOptionsOpen(true)
+  }
+
+  const handleCloseOptions = () => {
+    setIsOptionsOpen(false)
+    if (isPaused) togglePause()
+  }
+
+  const handleOpenReport = () => {
+    setIsOptionsOpen(false)
+    setIsReportOpen(true)
+  }
+
+  const handleOpenAccountInfo = () => {
+    setIsOptionsOpen(false)
+    setIsAccountInfoOpen(true)
+  }
+
+  const handleOpenDeleteConfirm = () => {
+    setIsOptionsOpen(false)
+    setIsDeleteConfirmOpen(true)
+  }
+
+  const handleDeleteStory = async () => {
+    try {
+      const response = await instance
+        .delete(`api/v1/stories/${currentStory.id}`, {
+          searchParams: { loggedInUser: 1 },
+        })
+        .json<{ isSuccess: boolean; code: string; message: string }>()
+
+      if (response.isSuccess) {
+        queryClient.invalidateQueries({ queryKey: ['stories', 'feed'] })
+        navigate({ to: '/' })
+      }
+    } catch (error) {
+      console.error('스토리 삭제 실패:', error)
+    }
+  }
 
   return (
     <div className={STORY_VIEWER_UI.STYLES.CONTAINER}>
@@ -147,7 +202,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
               </button>
               <button
                 className="p-1 text-white transition-opacity hover:opacity-70"
-                onClick={(e) => e.stopPropagation()}
+                onClick={handleOpenOptions}
               >
                 <MoreHorizontal className="h-6 w-6" />
               </button>
@@ -194,6 +249,77 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
         >
           <ChevronRight className="h-7 w-7" />
         </button>
+      )}
+
+      <StoryOptionsModal
+        isOpen={isOptionsOpen}
+        onClose={handleCloseOptions}
+        isMine={isMine}
+        onReport={handleOpenReport}
+        onAccountInfo={handleOpenAccountInfo}
+        onDelete={handleOpenDeleteConfirm}
+      />
+
+      {isReportOpen && (
+        <ReportModal
+          onClose={() => {
+            setIsReportOpen(false)
+            if (isPaused) togglePause()
+          }}
+          onHideComment={() => {}}
+          nickname={currentUser.nickname}
+          type="post"
+        />
+      )}
+
+      {isAccountInfoOpen && (
+        <AccountInfoModal
+          onClose={() => {
+            setIsAccountInfoOpen(false)
+            if (isPaused) togglePause()
+          }}
+          nickname={currentUser.nickname}
+          profileImageUrl={currentUser.profileImageUrl}
+        />
+      )}
+
+      {isDeleteConfirmOpen && (
+        <div
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4"
+          onClick={() => {
+            setIsDeleteConfirmOpen(false)
+            if (isPaused) togglePause()
+          }}
+        >
+          <div
+            className="w-full max-w-[400px] overflow-hidden rounded-[12px] bg-white text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-8 py-6">
+              <h2 className="mb-2 text-[18px] font-bold text-black">
+                스토리를 삭제하시겠어요?
+              </h2>
+              <p className="text-[14px] text-gray-500">
+                스토리에서 이 사진을 삭제하시겠어요?
+              </p>
+            </div>
+            <button
+              onClick={handleDeleteStory}
+              className="w-full border-t border-gray-200 py-3 text-[14px] font-bold text-red-500 active:bg-gray-50"
+            >
+              삭제
+            </button>
+            <button
+              onClick={() => {
+                setIsDeleteConfirmOpen(false)
+                if (isPaused) togglePause()
+              }}
+              className="w-full border-t border-gray-200 py-3 text-[14px] active:bg-gray-50"
+            >
+              취소
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

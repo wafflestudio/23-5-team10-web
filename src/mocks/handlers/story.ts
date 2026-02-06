@@ -60,24 +60,30 @@ export const storyHandlers = [
   }),
 
   http.get('*/api/v1/stories/feed', () => {
-    const storyFeedItems = users.map((user) => {
-      const userStories = stories
-        .filter((s) => s.userId === user.userId)
-        .map((s) => ({
-          id: s.storyId,
-          userId: String(s.userId),
-          imageUrl: s.imageUrl,
-          createdAt: s.createdAt,
-        }))
+    const storyFeedItems = users
+      .map((user) => {
+        const userStories = stories
+          .filter((s) => s.userId === user.userId)
+          .map((s) => ({
+            id: s.storyId,
+            userId: String(s.userId),
+            imageUrl: s.imageUrl,
+            createdAt: s.createdAt,
+          }))
 
-      return StoryFeedItemSchema.parse({
-        userId: String(user.userId),
-        nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl,
-        hasUnseenStory: Math.random() > 0.5,
-        stories: userStories,
+        if (userStories.length === 0) return null
+
+        return StoryFeedItemSchema.parse({
+          userId: String(user.userId),
+          nickname: user.nickname,
+          profileImageUrl: user.profileImageUrl,
+          hasUnseenStory: Math.random() > 0.5,
+          stories: userStories,
+        })
       })
-    })
+      .filter(
+        (item): item is z.infer<typeof StoryFeedItemSchema> => item !== null
+      )
 
     const responseBody = ApiResponseSchema(StoryFeedItemSchema.array()).parse({
       code: '200',
@@ -89,13 +95,20 @@ export const storyHandlers = [
     return HttpResponse.json(responseBody)
   }),
 
-  http.delete('*/api/v1/stories/:storyId', () => {
-    const responseBody = {
+  http.delete('*/api/v1/stories/:storyId', ({ params }) => {
+    const { storyId } = params
+    const id = Number(storyId)
+
+    const index = stories.findIndex((s) => s.storyId === id)
+    if (index !== -1) {
+      stories.splice(index, 1)
+    }
+
+    return HttpResponse.json({
       code: '200',
       message: '요청에 성공하였습니다.',
       isSuccess: true,
-    }
-    return HttpResponse.json(responseBody)
+    })
   }),
 
   http.get('*/api/v1/stories/user/:userId', ({ params }) => {
