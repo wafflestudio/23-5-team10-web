@@ -18,8 +18,8 @@ export const StoryFeedItemSchema = z.object({
 })
 
 export const StoryFeedResponseSchema = z.object({
+  isSuccess: z.boolean(),
   code: z.string(),
   message: z.string(),
   data: z.array(StoryFeedItemSchema),
-  isSuccess: z.boolean(),
 })

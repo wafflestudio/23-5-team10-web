@@ -7,82 +7,81 @@ export function useStoryViewer(
   initialUserId: string
 ) {
   const navigate = useNavigate()
+  const STORY_DURATION = 5000
+  const INTERVAL_MS = 10
 
   const currentUserIndex = useMemo(() => {
-    const index = storiesData.findIndex(
+    return storiesData.findIndex(
       (u) => String(u.userId) === String(initialUserId)
     )
-    return index !== -1 ? index : 0
   }, [storiesData, initialUserId])
 
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0)
   const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+
   const [prevUserId, setPrevUserId] = useState(initialUserId)
 
   if (prevUserId !== initialUserId) {
     setPrevUserId(initialUserId)
     setCurrentStoryIndex(0)
     setProgress(0)
+    setIsPaused(false)
   }
 
   const currentUser = storiesData[currentUserIndex]
   const currentStory = currentUser?.stories?.[currentStoryIndex]
 
   const handleNext = useCallback(() => {
-    if (!currentUser || !currentUser.stories) return
-
+    if (!currentUser) return
     if (currentStoryIndex < currentUser.stories.length - 1) {
       setCurrentStoryIndex((prev) => prev + 1)
       setProgress(0)
     } else if (currentUserIndex < storiesData.length - 1) {
       const nextUser = storiesData[currentUserIndex + 1]
-      setTimeout(() => {
-        navigate({
-          to: '/stories/$user_id',
-          params: { user_id: String(nextUser.userId) },
-        })
-      }, 0)
+      navigate({
+        to: '/stories/$user_id',
+        params: { user_id: String(nextUser.userId) },
+      })
     } else {
-      setTimeout(() => {
-        navigate({ to: '/', search: { page: 1 } })
-      }, 0)
+      navigate({ to: '/', search: { page: 1 } })
     }
   }, [currentUser, currentStoryIndex, currentUserIndex, storiesData, navigate])
 
   const handlePrev = useCallback(() => {
-    if (!currentUser || !currentUser.stories) return
-
+    if (!currentUser) return
     if (currentStoryIndex > 0) {
       setCurrentStoryIndex((prev) => prev - 1)
       setProgress(0)
     } else if (currentUserIndex > 0) {
       const prevUser = storiesData[currentUserIndex - 1]
-      setTimeout(() => {
-        navigate({
-          to: '/stories/$user_id',
-          params: { user_id: String(prevUser.userId) },
-        })
-      }, 0)
+      navigate({
+        to: '/stories/$user_id',
+        params: { user_id: String(prevUser.userId) },
+      })
     }
   }, [currentUser, currentStoryIndex, currentUserIndex, storiesData, navigate])
 
-  const togglePause = useCallback(() => setIsPaused((prev) => !prev), [])
+  const togglePause = useCallback(() => {
+    setIsPaused((prev) => !prev)
+  }, [])
 
   useEffect(() => {
-    if (isPaused || !currentUser || !currentUser.stories) return
+    if (isPaused || !currentStory) return
 
-    const interval = setInterval(() => {
+    const step = (INTERVAL_MS / STORY_DURATION) * 100
+    const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           handleNext()
           return 100
         }
-        return prev + 1
+        return prev + step
       })
-    }, 50)
-    return () => clearInterval(interval)
-  }, [handleNext, isPaused, currentUser])
+    }, INTERVAL_MS)
+
+    return () => clearInterval(timer)
+  }, [isPaused, currentStoryIndex, handleNext, currentStory])
 
   return {
     currentUser,

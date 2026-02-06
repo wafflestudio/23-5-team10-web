@@ -5,11 +5,17 @@ import { STORY_VIEWER_UI } from './constants'
 interface StoryDetailViewProps {
   profileName: string
   storyId: string
+  progress: number
+  currentStoryIndex: number
+  storiesCount: number
 }
 
 export function StoryDetailView({
   profileName,
   storyId,
+  progress,
+  currentStoryIndex,
+  storiesCount,
 }: StoryDetailViewProps) {
   const navigate = useNavigate()
 
@@ -18,12 +24,21 @@ export function StoryDetailView({
       <div className={STORY_VIEWER_UI.STYLES.VIEWER_CARD}>
         <div className={STORY_VIEWER_UI.STYLES.OVERLAY_TOP}>
           <div className={STORY_VIEWER_UI.STYLES.PROGRESS_CONTAINER}>
-            <div className={STORY_VIEWER_UI.STYLES.PROGRESS_BAR}>
-              <div
-                className={STORY_VIEWER_UI.STYLES.PROGRESS_BAR_FILL}
-                style={{ width: '30%' }}
-              />
-            </div>
+            {Array.from({ length: storiesCount }).map((_, idx) => (
+              <div key={idx} className={STORY_VIEWER_UI.STYLES.PROGRESS_BAR}>
+                <div
+                  className={STORY_VIEWER_UI.STYLES.PROGRESS_BAR_FILL}
+                  style={{
+                    width:
+                      idx === currentStoryIndex
+                        ? `${progress}%`
+                        : idx < currentStoryIndex
+                          ? '100%'
+                          : '0%',
+                  }}
+                />
+              </div>
+            ))}
           </div>
 
           <div className={STORY_VIEWER_UI.STYLES.HEADER}>
