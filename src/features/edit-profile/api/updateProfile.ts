@@ -6,10 +6,10 @@ import {
 import type { CurrentUser } from '@/entities/user/model/types'
 
 export type UpdateProfilePayload = {
-  nickname?: string
-  name?: string
-  bio?: string
-  profileImageUrl?: string
+  nickname?: string | null
+  name?: string | null
+  bio?: string | null
+  profileImageUrl?: string | null
 }
 
 export async function updateProfile(

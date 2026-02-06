@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-// import { toast } from 'sonner'
+import { toast } from 'sonner'
 import {
   useCurrentUser,
-  // useInvalidateCurrentUser,
+  useInvalidateCurrentUser,
 } from '@/shared/auth/useCurrentUser'
 import { cn } from '@/shared/lib/utils'
 import { uploadImages } from '@/features/create-post/api/uploadImages'
-// import { updateProfile } from '../api/updateProfile'
+import { updateProfile } from '../api/updateProfile'
 import { ProfileEditCard } from './ProfileEditCard'
 import { WebsiteField } from './WebsiteField'
 import { BioTextarea } from './BioTextarea'
@@ -15,7 +15,7 @@ import { ChangePhotoModal } from './ChangePhotoModal'
 
 export function ProfileEditForm() {
   const { data: currentUser } = useCurrentUser()
-  // const invalidateCurrentUser = useInvalidateCurrentUser()
+  const invalidateCurrentUser = useInvalidateCurrentUser()
   const [bio, setBio] = useState(currentUser?.bio ?? '')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     currentUser?.profileImageUrl ?? null
@@ -34,23 +34,23 @@ export function ProfileEditForm() {
     },
   })
 
-  // const updateMutation = useMutation({
-  //   mutationFn: updateProfile,
-  //   onSuccess: () => {
-  //     invalidateCurrentUser()
-  //     toast.success('프로필이 저장되었습니다.')
-  //   },
-  //   onError: () => {
-  //     toast.error('프로필 저장에 실패했습니다.')
-  //   },
-  // })
+  const updateMutation = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: () => {
+      invalidateCurrentUser()
+      toast.success('프로필이 저장되었습니다.')
+    },
+    onError: () => {
+      toast.error('프로필 저장에 실패했습니다.')
+    },
+  })
 
-  // const handleSubmit = () => {
-  //   updateMutation.mutate({
-  //     bio: bio || null,
-  //     profileImageUrl: avatarUrl,
-  //   })
-  // }
+  const handleSubmit = () => {
+    updateMutation.mutate({
+      bio: bio || null,
+      profileImageUrl: avatarUrl,
+    })
+  }
 
   const handleUploadPhoto = () => {
     fileInputRef.current?.click()
@@ -116,8 +116,8 @@ export function ProfileEditForm() {
       <div className="flex justify-end">
         <button
           type="button"
-          disabled={!hasChanges}
-          // onClick={handleSubmit}
+          disabled={!hasChanges || updateMutation.isPending}
+          onClick={handleSubmit}
           className={cn(
             'w-1/2 rounded-xl py-3 text-sm font-semibold transition-colors',
             hasChanges

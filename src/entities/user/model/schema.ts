@@ -18,10 +18,10 @@ export const CurrentUserResponseSchema = z.object({
 })
 
 export const UpdateProfileRequestSchema = z.object({
-  nickname: z.string().optional(),
-  name: z.string().optional(),
-  bio: z.string().optional(),
-  profileImageUrl: z.string().optional(),
+  nickname: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  profileImageUrl: z.string().nullable().optional(),
 })
 
 export const SearchUserSchema = z.object({
