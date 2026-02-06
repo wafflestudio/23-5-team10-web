@@ -1,16 +1,25 @@
-// import { instance } from '@/shared/api/ky'
+import { instance } from '@/shared/api/ky'
+import {
+  CurrentUserResponseSchema,
+  UpdateProfileRequestSchema,
+} from '@/entities/user/model/schema'
+import type { CurrentUser } from '@/entities/user/model/types'
 
-// type UpdateProfilePayload = {
-//   bio: string | null
-//   profileImageUrl: string | null
-// }
+export type UpdateProfilePayload = {
+  nickname?: string | null
+  name?: string | null
+  bio?: string | null
+  profileImageUrl?: string | null
+}
 
-// export async function updateProfile(payload: UpdateProfilePayload) {
-//   const response = await instance.patch('api/v1/users/me', {
-//     json: payload,
-//   })
-
-//   if (!response.ok) {
-//     throw new Error('Failed to update profile')
-//   }
-// }
+export async function updateProfile(
+  payload: UpdateProfilePayload
+): Promise<CurrentUser> {
+  const parsedRequest = UpdateProfileRequestSchema.parse(payload)
+  const response = await instance.patch('api/v1/users/me', {
+    json: parsedRequest,
+  })
+  const raw = await response.json()
+  const parsed = CurrentUserResponseSchema.parse(raw)
+  return parsed.data
+}

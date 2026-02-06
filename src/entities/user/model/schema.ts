@@ -17,6 +17,13 @@ export const CurrentUserResponseSchema = z.object({
   isSuccess: z.boolean(),
 })
 
+export const UpdateProfileRequestSchema = z.object({
+  nickname: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  profileImageUrl: z.string().nullable().optional(),
+})
+
 export const SearchUserSchema = z.object({
   userId: z.number(),
   nickname: z.string(),

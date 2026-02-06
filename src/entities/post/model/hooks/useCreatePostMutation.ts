@@ -13,6 +13,7 @@ export function useCreatePostMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       queryClient.invalidateQueries({ queryKey: ['posts', 'explore'] })
+      queryClient.invalidateQueries({ queryKey: ['posts', 'user'] })
       queryClient.invalidateQueries({ queryKey: ['profile'] })
     },
   })

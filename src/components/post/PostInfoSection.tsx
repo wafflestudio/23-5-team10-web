@@ -8,6 +8,7 @@ import {
 } from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 import type { PostData } from './PostDetail'
 import PostMenuModal from './PostMenuModal'
 import CommentItem from './CommentItem'
@@ -332,7 +333,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
                   alt=""
                 />
               ) : (
-                <div className="h-8 w-8 rounded-full bg-gray-200" />
+                <DefaultProfileImage className="size-8" />
               )}
             </Link>
             <Link
@@ -368,7 +369,7 @@ const PostInfoSection = forwardRef<PostInfoSectionRef, PostInfoSectionProps>(
                   alt=""
                 />
               ) : (
-                <div className="h-8 w-8 shrink-0 rounded-full bg-gray-200" />
+                <DefaultProfileImage className="size-8" />
               )}
             </Link>
             <div className="text-sm text-black">

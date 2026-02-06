@@ -2,9 +2,7 @@ export async function cropImageToSquare(file: File): Promise<File> {
   const imageBitmap = await createImageBitmap(file)
   const { width, height } = imageBitmap
 
-  const size = Math.min(width, height)
-  const offsetX = (width - size) / 2
-  const offsetY = (height - size) / 2
+  const size = Math.max(width, height)
 
   const canvas = new OffscreenCanvas(size, size)
   const ctx = canvas.getContext('2d')
@@ -13,7 +11,12 @@ export async function cropImageToSquare(file: File): Promise<File> {
     throw new Error('Failed to get canvas context')
   }
 
-  ctx.drawImage(imageBitmap, offsetX, offsetY, size, size, 0, 0, size, size)
+  ctx.fillStyle = '#000000'
+  ctx.fillRect(0, 0, size, size)
+
+  const offsetX = (size - width) / 2
+  const offsetY = (size - height) / 2
+  ctx.drawImage(imageBitmap, offsetX, offsetY)
 
   const blob = await canvas.convertToBlob({
     type: file.type || 'image/jpeg',

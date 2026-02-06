@@ -101,11 +101,13 @@ export function ProfileHeader({
             <div className="mt-6 flex gap-10 text-base">
               <ProfileStat label="게시물" value={postsCount} />
               <ProfileStat
+                className="cursor-pointer"
                 label="팔로워"
                 value={followersCount}
                 onClick={handleFollowListClick}
               />
               <ProfileStat
+                className="cursor-pointer"
                 label="팔로잉"
                 value={followingCount}
                 onClick={handleFollowingListClick}

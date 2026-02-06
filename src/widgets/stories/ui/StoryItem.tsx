@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { CarouselItem } from '@/shared/ui/carousel'
 import { cn } from '@/shared/lib/utils'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 
 type StoryItemProps = {
   userId: number
@@ -31,19 +32,17 @@ export function StoryItem({
           )}
         >
           <div className="flex size-full items-center justify-center rounded-full bg-white p-1">
-            <div className="flex size-full items-center justify-center overflow-hidden rounded-full bg-gray-200">
-              {profileImageUrl ? (
+            {profileImageUrl ? (
+              <div className="flex size-full items-center justify-center overflow-hidden rounded-full bg-gray-200">
                 <img
                   src={profileImageUrl}
                   alt={`${nickname} 프로필`}
                   className="h-full w-full object-cover"
                 />
-              ) : (
-                <span className="text-xl font-semibold text-gray-500">
-                  {nickname.trim().slice(0, 1).toUpperCase() || '?'}
-                </span>
-              )}
-            </div>
+              </div>
+            ) : (
+              <DefaultProfileImage className="size-full" />
+            )}
           </div>
         </div>
       </Link>
