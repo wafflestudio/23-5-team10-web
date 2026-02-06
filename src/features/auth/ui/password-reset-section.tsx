@@ -35,6 +35,11 @@ export const PasswordResetSection = () => {
     }
   }
 
+  const handleKakaoLogin = () => {
+    window.location.href =
+      'https://api.wfinstaclone.shop/oauth2/authorization/kakao'
+  }
+
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => setShowToast(false), 3100)
@@ -93,6 +98,7 @@ export const PasswordResetSection = () => {
         </div>
         <button
           type="button"
+          onClick={handleKakaoLogin}
           className="mb-6 flex h-[34px] w-full items-center justify-center gap-2 rounded bg-[#FEE500] text-[14px] font-semibold text-[#191919] hover:opacity-90"
         >
           <MessageCircle className="h-4 w-4 fill-[#191919] stroke-none" />{' '}
