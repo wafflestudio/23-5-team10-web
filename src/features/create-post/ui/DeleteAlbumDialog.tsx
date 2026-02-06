@@ -20,8 +20,8 @@ export function DeleteAlbumDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        overlayClassName="z-70"
-        className="z-70 w-[min(92vw,520px)] gap-0 overflow-hidden rounded-3xl bg-white p-0"
+        overlayClassName="z-[140]"
+        className="z-[140] w-[min(92vw,520px)] gap-0 overflow-hidden rounded-3xl bg-white p-0"
       >
         <div className="px-8 pt-10 pb-8 text-center">
           <DialogTitle className="text-2xl leading-tight font-semibold">
