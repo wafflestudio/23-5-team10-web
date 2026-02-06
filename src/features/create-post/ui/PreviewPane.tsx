@@ -47,7 +47,7 @@ export function PreviewPane({
   return (
     <div className="flex flex-1 flex-col">
       <div
-        className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-zinc-50"
+        className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-black"
         onDragOver={(e) => {
           e.preventDefault()
           e.stopPropagation()
@@ -61,7 +61,7 @@ export function PreviewPane({
           <img
             src={activePreviewUrl}
             alt="업로드된 이미지 미리보기"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain"
           />
         ) : null}
 
