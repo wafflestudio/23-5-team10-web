@@ -104,6 +104,11 @@ const LoginCard = () => {
     }
   }
 
+  const handleKakaoLogin = () => {
+    window.location.href =
+      'https://api.wfinstaclone.shop/oauth2/authorization/kakao'
+  }
+
   return (
     <div className="flex w-full flex-col items-center border border-gray-300 bg-white p-10 shadow-sm">
       <img
@@ -154,6 +159,7 @@ const LoginCard = () => {
 
       <button
         type="button"
+        onClick={handleKakaoLogin}
         className="flex w-full items-center justify-center gap-2 rounded bg-[#FEE500] py-2 text-[14px] font-semibold text-[#191919] transition-opacity hover:opacity-90"
       >
         <MessageCircle className="h-4 w-4 fill-[#191919] stroke-none" />
@@ -161,6 +167,7 @@ const LoginCard = () => {
       </button>
 
       <button
+        type="button"
         onClick={() => navigate({ to: '/accounts/password/reset' })}
         className="mt-6 cursor-pointer text-xs text-[#00376b] hover:underline"
       >

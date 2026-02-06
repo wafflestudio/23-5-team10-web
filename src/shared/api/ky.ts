@@ -96,8 +96,8 @@ export const instance = ky.create({
           if (!response.ok) {
             try {
               console.debug('errorBody', await response.clone().json())
-            } catch {
-              // ignore
+            } catch (e) {
+              void e
             }
           }
 
@@ -116,11 +116,15 @@ export const instance = ky.create({
         const { response } = error
 
         const tryRefresh = async () => {
+          if (window.location.pathname.startsWith('/oauth')) {
+            return
+          }
+
           if (isRefreshing && refreshPromise) {
             try {
               await refreshPromise
-            } catch {
-              // ignore
+            } catch (e) {
+              void e
             }
             return
           }

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OauthRouteImport } from './routes/oauth'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
@@ -33,6 +34,11 @@ import { Route as AppUserIdSplatRouteImport } from './routes/_app/$userId/$'
 import { Route as AppAccountsEditIndexRouteImport } from './routes/_app/accounts/edit/index'
 import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
+const OauthRoute = OauthRouteImport.update({
+  id: '/oauth',
+  path: '/oauth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -157,6 +163,7 @@ const ExploreLocationsCountryCodeCountryNameRoute =
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
+  '/oauth': typeof OauthRoute
   '/$userId': typeof AppUserIdRouteWithChildren
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/oauth': typeof OauthRoute
   '/explore': typeof AppExploreRoute
   '/test': typeof AppTestRoute
   '/stories/$user_id': typeof StoriesUser_idRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/oauth': typeof OauthRoute
   '/_app/$userId': typeof AppUserIdRouteWithChildren
   '/_app/explore': typeof AppExploreRoute
   '/_app/test': typeof AppTestRoute
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
+    | '/oauth'
     | '/$userId'
     | '/explore'
     | '/test'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/oauth'
     | '/explore'
     | '/test'
     | '/stories/$user_id'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/login'
+    | '/oauth'
     | '/_app/$userId'
     | '/_app/explore'
     | '/_app/test'
@@ -306,6 +318,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  OauthRoute: typeof OauthRoute
   StoriesUser_idRoute: typeof StoriesUser_idRoute
   WebLiteRoute: typeof WebLiteRoute
   AccountsEmailsignupBirthdayRoute: typeof AccountsEmailsignupBirthdayRoute
@@ -321,6 +334,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/oauth': {
+      id: '/oauth'
+      path: '/oauth'
+      fullPath: '/oauth'
+      preLoaderRoute: typeof OauthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -526,6 +546,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  OauthRoute: OauthRoute,
   StoriesUser_idRoute: StoriesUser_idRoute,
   WebLiteRoute: WebLiteRoute,
   AccountsEmailsignupBirthdayRoute: AccountsEmailsignupBirthdayRoute,
