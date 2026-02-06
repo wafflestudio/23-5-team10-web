@@ -4,6 +4,7 @@ export interface Story {
   imageUrl: string
   createdAt: string
   expiresAt?: string
+  viewCount?: number
 }
 
 export interface StoryFeedItem {
