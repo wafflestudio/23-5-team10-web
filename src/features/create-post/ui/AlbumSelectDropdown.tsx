@@ -140,7 +140,7 @@ export function AlbumSelectDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="z-60 w-80 border-none bg-white p-0 shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
+        className="z-[130] w-80 border-none bg-white p-0 shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
       >
         <DropdownMenuRadioGroup
           value={state.value}

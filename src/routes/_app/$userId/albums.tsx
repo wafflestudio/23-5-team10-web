@@ -88,7 +88,7 @@ function RouteComponent() {
             </button>
           </div>
           <div className="flex h-96 flex-col items-center justify-center gap-2 text-sm text-gray-500">
-            <span>해당 앨범은 삭제되었습니다.</span>
+            <span>앨범 데이터를 찾을 수 없습니다.</span>
           </div>
         </div>
       ) : (
