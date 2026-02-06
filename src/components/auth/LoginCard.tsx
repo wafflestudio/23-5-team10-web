@@ -95,7 +95,7 @@ const LoginCard = () => {
         localStorage.setItem('accessToken', res.data.accessToken)
         localStorage.setItem('refreshToken', res.data.refreshToken)
         await invalidateCurrentUser()
-        navigate({ to: '/' })
+        navigate({ to: '/', search: { page: 1 } })
       } else {
         setErrorMsg(res.message || '로그인에 실패했습니다.')
       }

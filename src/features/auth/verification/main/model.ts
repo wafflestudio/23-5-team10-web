@@ -44,7 +44,7 @@ export function useVerification() {
         navigate({
           to: '/',
           replace: true,
-          search: {},
+          search: { page: 1 },
         })
       }
     } catch (err) {

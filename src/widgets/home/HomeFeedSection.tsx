@@ -4,6 +4,7 @@ import { useFeedQuery } from '@/entities/feed/model/hooks/useFeedQuery'
 import { FeedList } from '@/entities/feed/ui/FeedList'
 import { FeedPagination } from '@/entities/feed/ui/FeedPagination'
 import { EmptyFeedState } from '@/entities/feed/ui/EmptyFeedState'
+import { InvalidPageState } from '@/entities/feed/ui/InvalidPageState'
 
 export function HomeFeedSection() {
   const { page } = useSearch({ from: '/_app/' })
@@ -14,6 +15,7 @@ export function HomeFeedSection() {
 
   const hasPrev = data?.hasPrev ?? page > 1
   const hasNext = data?.hasNext ?? false
+  const isInvalidPage = data && data.totalPages > 0 && page > data.totalPages
 
   const handlePageChange = (newPage: number) => {
     navigate({
@@ -36,7 +38,14 @@ export function HomeFeedSection() {
         </div>
       )}
 
-      {data && data.items.length === 0 && <EmptyFeedState />}
+      {data && data.items.length === 0 && !isInvalidPage && <EmptyFeedState />}
+
+      {isInvalidPage && (
+        <InvalidPageState
+          totalPages={data.totalPages}
+          onGoToFirstPage={() => handlePageChange(1)}
+        />
+      )}
 
       {data && data.items.length > 0 && <FeedList items={data.items} />}
 

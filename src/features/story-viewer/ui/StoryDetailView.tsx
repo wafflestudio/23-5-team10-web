@@ -39,7 +39,7 @@ export function StoryDetailView({
 
             <div className={STORY_VIEWER_UI.STYLES.CONTROL_SECTION}>
               <button
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => navigate({ to: '/', search: { page: 1 } })}
                 className="text-white transition-opacity hover:opacity-80"
               >
                 <X className="h-7 w-7" />

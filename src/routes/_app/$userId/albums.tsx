@@ -17,7 +17,7 @@ import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePos
 
 export const Route = createFileRoute('/_app/$userId/albums')({
   validateSearch: z.object({
-    albumId: z.coerce.number().int().optional(),
+    albumId: z.coerce.number().int().positive().optional().catch(undefined),
   }),
   component: RouteComponent,
 })
@@ -78,11 +78,11 @@ function RouteComponent() {
         </div>
       ) : !selectedAlbum ? (
         <div className="space-y-4">
-          <div className="flex w-full items-center justify-end">
+          <div className="flex w-full items-center justify-end gap-2">
             <button
               type="button"
               onClick={handleBackToList}
-              className="text-sm font-medium text-blue-500 hover:underline"
+              className="shrink-0 text-sm font-medium whitespace-nowrap text-blue-500 hover:underline"
             >
               ← 앨범 목록으로
             </button>
@@ -99,14 +99,14 @@ function RouteComponent() {
             </div>
           ) : (
             <>
-              <div className="flex w-full items-center justify-between">
+              <div className="flex w-full items-center justify-between gap-2">
                 <h2 className="px-1 text-xl font-semibold">
                   {`${selectedAlbum.title} (${albumDetail.posts.length})`}
                 </h2>
                 <button
                   type="button"
                   onClick={handleBackToList}
-                  className="text-sm font-medium text-blue-500 hover:underline"
+                  className="shrink-0 text-sm font-medium whitespace-nowrap text-blue-500 hover:underline"
                 >
                   ← 앨범 목록으로
                 </button>

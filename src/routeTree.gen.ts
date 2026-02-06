@@ -29,6 +29,7 @@ import { Route as AccountsEmailsignupBirthdayRouteImport } from './routes/accoun
 import { Route as AppPPost_idRouteImport } from './routes/_app/p/$post_id'
 import { Route as AppUserIdSavedRouteImport } from './routes/_app/$userId/saved'
 import { Route as AppUserIdAlbumsRouteImport } from './routes/_app/$userId/albums'
+import { Route as AppUserIdSplatRouteImport } from './routes/_app/$userId/$'
 import { Route as AppAccountsEditIndexRouteImport } from './routes/_app/accounts/edit/index'
 import { Route as ExploreLocationsCountryCodeCountryNameRouteImport } from './routes/explore/locations/$countryCode/$countryName'
 
@@ -137,6 +138,11 @@ const AppUserIdAlbumsRoute = AppUserIdAlbumsRouteImport.update({
   path: '/albums',
   getParentRoute: () => AppUserIdRoute,
 } as any)
+const AppUserIdSplatRoute = AppUserIdSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => AppUserIdRoute,
+} as any)
 const AppAccountsEditIndexRoute = AppAccountsEditIndexRouteImport.update({
   id: '/accounts/edit/',
   path: '/accounts/edit/',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
+  '/$userId/$': typeof AppUserIdSplatRoute
   '/$userId/albums': typeof AppUserIdAlbumsRoute
   '/$userId/saved': typeof AppUserIdSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/': typeof AppIndexRoute
+  '/$userId/$': typeof AppUserIdSplatRoute
   '/$userId/albums': typeof AppUserIdAlbumsRoute
   '/$userId/saved': typeof AppUserIdSavedRoute
   '/p/$post_id': typeof AppPPost_idRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/stories/$user_id': typeof StoriesUser_idRoute
   '/web/lite': typeof WebLiteRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/$userId/$': typeof AppUserIdSplatRoute
   '/_app/$userId/albums': typeof AppUserIdAlbumsRoute
   '/_app/$userId/saved': typeof AppUserIdSavedRoute
   '/_app/p/$post_id': typeof AppPPost_idRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/stories/$user_id'
     | '/web/lite'
     | '/'
+    | '/$userId/$'
     | '/$userId/albums'
     | '/$userId/saved'
     | '/p/$post_id'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/stories/$user_id'
     | '/web/lite'
     | '/'
+    | '/$userId/$'
     | '/$userId/albums'
     | '/$userId/saved'
     | '/p/$post_id'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/stories/$user_id'
     | '/web/lite'
     | '/_app/'
+    | '/_app/$userId/$'
     | '/_app/$userId/albums'
     | '/_app/$userId/saved'
     | '/_app/p/$post_id'
@@ -449,6 +461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUserIdAlbumsRouteImport
       parentRoute: typeof AppUserIdRoute
     }
+    '/_app/$userId/$': {
+      id: '/_app/$userId/$'
+      path: '/$'
+      fullPath: '/$userId/$'
+      preLoaderRoute: typeof AppUserIdSplatRouteImport
+      parentRoute: typeof AppUserIdRoute
+    }
     '/_app/accounts/edit/': {
       id: '/_app/accounts/edit/'
       path: '/accounts/edit'
@@ -467,12 +486,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppUserIdRouteChildren {
+  AppUserIdSplatRoute: typeof AppUserIdSplatRoute
   AppUserIdAlbumsRoute: typeof AppUserIdAlbumsRoute
   AppUserIdSavedRoute: typeof AppUserIdSavedRoute
   AppUserIdIndexRoute: typeof AppUserIdIndexRoute
 }
 
 const AppUserIdRouteChildren: AppUserIdRouteChildren = {
+  AppUserIdSplatRoute: AppUserIdSplatRoute,
   AppUserIdAlbumsRoute: AppUserIdAlbumsRoute,
   AppUserIdSavedRoute: AppUserIdSavedRoute,
   AppUserIdIndexRoute: AppUserIdIndexRoute,

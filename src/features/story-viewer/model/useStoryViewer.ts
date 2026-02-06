@@ -45,7 +45,7 @@ export function useStoryViewer(
       }, 0)
     } else {
       setTimeout(() => {
-        navigate({ to: '/' })
+        navigate({ to: '/', search: { page: 1 } })
       }, 0)
     }
   }, [currentUser, currentStoryIndex, currentUserIndex, storiesData, navigate])
