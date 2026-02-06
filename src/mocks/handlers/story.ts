@@ -16,6 +16,7 @@ const StoryFeedItemSchema = z.object({
       userId: z.string(),
       imageUrl: z.string(),
       createdAt: z.string(),
+      viewCount: z.number().optional(),
     })
   ),
 })
@@ -69,6 +70,7 @@ export const storyHandlers = [
             userId: String(s.userId),
             imageUrl: s.imageUrl,
             createdAt: s.createdAt,
+            viewCount: s.viewCount,
           }))
 
         if (userStories.length === 0) return null

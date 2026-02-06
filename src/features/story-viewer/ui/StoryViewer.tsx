@@ -226,14 +226,25 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
               </p>
             </div>
           ) : (
-            <img
-              key={currentStory.imageUrl}
-              src={currentStory.imageUrl}
-              className="h-full w-full object-cover select-none"
-              alt="story"
-              onError={() => setImageError(true)}
-              referrerPolicy="no-referrer"
-            />
+            <>
+              <img
+                key={currentStory.imageUrl}
+                src={currentStory.imageUrl}
+                className="h-full w-full object-cover select-none"
+                alt="story"
+                onError={() => setImageError(true)}
+                referrerPolicy="no-referrer"
+              />
+
+              {/* 내 스토리일 때 좌측 하단에 조회수 표시 */}
+              {isMine && currentStory.viewCount !== undefined && (
+                <div className="absolute bottom-4 left-4 z-50 flex flex-col items-start gap-1">
+                  <span className="text-[13px] font-semibold text-white drop-shadow-md">
+                    {currentStory.viewCount}명이 읽음
+                  </span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
