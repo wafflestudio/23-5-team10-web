@@ -1,73 +1,163 @@
-# React + TypeScript + Vite
+# Waffle Studio 23-5 Team 10 - Instagram Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+와플스튜디오 23-5 세미나 10조 프론트엔드 레포지토리입니다.
 
-Currently, two official plugins are available:
+## 서비스 소개
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Instagram 클론 웹 서비스로, 기본적인 Instagram의 핵심 기능을 구현하고 **앨범 기능**을 추가했습니다.
 
-## React Compiler
+### 주요 기능
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 게시물 CRUD
+- 스토리
+- 계정 검색
+- 팔로우/언팔로우
+- 프로필 편집
+- 탐색 페이지
+- **앨범**: 게시물을 앨범으로 묶어서 관리
 
-## Expanding the ESLint configuration
+## 기술 스택
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Core
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| 기술       | 버전 | 설명               |
+| ---------- | ---- | ------------------ |
+| React      | 19   | UI 라이브러리      |
+| TypeScript | 5.9  | strict 모드 활성화 |
+| Vite       | 7    | 빌드 도구          |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Styling
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Tailwind CSS 4** - 유틸리티 기반 CSS
+- **tailwind-merge** + **clsx** - 조건부 클래스 병합
+- **class-variance-authority (CVA)** - 컴포넌트 variants 관리
+
+### Routing & State
+
+- **TanStack Router** - 타입 안전한 파일 기반 라우팅
+- **TanStack Query** - 서버 상태 관리
+- **Zustand** - 클라이언트 상태 관리
+
+### UI Components
+
+- **shadcn/ui** - Radix UI 기반, 접근성 준수 및 기본 동작 구현 효율화
+- **Framer Motion** - 애니메이션
+
+### API & Validation
+
+- **ky** - HTTP 클라이언트
+- **Zod** - 스키마 검증
+
+### Testing & Quality
+
+- **Vitest** + **Testing Library** - 테스트
+- **MSW** - API 모킹
+- **ESLint** + **Prettier** - 코드 품질
+
+## 프로젝트 구조
+
+Feature-Sliced Design (FSD) 아키텍처 기반으로 진행 중입니다.
+
+```
+src/
+├── app/                    # 앱 프로바이더 (QueryClient, Theme 등)
+├── pages/                  # 페이지 컴포넌트
+├── widgets/                # 복합 UI 블록 (독립적인 기능 단위)
+│   ├── navigation-sidebar/
+│   ├── stories/
+│   ├── home/
+│   └── profile-*/
+├── features/               # 기능별 로직 (사용자 시나리오)
+│   ├── create-post/
+│   ├── follow-user/
+│   ├── profile-posts/
+│   └── search/
+├── entities/               # 비즈니스 엔티티
+│   ├── album/
+│   ├── feed/
+│   └── post/
+├── shared/                 # 공유 리소스
+│   ├── ui/                # 재사용 UI 컴포넌트
+│   ├── lib/               # 유틸리티 함수, hooks
+│   ├── api/               # API 클라이언트 설정
+│   └── auth/              # 인증 관련
+├── routes/                 # TanStack Router 라우트 정의
+└── mocks/                  # MSW 목 핸들러
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 협업 방식
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Git 브랜치 전략
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. **Issue 생성**: 작업할 내용에 대해 GitHub Issue 생성
+2. **브랜치 생성**: Issue 번호 기반으로 브랜치 생성 (예: `123-feature-login`)
+3. **PR 생성**: `dev` 브랜치로 Pull Request
+4. **코드 리뷰**: CODEOWNERS에 등록된 리뷰어가 자동 할당
+5. **머지**: 승인 후 `dev`에 머지
+6. **배포**: 주간 회의 후 `main`으로 머지하여 배포
+
+### CODEOWNERS
+
+`.github/CODEOWNERS` 파일을 통해 PR 생성 시 자동으로 리뷰어가 할당됩니다.
+
 ```
+* @c0912jy @kimnamheeee
+```
+
+### 커밋 컨벤션
+
+**Commitizen**을 사용하여 커밋 메시지를 통일합니다.
+
+```bash
+yarn commit  # Commitizen 인터랙티브 커밋
+```
+
+이모지가 포함된 컨벤셔널 커밋 형식을 사용합니다:
+
+- ✨ `feat`: 새로운 기능
+- 🐛 `fix`: 버그 수정
+- ♻️ `refactor`: 리팩토링
+- 🎨 `style`: 스타일 변경
+- 📝 `docs`: 문서 수정
+- 🧹 `chore`: 기타 작업
+
+## 워크플로우
+
+### CI/CD
+
+GitHub Actions를 통해 자동화된 파이프라인을 구성했습니다.
+
+**CI Pipeline** (`ci.yml`)
+
+- **트리거**: `dev` 브랜치로 PR 생성 시
+- **검사 항목**: ESLint → Type check → Test → Build
+- PR에 CI 결과 코멘트 자동 작성
+- branch protection으로 CI 통과 및 approval 후 병합 가능
+
+**CD Pipeline** (`cd.yml`)
+
+- **트리거**: `main`, `dev` 브랜치 push
+- **배포 대상**: AWS S3 + CloudFront
+- 빌드 결과물을 S3에 업로드하고 CloudFront 캐시를 무효화
+
+### Pre-commit Hooks (Husky)
+
+커밋 전 자동으로 코드 품질을 검사합니다:
+
+```bash
+# .husky/pre-commit
+yarn -s type-check    # TypeScript 타입 검사
+yarn -s lint-staged   # 변경된 파일에 대해 lint + format
+```
+
+**lint-staged** 설정:
+
+- `*.{ts,tsx,js,jsx}`: Prettier 포맷팅 + ESLint 수정
+- `*.{css,scss,md,json,yml,yaml,html}`: Prettier 포맷팅
+
+## 팀원
+
+| 이름   | GitHub                                         | 담당                                                                                         |
+| ------ | ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 김남희 | [@kimnamheeee](https://github.com/kimnamheeee) | 초기 개발 환경 세팅, 라우트 세팅, 배포, 프로필 페이지 구현, 홈페이지 구현, 탐색 탭 구현      |
+| 천준영 | [@c0912jy](https://github.com/c0912jy)         | msw 초기 세팅, 게시글 상세 페이지 구현, 스토리 상세 페이지 구현, 로그인/회원가입 페이지 구현 |
