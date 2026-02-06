@@ -34,8 +34,10 @@ function RouteComponent() {
   const { data: profile } = useProfile(numericUserId)
   const selectedAlbumId = albumId ?? null
 
-  const { data: albumDetail, isLoading: isAlbumLoading } =
-    useAlbumDetailQuery(selectedAlbumId)
+  const { data: albumDetail, isLoading: isAlbumLoading } = useAlbumDetailQuery(
+    selectedAlbumId,
+    numericUserId
+  )
 
   const selectedAlbum = albums.find(
     (album) => album.albumId === selectedAlbumId
