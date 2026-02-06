@@ -8,6 +8,7 @@ import { useToggleBookmarkMutation } from '@/entities/post/model/hooks/useToggle
 import { Button } from '@/shared/ui/button'
 import { Card, CardFooter, CardHeader } from '@/shared/ui/card'
 import { cn } from '@/shared/lib/utils'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 import LazyImage from '@/shared/ui/lazyImage'
 import PostMenuModal from '@/components/post/PostMenuModal'
 
@@ -57,18 +58,16 @@ export function FeedCard({ item, className, onOpenPost }: FeedCardProps) {
             <Link
               to="/$userId"
               params={{ userId: String(item.author.userId) }}
-              className="size-8 shrink-0 overflow-hidden rounded-full bg-gray-200 transition-opacity hover:opacity-80"
+              className="shrink-0 transition-opacity hover:opacity-80"
             >
               {item.author.profileImageUrl ? (
                 <img
                   src={item.author.profileImageUrl}
                   alt={`${item.author.nickname} 프로필`}
-                  className="h-full w-full object-cover"
+                  className="size-8 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-gray-500">
-                  {item.author.nickname.trim().slice(0, 1).toUpperCase() || '?'}
-                </div>
+                <DefaultProfileImage className="size-8" />
               )}
             </Link>
             <div className="flex flex-col">

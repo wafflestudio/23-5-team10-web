@@ -1,3 +1,5 @@
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
+
 interface AccountInfoModalProps {
   onClose: () => void
   nickname: string
@@ -20,21 +22,17 @@ export default function AccountInfoModal({
         </div>
 
         <div className="flex flex-col items-center p-8">
-          <div className="mb-4 h-20 w-20 overflow-hidden rounded-full bg-gray-100">
-            {profileImageUrl ? (
+          {profileImageUrl ? (
+            <div className="mb-4 h-20 w-20 overflow-hidden rounded-full">
               <img
                 src={profileImageUrl}
                 alt={nickname}
                 className="h-full w-full object-cover"
               />
-            ) : (
-              <img
-                src="/default-profile.png"
-                alt="기본 프로필"
-                className="h-full w-full object-cover"
-              />
-            )}
-          </div>
+            </div>
+          ) : (
+            <DefaultProfileImage className="mb-4 size-20" />
+          )}
           <h2 className="text-[16px] font-bold">{nickname}</h2>
           <p className="mt-4 px-4 text-center text-[12px] leading-normal text-gray-500">
             신뢰할 수 있는 커뮤니티를 유지하기 위해 Instagram 계정에 대한 정보가
