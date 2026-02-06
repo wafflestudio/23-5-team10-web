@@ -34,12 +34,14 @@ export function useVerification() {
         .json<{
           data: {
             accessToken: string
+            refreshToken: string
           }
-          success: boolean
+          isSuccess: boolean
         }>()
 
-      if (res.success) {
+      if (res.isSuccess) {
         localStorage.setItem('accessToken', res.data.accessToken)
+        localStorage.setItem('refreshToken', res.data.refreshToken)
         await invalidateCurrentUser()
         navigate({
           to: '/',
