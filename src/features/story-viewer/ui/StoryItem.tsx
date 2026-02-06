@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
 import { cn } from '@/shared/lib/utils'
-import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 
 type StoryItemProps = {
   userId: string
@@ -30,18 +29,20 @@ export function StoryItem({
               : 'bg-gray-300'
           )}
         >
-          <div className="flex size-full items-center justify-center rounded-full bg-white p-1">
-            {profileImageUrl ? (
-              <div className="flex size-full items-center justify-center overflow-hidden rounded-full bg-gray-200">
+          <div className="flex size-full items-center justify-center rounded-full bg-white p-[2px] dark:bg-black">
+            <div className="flex size-full items-center justify-center overflow-hidden rounded-full bg-gray-100">
+              {profileImageUrl ? (
                 <img
                   src={profileImageUrl}
                   alt={nickname}
                   className="h-full w-full object-cover"
                 />
-              </div>
-            ) : (
-              <DefaultProfileImage className="size-full" />
-            )}
+              ) : (
+                <span className="text-xl font-bold text-gray-400">
+                  {nickname.trim().slice(0, 1).toUpperCase() || '?'}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </Link>

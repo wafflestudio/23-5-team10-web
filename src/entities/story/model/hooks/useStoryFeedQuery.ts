@@ -1,9 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
-import { getStoryFeed } from '@/entities/story/api/getStoryFeed'
+import ky from 'ky'
+import type { StoryFeedItem, StoryResponse } from '../types'
 
-export function useStoryFeedQuery() {
+export const useStoryFeedQuery = () => {
   return useQuery({
     queryKey: ['stories', 'feed'],
-    queryFn: getStoryFeed,
+    queryFn: async () => {
+      const response = await ky
+        .get('/api/v1/stories/feed')
+        .json<StoryResponse<StoryFeedItem[]>>()
+
+      if (!response.isSuccess) {
+        throw new Error(response.message)
+      }
+
+      return response.data ?? []
+    },
   })
 }
