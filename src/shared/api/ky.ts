@@ -11,10 +11,7 @@ if (!import.meta.env.VITE_API_URL) {
 const DEV = import.meta.env.DEV
 const requestStartTimes = new WeakMap<NormalizedOptions, number>()
 let isRefreshing = false
-let refreshPromise: Promise<{
-  accessToken: string
-  refreshToken: string
-}> | null = null
+let refreshPromise: Promise<{ accessToken: string }> | null = null
 
 function maskHeaders(headersInit: HeadersInit | undefined) {
   const headers = headersInit ? new Headers(headersInit) : undefined
@@ -48,6 +45,7 @@ function getDurationMs(options: NormalizedOptions) {
 export const instance = ky.create({
   prefixUrl: import.meta.env.VITE_API_URL,
   timeout: 10000,
+  credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -135,13 +133,11 @@ export const instance = ky.create({
           try {
             const data = await refreshPromise
             localStorage.setItem('accessToken', data.accessToken)
-            localStorage.setItem('refreshToken', data.refreshToken)
             void queryClient.invalidateQueries({
               queryKey: currentUserQueryKey,
             })
           } catch {
             localStorage.removeItem('accessToken')
-            localStorage.removeItem('refreshToken')
             useAuthStore.getState().setSessionExpired()
           } finally {
             isRefreshing = false

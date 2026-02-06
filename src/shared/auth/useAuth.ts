@@ -13,7 +13,6 @@ type LoginResponse = {
   success: boolean
   data: {
     accessToken: string
-    refreshToken: string
   }
 }
 
@@ -32,7 +31,6 @@ export function useAuth() {
 
     if (response.success) {
       localStorage.setItem('accessToken', response.data.accessToken)
-      localStorage.setItem('refreshToken', response.data.refreshToken)
       await invalidateCurrentUser()
       navigate({ to: '/', search: { page: 1 } })
     }
@@ -44,7 +42,6 @@ export function useAuth() {
       await instance.post('api/v1/auth/logout')
     } finally {
       localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
       clearCurrentUser()
       reset()
       navigate({ to: '/login' })
