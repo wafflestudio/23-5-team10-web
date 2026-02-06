@@ -1,4 +1,22 @@
-import { z } from 'zod'
-import { StoryFeedItemSchema } from './schema'
+export interface Story {
+  id: number
+  userId: string
+  imageUrl: string
+  createdAt: string
+  expiresAt?: string
+}
 
-export type StoryFeedItem = z.infer<typeof StoryFeedItemSchema>
+export interface StoryFeedItem {
+  userId: string
+  nickname: string
+  profileImageUrl: string | null
+  hasUnseenStory: boolean
+  stories: Story[]
+}
+
+export interface StoryResponse<T> {
+  isSuccess: boolean
+  code: string
+  message: string
+  data: T
+}

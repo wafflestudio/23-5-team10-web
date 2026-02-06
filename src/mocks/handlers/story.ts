@@ -6,10 +6,18 @@ import { MOCK_USER_ID } from '../db/session.db'
 import { ApiResponseSchema } from '@/entities/feed/model/schema'
 
 const StoryFeedItemSchema = z.object({
-  userId: z.number(),
+  userId: z.string(),
   nickname: z.string(),
   profileImageUrl: z.string().nullable(),
   hasUnseenStory: z.boolean(),
+  stories: z.array(
+    z.object({
+      id: z.number(),
+      userId: z.string(),
+      imageUrl: z.string(),
+      createdAt: z.string(),
+    })
+  ),
 })
 
 const CreateStoryRequestSchema = z.object({
@@ -19,7 +27,6 @@ const CreateStoryRequestSchema = z.object({
 export const storyHandlers = [
   http.post('*/api/v1/stories', async ({ request }) => {
     await new Promise((resolve) => setTimeout(resolve, 5000))
-
     const json = await request.json().catch(() => null)
     const result = CreateStoryRequestSchema.safeParse(json)
 
@@ -45,23 +52,32 @@ export const storyHandlers = [
       viewCount: 0,
     })
 
-    const responseBody = {
+    return HttpResponse.json({
       code: '200',
       message: '요청에 성공하였습니다.',
-      isSuccess: true as const,
-    }
-
-    return HttpResponse.json(responseBody)
+      isSuccess: true,
+    })
   }),
+
   http.get('*/api/v1/stories/feed', () => {
-    const storyFeedItems = users.map((user) =>
-      StoryFeedItemSchema.parse({
-        userId: user.userId,
+    const storyFeedItems = users.map((user) => {
+      const userStories = stories
+        .filter((s) => s.userId === user.userId)
+        .map((s) => ({
+          id: s.storyId,
+          userId: String(s.userId),
+          imageUrl: s.imageUrl,
+          createdAt: s.createdAt,
+        }))
+
+      return StoryFeedItemSchema.parse({
+        userId: String(user.userId),
         nickname: user.nickname,
         profileImageUrl: user.profileImageUrl,
         hasUnseenStory: Math.random() > 0.5,
+        stories: userStories,
       })
-    )
+    })
 
     const responseBody = ApiResponseSchema(StoryFeedItemSchema.array()).parse({
       code: '200',
@@ -72,42 +88,19 @@ export const storyHandlers = [
 
     return HttpResponse.json(responseBody)
   }),
-  http.delete('*/api/v1/stories/:storyId', ({ params }) => {
-    const storyId = Number(params.storyId)
 
-    if (!Number.isInteger(storyId) || storyId < 1) {
-      return HttpResponse.json(
-        {
-          code: '400',
-          message: '유효하지 않은 경로 파라미터입니다.',
-          isSuccess: false,
-        },
-        { status: 400 }
-      )
-    }
-
+  http.delete('*/api/v1/stories/:storyId', () => {
     const responseBody = {
       code: '200',
       message: '요청에 성공하였습니다.',
-      isSuccess: true as const,
+      isSuccess: true,
     }
-
     return HttpResponse.json(responseBody)
   }),
+
   http.get('*/api/v1/stories/user/:userId', ({ params }) => {
-    const userId = Number(params.userId)
-
-    if (!Number.isInteger(userId) || userId < 1) {
-      return HttpResponse.json(
-        {
-          code: '400',
-          message: '유효하지 않은 경로 파라미터입니다.',
-          isSuccess: false,
-        },
-        { status: 400 }
-      )
-    }
-
+    const { userId: userIdParam } = params
+    const userId = Number(userIdParam)
     const userStories = stories.filter((story) => story.userId === userId)
     const isMyStory = userId === MOCK_USER_ID
 

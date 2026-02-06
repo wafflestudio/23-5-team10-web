@@ -1,1 +1,1 @@
-export * from './ui/StoriesCarousel'
+export * from './ui/StoriesFeed'
