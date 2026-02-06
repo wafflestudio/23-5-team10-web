@@ -34,7 +34,7 @@ export function useAuth() {
       localStorage.setItem('accessToken', response.data.accessToken)
       localStorage.setItem('refreshToken', response.data.refreshToken)
       await invalidateCurrentUser()
-      navigate({ to: '/' })
+      navigate({ to: '/', search: { page: 1 } })
     }
     return response
   }

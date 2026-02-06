@@ -105,7 +105,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
 
       if (response.isSuccess) {
         queryClient.invalidateQueries({ queryKey: ['stories', 'feed'] })
-        navigate({ to: '/' })
+        navigate({ to: '/', search: { page: 1 } })
       }
     } catch (error) {
       console.error('스토리 삭제 실패:', error)
@@ -115,7 +115,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
   return (
     <div className={STORY_VIEWER_UI.STYLES.CONTAINER}>
       <div className="absolute top-0 left-0 z-50 p-0 leading-none">
-        <Link to="/">
+        <Link to="/" search={{ page: 1 }}>
           <img
             src={instagramLogo}
             alt="Instagram"
@@ -125,7 +125,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
       </div>
 
       <button
-        onClick={() => navigate({ to: '/' })}
+        onClick={() => navigate({ to: '/', search: { page: 1 } })}
         className="absolute top-4 right-4 z-50 p-2 text-white transition-opacity hover:opacity-70"
       >
         <X className="h-9 w-9" strokeWidth={1.5} />

@@ -32,7 +32,9 @@ export function AlbumSummaryCard({
       onClick={handleClick}
     >
       <CardHeader className="flex items-start gap-2 px-4 py-3">
-        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+        <CardTitle className="line-clamp-1 text-base font-semibold">
+          {title}
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="px-0 pb-0">

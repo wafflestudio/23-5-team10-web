@@ -5,6 +5,7 @@ export function useProfile(userId: number) {
   return useQuery({
     queryKey: ['profile', userId],
     queryFn: () => getProfile({ userId }),
-    enabled: userId > 0,
+    enabled: Number.isInteger(userId) && userId > 0,
+    retry: false,
   })
 }
