@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   X,
   ChevronLeft,
@@ -16,7 +16,7 @@ import { StoryOptionsModal } from './StoryOptionsModal'
 import ReportModal from '@/components/post/ReportModal'
 import AccountInfoModal from '@/components/post/AccountInfoModal'
 import { instance } from '@/shared/api/ky'
-
+import { useCurrentUser } from '@/shared/auth/useCurrentUser'
 import instagramLogo from '@/assets/instagram-black-logo.png'
 
 interface StoryViewerProps {
@@ -41,6 +41,8 @@ const formatRelativeTime = (createdAt: string) => {
 export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { data: me } = useCurrentUser()
+
   const [imageError, setImageError] = useState(false)
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
   const [isReportOpen, setIsReportOpen] = useState(false)
@@ -59,15 +61,23 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
     togglePause,
   } = useStoryViewer(feed, userId)
 
+  const isMine =
+    me?.userId !== undefined &&
+    String(currentUser?.userId) === String(me.userId)
+
+  useEffect(() => {
+    if (imageError && !isPaused) {
+      togglePause()
+    }
+  }, [imageError, isPaused, togglePause])
+
   if (!currentUser || !currentStory) return null
 
   const isFirstStoryOfFirstUser =
     currentUserIndex === 0 && currentStoryIndex === 0
   const isLastStoryOfLastUser =
     currentUserIndex === feed.length - 1 &&
-    currentStoryIndex === currentUser.stories.length - 1
-
-  const isMine = String(currentUser.userId) === '1'
+    currentStoryIndex === (currentUser?.stories?.length ?? 0) - 1
 
   const handleOpenOptions = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -77,7 +87,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
 
   const handleCloseOptions = () => {
     setIsOptionsOpen(false)
-    if (isPaused) togglePause()
+    if (isPaused && !imageError) togglePause()
   }
 
   const handleOpenReport = () => {
@@ -98,9 +108,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const handleDeleteStory = async () => {
     try {
       const response = await instance
-        .delete(`api/v1/stories/${currentStory.id}`, {
-          searchParams: { loggedInUser: 1 },
-        })
+        .delete(`api/v1/stories/${currentStory.id}`)
         .json<{ isSuccess: boolean; code: string; message: string }>()
 
       if (response.isSuccess) {
@@ -190,9 +198,10 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  togglePause()
+                  if (!imageError) togglePause()
                 }}
-                className="p-1 text-white transition-opacity hover:opacity-70"
+                className="p-1 text-white transition-opacity hover:opacity-70 disabled:opacity-30"
+                disabled={imageError}
               >
                 {isPaused ? (
                   <Play className="h-5 w-5 fill-current" />
@@ -236,7 +245,6 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
                 referrerPolicy="no-referrer"
               />
 
-              {/* 내 스토리일 때 좌측 하단에 조회수 표시 */}
               {isMine && currentStory.viewCount !== undefined && (
                 <div className="absolute bottom-4 left-4 z-50 flex flex-col items-start gap-1">
                   <span className="text-[13px] font-semibold text-white drop-shadow-md">
@@ -275,7 +283,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
         <ReportModal
           onClose={() => {
             setIsReportOpen(false)
-            if (isPaused) togglePause()
+            if (isPaused && !imageError) togglePause()
           }}
           onHideComment={() => {}}
           nickname={currentUser.nickname}
@@ -287,7 +295,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
         <AccountInfoModal
           onClose={() => {
             setIsAccountInfoOpen(false)
-            if (isPaused) togglePause()
+            if (isPaused && !imageError) togglePause()
           }}
           nickname={currentUser.nickname}
           profileImageUrl={currentUser.profileImageUrl}
@@ -299,7 +307,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
           className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4"
           onClick={() => {
             setIsDeleteConfirmOpen(false)
-            if (isPaused) togglePause()
+            if (isPaused && !imageError) togglePause()
           }}
         >
           <div
@@ -323,7 +331,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
             <button
               onClick={() => {
                 setIsDeleteConfirmOpen(false)
-                if (isPaused) togglePause()
+                if (isPaused && !imageError) togglePause()
               }}
               className="w-full border-t border-gray-200 py-3 text-[14px] active:bg-gray-50"
             >
