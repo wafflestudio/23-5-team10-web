@@ -34,8 +34,10 @@ function RouteComponent() {
   const { data: profile } = useProfile(numericUserId)
   const selectedAlbumId = albumId ?? null
 
-  const { data: albumDetail, isLoading: isAlbumLoading } =
-    useAlbumDetailQuery(selectedAlbumId)
+  const { data: albumDetail, isLoading: isAlbumLoading } = useAlbumDetailQuery(
+    selectedAlbumId,
+    numericUserId
+  )
 
   const selectedAlbum = albums.find(
     (album) => album.albumId === selectedAlbumId
@@ -74,9 +76,24 @@ function RouteComponent() {
             />
           ))}
         </div>
+      ) : !selectedAlbum ? (
+        <div className="space-y-4">
+          <div className="flex w-full items-center justify-end">
+            <button
+              type="button"
+              onClick={handleBackToList}
+              className="text-sm font-medium text-blue-500 hover:underline"
+            >
+              ← 앨범 목록으로
+            </button>
+          </div>
+          <div className="flex h-96 flex-col items-center justify-center gap-2 text-sm text-gray-500">
+            <span>앨범 데이터를 찾을 수 없습니다.</span>
+          </div>
+        </div>
       ) : (
         <div className="space-y-4">
-          {isAlbumLoading || !albumDetail || !selectedAlbum ? (
+          {isAlbumLoading || !albumDetail ? (
             <div className="flex justify-center text-sm text-gray-500">
               앨범을 불러오는 중입니다...
             </div>

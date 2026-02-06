@@ -51,7 +51,7 @@ export function FollowButton({
       disabled={isPending}
       onClick={handleClick}
       className={cn(
-        'h-8 rounded-md px-4 text-sm font-semibold',
+        'h-8 cursor-pointer rounded-md px-4 text-sm font-semibold',
         isFollowing
           ? 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50'
           : FOLLOW_BUTTON_PRIMARY_CLASSNAME,

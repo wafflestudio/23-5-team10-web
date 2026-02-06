@@ -60,20 +60,18 @@ export function useNavController({
 
   useEffect(() => {
     if (uiState.isSearchOpen) {
+      setLockGapWidth(!isBelowXl)
       setOpen(false)
       return
     }
 
+    setLockGapWidth(false)
     if (isBelowXl) {
       setOpen(false)
     } else {
       setOpen(true)
     }
-  }, [uiState.isSearchOpen, isBelowXl, setOpen])
-
-  useEffect(() => {
-    setLockGapWidth(uiState.isSearchOpen)
-  }, [uiState.isSearchOpen, setLockGapWidth])
+  }, [uiState.isSearchOpen, isBelowXl, setOpen, setLockGapWidth])
 
   const isMyProfileRouteActive =
     currentUserId !== null &&

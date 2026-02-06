@@ -18,7 +18,7 @@ export interface PostData {
   nickname: string
   profileImageUrl: string
   content: string
-  albumId: number
+  albumId: number | null
   images: PostImage[]
   likeCount: number
   commentCount: number

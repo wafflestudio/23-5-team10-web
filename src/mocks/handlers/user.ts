@@ -85,6 +85,72 @@ export const userHandlers = [
     })
   }),
 
+  http.patch('*/api/v1/users/me', async ({ request }) => {
+    const userId = getUserIdFromToken(request)
+    if (!userId) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_401',
+          message: '인증이 필요합니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 401 }
+      )
+    }
+
+    const authUser = authDb.find((u) => u.userId === userId)
+    const profileUser = users.find((u) => u.userId === userId)
+
+    if (!authUser || !profileUser) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '사용자를 찾을 수 없습니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    const body = (await request.json()) as Partial<{
+      nickname: string
+      name: string
+      bio: string
+      profileImageUrl: string
+    }>
+
+    if (body.nickname !== undefined) {
+      profileUser.nickname = body.nickname
+      authUser.nickname = body.nickname
+    }
+    if (body.name !== undefined) {
+      profileUser.name = body.name
+    }
+    if (body.bio !== undefined) {
+      profileUser.bio = body.bio
+    }
+    if (body.profileImageUrl !== undefined) {
+      profileUser.profileImageUrl = body.profileImageUrl
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '요청에 성공하였습니다.',
+      data: {
+        userId: authUser.userId,
+        email: authUser.email,
+        nickname: profileUser.nickname,
+        name: profileUser.name,
+        bio: profileUser.bio,
+        profileImageUrl: profileUser.profileImageUrl,
+        role: 'USER',
+      },
+      isSuccess: true,
+    })
+  }),
+
   http.get('*/api/v1/users/:userId/profile', ({ params }) => {
     const userId = Number(params.userId)
 

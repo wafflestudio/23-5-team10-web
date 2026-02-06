@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Heart, MoreHorizontal } from 'lucide-react'
+import { Heart, MoreHorizontal, User } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { formatRelativeTime } from '../../utils/date.ts'
 import CommentMenuModal from './CommentMenuModal'
@@ -97,7 +97,9 @@ export default function CommentItem({
                 alt={comment.nickname}
                 className="object-cover"
               />
-              <AvatarFallback>{comment.nickname[0]}</AvatarFallback>
+              <AvatarFallback className="bg-gray-200">
+                <User className="size-[60%] stroke-[1.5] text-gray-400" />
+              </AvatarFallback>
             </Avatar>
           </Link>
           <div className="text-sm leading-tight">

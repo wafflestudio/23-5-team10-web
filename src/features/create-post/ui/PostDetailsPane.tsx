@@ -1,4 +1,5 @@
 import { MAX_CAPTION_LENGTH } from '@/features/create-post/constants'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 import { AlbumSelectDropdown } from '@/features/create-post/ui/AlbumSelectDropdown'
 
 type PostDetailsPaneProps = {
@@ -24,15 +25,17 @@ export function PostDetailsPane({
   return (
     <aside className="flex h-full w-full flex-col border-l border-zinc-200 bg-white">
       <div className="flex items-center gap-3 px-4 py-4">
-        <div className="h-7 w-7 overflow-hidden rounded-full bg-zinc-200">
-          {profileImageUrl ? (
+        {profileImageUrl ? (
+          <div className="h-7 w-7 overflow-hidden rounded-full">
             <img
               src={profileImageUrl}
               alt={`${profileName} 프로필 사진`}
               className="h-full w-full object-cover"
             />
-          ) : null}
-        </div>
+          </div>
+        ) : (
+          <DefaultProfileImage className="size-7" />
+        )}
 
         <div className="text-sm font-semibold">{profileName}</div>
       </div>

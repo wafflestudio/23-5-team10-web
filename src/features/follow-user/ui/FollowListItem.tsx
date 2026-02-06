@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/shared/ui/button'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 import { FollowButton } from './FollowButton'
 import { RemoveFollowerModal } from './RemoveFollowerModal'
 import { type FollowListType } from './FollowListModal'
@@ -57,8 +58,6 @@ export function FollowListItem({
     await toggleFollow()
   }
 
-  const initial = user.nickname.trim().slice(0, 1).toUpperCase()
-
   const renderActionButton = () => {
     if (isMe) {
       return null
@@ -102,12 +101,7 @@ export function FollowListItem({
               className="size-10 shrink-0 rounded-full object-cover"
             />
           ) : (
-            <div
-              aria-label={`${user.nickname} 프로필 이미지`}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-base font-semibold text-gray-500"
-            >
-              {initial || '?'}
-            </div>
+            <DefaultProfileImage className="size-10" />
           )}
 
           <div className="min-w-0 flex-1">

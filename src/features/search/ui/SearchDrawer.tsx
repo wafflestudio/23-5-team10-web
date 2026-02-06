@@ -10,6 +10,7 @@ import {
   useRecentSearchQuery,
   useAddRecentSearchMutation,
   useDeleteRecentSearchMutation,
+  useClearAllRecentSearchMutation,
 } from '@/entities/search'
 import { useAnchorPosition } from '../hooks/useAnchorPosition'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -41,6 +42,7 @@ export function SearchDrawer({
   const { data: recentSearchedUsers = [] } = useRecentSearchQuery()
   const addRecentSearch = useAddRecentSearchMutation()
   const deleteRecentSearch = useDeleteRecentSearchMutation()
+  const clearAllRecentSearch = useClearAllRecentSearchMutation()
 
   const close = useCallback(() => {
     setSearchTerm('')
@@ -132,7 +134,11 @@ export function SearchDrawer({
         open={clearDialogOpen}
         onOpenChange={setClearDialogOpen}
         onClear={() => {
-          setClearDialogOpen(false)
+          clearAllRecentSearch.mutate(undefined, {
+            onSettled: () => {
+              setClearDialogOpen(false)
+            },
+          })
         }}
       />
     </>

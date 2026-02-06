@@ -1,3 +1,4 @@
+import { User } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Button } from '@/shared/ui/button'
 
@@ -22,7 +23,9 @@ export function ProfileEditCard({
           onClick={onChangePhotoClick}
         >
           <AvatarImage src={avatarUrl ?? undefined} alt={nickname} />
-          <AvatarFallback>{nickname.charAt(0).toUpperCase()}</AvatarFallback>
+          <AvatarFallback className="bg-gray-200">
+            <User className="size-[60%] stroke-[1.5] text-gray-400" />
+          </AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
           <span className="font-semibold text-gray-900">{nickname}</span>

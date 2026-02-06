@@ -6,8 +6,10 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { Button } from '@/shared/ui/button'
+import { toast } from 'sonner'
 import { useCurrentUserId } from '@/shared/auth/useCurrentUser'
 import { useUserAlbumsQuery } from '@/entities/album/model/hooks/useUserAlbumsQuery'
+import { useDeleteAlbumMutation } from '@/entities/album/model/hooks/useDeleteAlbumMutation'
 import {
   useAlbumDropdownState,
   NO_ALBUM_VALUE,
@@ -78,13 +80,34 @@ export function AlbumSelectDropdown({
     onComplete: handleEditComplete,
   })
 
+  const deleteAlbumMutation = useDeleteAlbumMutation()
+
+  const handleDeleteAlbum = (albumId: number) => {
+    deleteAlbumMutation.mutate(
+      { albumId },
+      {
+        onSuccess: () => {
+          toast.success('앨범이 삭제되었습니다.')
+          handleEditCancel()
+          if (selectedAlbumId === albumId) {
+            onSelect(-1)
+          }
+        },
+        onError: () => {
+          toast.error('앨범 삭제에 실패했습니다.')
+        },
+      }
+    )
+  }
+
   const handleOpenChange = (open: boolean) => {
     if (
       !open &&
       (state.isAddingAlbum ||
         state.editingAlbumId !== null ||
         createAlbumMutation.isPending ||
-        updateAlbumTitleMutation.isPending)
+        updateAlbumTitleMutation.isPending ||
+        deleteAlbumMutation.isPending)
     ) {
       return
     }
@@ -147,10 +170,14 @@ export function AlbumSelectDropdown({
                     key={album.albumId}
                     title={state.editingAlbumTitle}
                     inputRef={editInputRef}
-                    isPending={updateAlbumTitleMutation.isPending}
+                    isPending={
+                      updateAlbumTitleMutation.isPending ||
+                      deleteAlbumMutation.isPending
+                    }
                     onTitleChange={handleEditTitleChange}
                     onUpdate={handleUpdateAlbum}
                     onCancel={handleEditCancel}
+                    onDelete={() => handleDeleteAlbum(album.albumId)}
                     onKeyDown={(e) => handleEditKeyDown(e, handleEditCancel)}
                   />
                 ) : (

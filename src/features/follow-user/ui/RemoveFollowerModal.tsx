@@ -1,4 +1,5 @@
 import { Dialog, DialogContent } from '@/shared/ui/dialog'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 
 type RemoveFollowerModalProps = {
   open: boolean
@@ -17,8 +18,6 @@ export function RemoveFollowerModal({
   onConfirm,
   isPending = false,
 }: RemoveFollowerModalProps) {
-  const initial = nickname.trim().slice(0, 1).toUpperCase()
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -33,9 +32,7 @@ export function RemoveFollowerModal({
               className="size-20 rounded-full object-cover"
             />
           ) : (
-            <div className="flex size-20 items-center justify-center rounded-full bg-gray-200 text-2xl font-semibold text-gray-500">
-              {initial || '?'}
-            </div>
+            <DefaultProfileImage className="size-20" />
           )}
           <h2 className="mt-4 text-center text-lg font-semibold">
             팔로워를 삭제하시겠어요?
