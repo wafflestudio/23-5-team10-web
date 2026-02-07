@@ -22,6 +22,7 @@ import instagramLogo from '@/assets/instagram-black-logo.png'
 interface StoryViewerProps {
   feed: StoryFeedItem[]
   userId: string
+  detailUser?: StoryFeedItem
   isDetailLoading?: boolean
 }
 
@@ -40,6 +41,7 @@ const formatRelativeTime = (createdAt: string) => {
 export function StoryViewer({
   feed,
   userId,
+  detailUser,
   isDetailLoading,
 }: StoryViewerProps) {
   const navigate = useNavigate()
@@ -64,11 +66,16 @@ export function StoryViewer({
     togglePause,
   } = useStoryViewer(feed, userId)
 
+  const viewerUser =
+    detailUser && String(detailUser.userId) === String(userId)
+      ? detailUser
+      : currentUser
+
   const isMine =
     !isMeLoading &&
     me?.userId !== undefined &&
-    currentUser?.userId !== undefined &&
-    String(me.userId) === String(currentUser.userId)
+    viewerUser?.userId !== undefined &&
+    String(me.userId) === String(viewerUser.userId)
 
   useEffect(() => {
     if (imageError && !isPaused) {
@@ -76,13 +83,13 @@ export function StoryViewer({
     }
   }, [imageError, isPaused, togglePause])
 
-  if (!currentUser) return null
+  if (!viewerUser || !currentStory) return null
 
   const isFirstStoryOfFirstUser =
     currentUserIndex === 0 && currentStoryIndex === 0
   const isLastStoryOfLastUser =
     currentUserIndex === feed.length - 1 &&
-    currentStoryIndex === (currentUser?.stories?.length ?? 0) - 1
+    currentStoryIndex === (viewerUser.stories.length ?? 0) - 1
 
   const handleOpenOptions = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -113,7 +120,7 @@ export function StoryViewer({
   const handleDeleteStory = async () => {
     try {
       const response = await instance
-        .delete(`api/v1/stories/${currentStory?.id}`)
+        .delete(`api/v1/stories/${currentStory.id}`)
         .json<{ isSuccess: boolean; code: string; message: string }>()
       if (response.isSuccess) {
         queryClient.invalidateQueries({ queryKey: ['stories', 'feed'] })
@@ -158,7 +165,7 @@ export function StoryViewer({
       )}
 
       <div className={STORY_VIEWER_UI.STYLES.VIEWER_CARD}>
-        {isDetailLoading && !currentStory?.imageUrl && (
+        {isDetailLoading && !currentStory.imageUrl && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-600 border-t-white" />
           </div>
@@ -166,7 +173,7 @@ export function StoryViewer({
 
         <div className={STORY_VIEWER_UI.STYLES.OVERLAY_TOP}>
           <div className={STORY_VIEWER_UI.STYLES.PROGRESS_CONTAINER}>
-            {currentUser.stories.map((story: Story, i: number) => (
+            {viewerUser.stories.map((story: Story, i: number) => (
               <div
                 key={story.id}
                 className={STORY_VIEWER_UI.STYLES.PROGRESS_BAR}
@@ -189,21 +196,19 @@ export function StoryViewer({
           <div className={STORY_VIEWER_UI.STYLES.HEADER}>
             <Link
               to="/$userId"
-              params={{ userId: String(currentUser.userId) }}
+              params={{ userId: String(viewerUser.userId) }}
               className={STORY_VIEWER_UI.STYLES.USER_SECTION}
             >
               <img
-                src={currentUser.profileImageUrl ?? ''}
+                src={viewerUser.profileImageUrl ?? ''}
                 className={STORY_VIEWER_UI.STYLES.AVATAR}
                 alt=""
               />
               <div className={STORY_VIEWER_UI.STYLES.USER_INFO}>
-                <span className="font-bold">{currentUser.nickname}</span>
-                {currentStory && (
-                  <span className="text-[13px] font-normal opacity-60">
-                    {formatRelativeTime(currentStory.createdAt)}
-                  </span>
-                )}
+                <span className="font-bold">{viewerUser.nickname}</span>
+                <span className="text-[13px] font-normal opacity-60">
+                  {formatRelativeTime(currentStory.createdAt)}
+                </span>
               </div>
             </Link>
 
@@ -234,7 +239,7 @@ export function StoryViewer({
 
         <div
           className={STORY_VIEWER_UI.STYLES.CONTENT_AREA}
-          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+          onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             setImageError(false)
             if (e.clientX - rect.left < rect.width / 2) handlePrev()
@@ -242,29 +247,22 @@ export function StoryViewer({
           }}
         >
           {imageError ? (
-            <div className="flex h-full w-full flex-col items-center justify-center bg-black px-10 text-center text-white">
-              <p className="text-[14px] leading-relaxed font-medium">
-                더 이상 이용할 수 없는 콘텐츠입니다
-              </p>
+            <div className="flex h-full w-full items-center justify-center bg-black text-white">
+              더 이상 이용할 수 없는 콘텐츠입니다
             </div>
           ) : (
             <>
-              {currentStory?.imageUrl && (
-                <img
-                  key={currentStory.imageUrl}
-                  src={currentStory.imageUrl}
-                  className="h-full w-full object-cover select-none"
-                  alt="story"
-                  onError={() => setImageError(true)}
-                  referrerPolicy="no-referrer"
-                />
-              )}
+              <img
+                src={currentStory.imageUrl}
+                className="h-full w-full object-cover select-none"
+                alt="story"
+                onError={() => setImageError(true)}
+                referrerPolicy="no-referrer"
+              />
 
-              {isMine && currentStory?.viewCount !== undefined && (
-                <div className="absolute bottom-4 left-4 z-50 flex flex-col items-start gap-1">
-                  <span className="text-[13px] font-semibold text-white drop-shadow-md">
-                    {currentStory.viewCount}명이 읽음
-                  </span>
+              {isMine && currentStory.viewCount !== undefined && (
+                <div className="absolute bottom-4 left-4 z-50 text-white">
+                  {currentStory.viewCount}명이 읽음
                 </div>
               )}
             </>
@@ -289,7 +287,7 @@ export function StoryViewer({
         isOpen={isOptionsOpen}
         onClose={handleCloseOptions}
         isMine={isMine}
-        userId={currentUser.userId}
+        userId={viewerUser.userId}
         onReport={handleOpenReport}
         onAccountInfo={handleOpenAccountInfo}
         onDelete={handleOpenDeleteConfirm}
@@ -302,7 +300,7 @@ export function StoryViewer({
             if (isPaused && !imageError) togglePause()
           }}
           onHideComment={() => {}}
-          nickname={currentUser.nickname}
+          nickname={viewerUser.nickname}
           type="post"
         />
       )}
@@ -313,8 +311,8 @@ export function StoryViewer({
             setIsAccountInfoOpen(false)
             if (isPaused && !imageError) togglePause()
           }}
-          nickname={currentUser.nickname}
-          profileImageUrl={currentUser.profileImageUrl}
+          nickname={viewerUser.nickname}
+          profileImageUrl={viewerUser.profileImageUrl}
         />
       )}
 
@@ -340,7 +338,7 @@ export function StoryViewer({
             </div>
             <button
               onClick={handleDeleteStory}
-              className="w-full border-t border-gray-200 py-3 text-[14px] font-bold text-red-500 active:bg-gray-50"
+              className="w-full border-t border-gray-200 py-3 text-[14px] font-bold text-red-500"
             >
               삭제
             </button>
@@ -349,7 +347,7 @@ export function StoryViewer({
                 setIsDeleteConfirmOpen(false)
                 if (isPaused && !imageError) togglePause()
               }}
-              className="w-full border-t border-gray-200 py-3 text-[14px] active:bg-gray-50"
+              className="w-full border-t border-gray-200 py-3 text-[14px]"
             >
               취소
             </button>

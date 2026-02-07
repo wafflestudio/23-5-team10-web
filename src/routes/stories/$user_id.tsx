@@ -21,10 +21,13 @@ function RouteComponent() {
 
   const mergedFeed = useMemo(() => {
     if (!feedData) return []
+
     if (!detailData) return feedData
 
     return feedData.map((item) =>
-      String(item.userId) === String(user_id) ? detailData : item
+      String(item.userId) === String(user_id)
+        ? { ...item, stories: detailData.stories }
+        : item
     )
   }, [feedData, detailData, user_id])
 
@@ -41,6 +44,7 @@ function RouteComponent() {
       <StoryViewer
         feed={mergedFeed}
         userId={user_id}
+        detailUser={detailData}
         isDetailLoading={isDetailLoading}
       />
     </div>
