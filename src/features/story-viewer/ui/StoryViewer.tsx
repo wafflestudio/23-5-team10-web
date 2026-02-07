@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import {
   X,
   ChevronLeft,
@@ -8,7 +8,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import { useNavigate, Link } from '@tanstack/react-router'
-import { useQueryClient, useQuery } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import type { StoryFeedItem, Story } from '@/entities/story/model/types'
 import { useStoryViewer } from '../model/useStoryViewer'
 import { STORY_VIEWER_UI } from './constants'
@@ -17,12 +17,12 @@ import ReportModal from '@/components/post/ReportModal'
 import AccountInfoModal from '@/components/post/AccountInfoModal'
 import { instance } from '@/shared/api/ky'
 import { useCurrentUser } from '@/shared/auth/useCurrentUser'
-import { getStoryDetail } from '@/entities/story/api/getStoryDetail'
 import instagramLogo from '@/assets/instagram-black-logo.png'
 
 interface StoryViewerProps {
   feed: StoryFeedItem[]
   userId: string
+  isDetailLoading?: boolean
 }
 
 const formatRelativeTime = (createdAt: string) => {
@@ -37,7 +37,11 @@ const formatRelativeTime = (createdAt: string) => {
   return `${diffInHours}시간 전`
 }
 
-export function StoryViewer({ feed, userId }: StoryViewerProps) {
+export function StoryViewer({
+  feed,
+  userId,
+  isDetailLoading,
+}: StoryViewerProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { data: me, isLoading: isMeLoading } = useCurrentUser()
@@ -47,19 +51,6 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [isAccountInfoOpen, setIsAccountInfoOpen] = useState(false)
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
-
-  const { data: detailData, isLoading: isDetailLoading } = useQuery({
-    queryKey: ['stories', 'user', userId],
-    queryFn: () => getStoryDetail(userId),
-    enabled: !!userId,
-  })
-
-  const enrichedFeed = useMemo(() => {
-    if (!detailData) return feed
-    return feed.map((item) =>
-      String(item.userId) === String(userId) ? detailData : item
-    )
-  }, [feed, detailData, userId])
 
   const {
     currentUser,
@@ -71,7 +62,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
     handleNext,
     handlePrev,
     togglePause,
-  } = useStoryViewer(enrichedFeed, userId)
+  } = useStoryViewer(feed, userId)
 
   const isMine =
     !isMeLoading &&
@@ -85,13 +76,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
     }
   }, [imageError, isPaused, togglePause])
 
-  if (isDetailLoading || !currentUser || !currentStory) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-600 border-t-white" />
-      </div>
-    )
-  }
+  if (!currentUser) return null
 
   const isFirstStoryOfFirstUser =
     currentUserIndex === 0 && currentStoryIndex === 0
@@ -128,7 +113,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const handleDeleteStory = async () => {
     try {
       const response = await instance
-        .delete(`api/v1/stories/${currentStory.id}`)
+        .delete(`api/v1/stories/${currentStory?.id}`)
         .json<{ isSuccess: boolean; code: string; message: string }>()
       if (response.isSuccess) {
         queryClient.invalidateQueries({ queryKey: ['stories', 'feed'] })
@@ -173,6 +158,12 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
       )}
 
       <div className={STORY_VIEWER_UI.STYLES.VIEWER_CARD}>
+        {isDetailLoading && !currentStory?.imageUrl && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-600 border-t-white" />
+          </div>
+        )}
+
         <div className={STORY_VIEWER_UI.STYLES.OVERLAY_TOP}>
           <div className={STORY_VIEWER_UI.STYLES.PROGRESS_CONTAINER}>
             {currentUser.stories.map((story: Story, i: number) => (
@@ -208,9 +199,11 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
               />
               <div className={STORY_VIEWER_UI.STYLES.USER_INFO}>
                 <span className="font-bold">{currentUser.nickname}</span>
-                <span className="text-[13px] font-normal opacity-60">
-                  {formatRelativeTime(currentStory.createdAt)}
-                </span>
+                {currentStory && (
+                  <span className="text-[13px] font-normal opacity-60">
+                    {formatRelativeTime(currentStory.createdAt)}
+                  </span>
+                )}
               </div>
             </Link>
 
@@ -256,16 +249,18 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
             </div>
           ) : (
             <>
-              <img
-                key={currentStory.imageUrl}
-                src={currentStory.imageUrl}
-                className="h-full w-full object-cover select-none"
-                alt="story"
-                onError={() => setImageError(true)}
-                referrerPolicy="no-referrer"
-              />
+              {currentStory?.imageUrl && (
+                <img
+                  key={currentStory.imageUrl}
+                  src={currentStory.imageUrl}
+                  className="h-full w-full object-cover select-none"
+                  alt="story"
+                  onError={() => setImageError(true)}
+                  referrerPolicy="no-referrer"
+                />
+              )}
 
-              {isMine && currentStory.viewCount !== undefined && (
+              {isMine && currentStory?.viewCount !== undefined && (
                 <div className="absolute bottom-4 left-4 z-50 flex flex-col items-start gap-1">
                   <span className="text-[13px] font-semibold text-white drop-shadow-md">
                     {currentStory.viewCount}명이 읽음
