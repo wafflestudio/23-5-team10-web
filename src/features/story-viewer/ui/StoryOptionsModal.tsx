@@ -17,9 +17,9 @@ export function StoryOptionsModal({
   onReport,
   onAccountInfo,
 }: StoryOptionsModalProps) {
-  const { data: me } = useCurrentUser()
+  const { data: me, isLoading } = useCurrentUser()
 
-  if (!isOpen) return null
+  if (!isOpen || isLoading) return null
 
   const isMine =
     me?.userId !== undefined && String(me.userId) === String(userId)
