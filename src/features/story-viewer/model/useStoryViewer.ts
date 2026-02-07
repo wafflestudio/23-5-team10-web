@@ -2,11 +2,17 @@ import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import type { StoryFeedItem } from '@/entities/story/model/types'
 
+type UseStoryViewerOptions = {
+  onComplete?: () => void
+}
+
 export function useStoryViewer(
   storiesData: StoryFeedItem[],
-  initialUserId: string
+  initialUserId: string,
+  options?: UseStoryViewerOptions
 ) {
   const navigate = useNavigate()
+  const { onComplete } = options ?? {}
   const STORY_DURATION = 5000
   const INTERVAL_MS = 10
 
@@ -50,10 +56,19 @@ export function useStoryViewer(
         to: '/stories/$user_id',
         params: { user_id: String(nextUser.userId) },
       })
+    } else if (onComplete) {
+      onComplete()
     } else {
       navigate({ to: '/', search: { page: 1 } })
     }
-  }, [currentUser, state.storyIndex, currentUserIndex, storiesData, navigate])
+  }, [
+    currentUser,
+    state.storyIndex,
+    currentUserIndex,
+    storiesData,
+    navigate,
+    onComplete,
+  ])
 
   const handlePrev = useCallback(() => {
     if (!currentUser) return
