@@ -3,6 +3,7 @@ import { useCurrentUser } from '@/shared/auth/useCurrentUser'
 interface StoryOptionsModalProps {
   isOpen: boolean
   onClose: () => void
+  isMine: boolean
   userId: string | number
   onDelete?: () => void
   onReport?: () => void
@@ -12,17 +13,14 @@ interface StoryOptionsModalProps {
 export function StoryOptionsModal({
   isOpen,
   onClose,
-  userId,
+  isMine,
   onDelete,
   onReport,
   onAccountInfo,
 }: StoryOptionsModalProps) {
-  const { data: me, isLoading } = useCurrentUser()
+  const { isLoading } = useCurrentUser()
 
   if (!isOpen || isLoading) return null
-
-  const isMine =
-    me?.userId !== undefined && String(me.userId) === String(userId)
 
   return (
     <div

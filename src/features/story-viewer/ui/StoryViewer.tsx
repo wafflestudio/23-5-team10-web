@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   X,
   ChevronLeft,
@@ -8,7 +8,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react'
 import { useNavigate, Link } from '@tanstack/react-router'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
 import type { StoryFeedItem, Story } from '@/entities/story/model/types'
 import { useStoryViewer } from '../model/useStoryViewer'
 import { STORY_VIEWER_UI } from './constants'
@@ -17,6 +17,7 @@ import ReportModal from '@/components/post/ReportModal'
 import AccountInfoModal from '@/components/post/AccountInfoModal'
 import { instance } from '@/shared/api/ky'
 import { useCurrentUser } from '@/shared/auth/useCurrentUser'
+import { getStoryDetail } from '@/entities/story/api/getStoryDetail'
 import instagramLogo from '@/assets/instagram-black-logo.png'
 
 interface StoryViewerProps {
@@ -30,10 +31,8 @@ const formatRelativeTime = (createdAt: string) => {
   const diffInMinutes = Math.floor(
     (now.getTime() - created.getTime()) / (1000 * 60)
   )
-
   if (diffInMinutes < 1) return '방금 전'
   if (diffInMinutes < 60) return `${diffInMinutes}분 전`
-
   const diffInHours = Math.floor(diffInMinutes / 60)
   return `${diffInHours}시간 전`
 }
@@ -41,13 +40,26 @@ const formatRelativeTime = (createdAt: string) => {
 export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { data: me } = useCurrentUser()
+  const { data: me, isLoading: isMeLoading } = useCurrentUser()
 
   const [imageError, setImageError] = useState(false)
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
   const [isReportOpen, setIsReportOpen] = useState(false)
   const [isAccountInfoOpen, setIsAccountInfoOpen] = useState(false)
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+
+  const { data: detailData, isLoading: isDetailLoading } = useQuery({
+    queryKey: ['stories', 'user', userId],
+    queryFn: () => getStoryDetail(userId),
+    enabled: !!userId,
+  })
+
+  const enrichedFeed = useMemo(() => {
+    if (!detailData) return feed
+    return feed.map((item) =>
+      String(item.userId) === String(userId) ? detailData : item
+    )
+  }, [feed, detailData, userId])
 
   const {
     currentUser,
@@ -59,9 +71,10 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
     handleNext,
     handlePrev,
     togglePause,
-  } = useStoryViewer(feed, userId)
+  } = useStoryViewer(enrichedFeed, userId)
 
   const isMine =
+    !isMeLoading &&
     me?.userId !== undefined &&
     currentUser?.userId !== undefined &&
     String(me.userId) === String(currentUser.userId)
@@ -72,7 +85,13 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
     }
   }, [imageError, isPaused, togglePause])
 
-  if (!currentUser || !currentStory) return null
+  if (isDetailLoading || !currentUser || !currentStory) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-600 border-t-white" />
+      </div>
+    )
+  }
 
   const isFirstStoryOfFirstUser =
     currentUserIndex === 0 && currentStoryIndex === 0
@@ -111,9 +130,9 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
       const response = await instance
         .delete(`api/v1/stories/${currentStory.id}`)
         .json<{ isSuccess: boolean; code: string; message: string }>()
-
       if (response.isSuccess) {
         queryClient.invalidateQueries({ queryKey: ['stories', 'feed'] })
+        queryClient.invalidateQueries({ queryKey: ['stories', 'user', userId] })
         navigate({ to: '/', search: { page: 1 } })
       }
     } catch (error) {
@@ -274,6 +293,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
       <StoryOptionsModal
         isOpen={isOptionsOpen}
         onClose={handleCloseOptions}
+        isMine={isMine}
         userId={currentUser.userId}
         onReport={handleOpenReport}
         onAccountInfo={handleOpenAccountInfo}
