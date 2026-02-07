@@ -64,7 +64,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
   const isMine =
     me?.userId !== undefined &&
     currentUser?.userId !== undefined &&
-    String(currentUser.userId) === String(me.userId)
+    String(me.userId) === String(currentUser.userId)
 
   useEffect(() => {
     if (imageError && !isPaused) {
