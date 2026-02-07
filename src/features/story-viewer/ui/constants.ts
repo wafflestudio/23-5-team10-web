@@ -7,9 +7,8 @@ export const STORY_VIEWER_UI = {
     OVERLAY_TOP:
       'absolute top-0 z-30 flex w-full flex-col gap-3 bg-gradient-to-b from-black/60 to-transparent p-4 pb-10',
     PROGRESS_CONTAINER: 'flex w-full gap-1',
-    PROGRESS_BAR: 'h-0.5 flex-1 overflow-hidden rounded-full bg-white/30',
-    PROGRESS_BAR_FILL:
-      'h-full bg-white transition-all duration-100 ease-linear',
+    PROGRESS_BAR: 'h-[3px] flex-1 overflow-hidden rounded-full bg-white/30',
+    PROGRESS_BAR_FILL: 'h-full bg-white',
     HEADER: 'flex items-center justify-between',
     USER_SECTION: 'flex items-center gap-3',
     USER_INFO: 'flex items-center gap-2 text-[14px] font-medium text-white',
