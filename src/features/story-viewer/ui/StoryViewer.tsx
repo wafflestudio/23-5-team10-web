@@ -17,6 +17,7 @@ import ReportModal from '@/components/post/ReportModal'
 import AccountInfoModal from '@/components/post/AccountInfoModal'
 import { instance } from '@/shared/api/ky'
 import { useCurrentUser } from '@/shared/auth/useCurrentUser'
+import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 import instagramLogo from '@/assets/instagram-black-logo.png'
 
 interface StoryViewerProps {
@@ -209,11 +210,17 @@ export function StoryViewer({
               params={{ userId: String(viewerUser.userId) }}
               className={STORY_VIEWER_UI.STYLES.USER_SECTION}
             >
-              <img
-                src={viewerUser.profileImageUrl ?? ''}
-                className={STORY_VIEWER_UI.STYLES.AVATAR}
-                alt=""
-              />
+              {viewerUser.profileImageUrl ? (
+                <img
+                  src={viewerUser.profileImageUrl}
+                  className={STORY_VIEWER_UI.STYLES.AVATAR}
+                  alt=""
+                />
+              ) : (
+                <DefaultProfileImage
+                  className={STORY_VIEWER_UI.STYLES.AVATAR}
+                />
+              )}
               <div className={STORY_VIEWER_UI.STYLES.USER_INFO}>
                 <span className="font-bold">{viewerUser.nickname}</span>
                 <span className="text-[13px] font-normal opacity-60">
