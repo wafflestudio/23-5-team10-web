@@ -8,6 +8,7 @@ import { FollowListModal } from '@/features/follow-user/ui/FollowListModal'
 import { useState } from 'react'
 import { type FollowListType } from '@/features/follow-user/ui/FollowListModal'
 import { Link } from '@tanstack/react-router'
+import { useUserStoriesQuery } from '@/entities/story/model/hooks/useUserStoriesQuery'
 
 interface ProfileHeaderProps {
   className?: string
@@ -44,6 +45,9 @@ export function ProfileHeader({
     type: null,
   })
 
+  const { data: userStoriesData } = useUserStoriesQuery(userId)
+  const hasStory = (userStoriesData?.stories.length ?? 0) > 0
+
   const handleFollowListClick = () => {
     setModalState({
       open: true,
@@ -76,7 +80,13 @@ export function ProfileHeader({
       <section className={cn(PROFILE_CONTAINER_CLASSNAME, className)}>
         <div className="flex gap-8 md:gap-16">
           <div className="flex w-[180px] justify-center">
-            <ProfileAvatar avatarUrl={avatarUrl} nickname={nickname} />
+            <ProfileAvatar
+              avatarUrl={avatarUrl}
+              nickname={nickname}
+              hasStory={hasStory}
+              hasUnseenStory={userStoriesData?.hasUnseenStory}
+              firstStoryId={userStoriesData?.stories[0]?.id}
+            />
           </div>
 
           <div className="min-w-0 flex-1">

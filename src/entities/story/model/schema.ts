@@ -23,3 +23,8 @@ export const StoryFeedResponseSchema = z.object({
   message: z.string(),
   data: z.array(StoryFeedItemSchema),
 })
+
+export const UserStoriesDataSchema = z.object({
+  hasUnseenStory: z.boolean(),
+  stories: z.array(StorySchema),
+})

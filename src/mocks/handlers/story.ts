@@ -139,21 +139,14 @@ export const storyHandlers = [
         viewCount: s.viewCount,
       }))
 
-    const responseData = StoryFeedItemSchema.parse({
-      userId: String(user.userId),
-      nickname: user.nickname,
-      profileImageUrl: user.profileImageUrl,
-      hasUnseenStory: false,
-      stories: userStories,
-    })
-
-    const responseBody = ApiResponseSchema(StoryFeedItemSchema).parse({
-      code: '200',
-      message: '요청에 성공하였습니다.',
-      data: responseData,
+    return HttpResponse.json({
+      code: 'COMMON200',
+      message: '성공입니다.',
+      data: {
+        hasUnseenStory: Math.random() > 0.5,
+        stories: userStories,
+      },
       isSuccess: true,
     })
-
-    return HttpResponse.json(responseBody)
   }),
 ]
