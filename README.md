@@ -1,10 +1,13 @@
-# Waffle Studio 23-5 Team 10 - Instagram Clone
+# 1gram
 
 와플스튜디오 23-5 세미나 10조 프론트엔드 레포지토리입니다.
 
 ## 서비스 소개
 
 Instagram 클론 웹 서비스로, 기본적인 Instagram의 핵심 기능을 구현하고 **앨범 기능**을 추가했습니다.
+
+- 제외된 주요 기능 : 게시글 동영상 업로드, 릴스, DM
+- 추가된 기능 : 앨범을 통해 게시글을 그룹화하여 정리할 수 있는 기능
 
 ### 주요 기능
 
@@ -15,6 +18,78 @@ Instagram 클론 웹 서비스로, 기본적인 Instagram의 핵심 기능을 �
 - 프로필 편집
 - 탐색 페이지
 - **앨범**: 게시물을 앨범으로 묶어서 관리
+- 반응형 디자인 적용
+
+### 홈 화면 (피드)
+
+게시물 피드와 스토리를 확인할 수 있는 홈 화면입니다. 반응형 디자인으로 화면 크기에 따라 레이아웃이 달라집니다.
+
+#### 큰 화면
+
+<img src="docs/feed-large.png" width="600" alt="홈 화면 - 큰 화면">
+
+#### 중간 화면
+
+<img src="docs/feed-mid.png" width="500" alt="홈 화면 - 중간 화면">
+
+#### 작은 화면
+
+<img src="docs/feed-mobile.png" width="300" alt="홈 화면 - 작은 화면">
+
+### 게시물 작성
+
+여러 장의 사진을 업로드하고 캡션을 작성하여 게시물을 생성할 수 있습니다.
+이때 앨범을 생성, 편집, 삭제할 수 있습니다.
+
+<img src="docs/create-post.png" width="600" alt="게시물 작성">
+
+### 게시물 상세
+
+게시물의 상세 내용과 댓글을 확인할 수 있습니다.
+
+<img src="docs/post-detail.png" width="600" alt="게시물 상세">
+
+### 스토리 상세
+
+사용자의 스토리를 풀스크린으로 감상할 수 있습니다.
+
+<img src="docs/story-detail.png" width="400" alt="스토리 상세">
+
+### 프로필 페이지
+
+사용자의 게시물과 앨범을 탭으로 구분하여 확인할 수 있습니다.
+
+<img src="docs/profile-detail.png" width="600" alt="프로필 페이지">
+
+### 앨범 탭
+
+프로필에서 앨범별로 그룹화된 게시물을 확인할 수 있습니다.
+
+<img src="docs/tabs-album.png" width="600" alt="앨범 탭">
+
+### 앨범 상세
+
+특정 앨범에 포함된 게시물 목록을 볼 수 있습니다.
+
+<img src="docs/album-detail.png" width="600" alt="앨범 상세">
+
+### 팔로우 목록
+
+팔로잉/팔로워 목록을 확인하고 팔로우 관리를 할 수 있습니다.
+
+<img src="docs/follow-list.png" width="500" alt="팔로우 목록">
+
+### 검색
+
+사용자를 검색하고 팔로우할 수 있습니다.
+
+<img src="docs/search.png" width="500" alt="검색">
+
+### 탐색 페이지
+
+다양한 게시물을 그리드 형태로 탐색할 수 있습니다.
+
+<img src="docs/explore.png" width="600" alt="탐색 페이지">
 
 ## 기술 스택
 
@@ -63,19 +138,8 @@ src/
 ├── app/                    # 앱 프로바이더 (QueryClient, Theme 등)
 ├── pages/                  # 페이지 컴포넌트
 ├── widgets/                # 복합 UI 블록 (독립적인 기능 단위)
-│   ├── navigation-sidebar/
-│   ├── stories/
-│   ├── home/
-│   └── profile-*/
 ├── features/               # 기능별 로직 (사용자 시나리오)
-│   ├── create-post/
-│   ├── follow-user/
-│   ├── profile-posts/
-│   └── search/
 ├── entities/               # 비즈니스 엔티티
-│   ├── album/
-│   ├── feed/
-│   └── post/
 ├── shared/                 # 공유 리소스
 │   ├── ui/                # 재사용 UI 컴포넌트
 │   ├── lib/               # 유틸리티 함수, hooks
