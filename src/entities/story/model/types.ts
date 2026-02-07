@@ -21,3 +21,8 @@ export interface StoryResponse<T> {
   message: string
   data: T
 }
+
+export interface UserStoriesData {
+  hasUnseenStory: boolean
+  stories: Story[]
+}
