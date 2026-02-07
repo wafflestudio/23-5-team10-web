@@ -86,6 +86,7 @@ export function ProfileHeader({
               hasStory={hasStory}
               hasUnseenStory={userStoriesData?.hasUnseenStory}
               userId={userId}
+              firstStoryId={userStoriesData?.stories[0]?.id}
             />
           </div>
 

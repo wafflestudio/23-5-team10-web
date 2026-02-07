@@ -10,6 +10,7 @@ type ProfileAvatarProps = {
   hasStory?: boolean
   hasUnseenStory?: boolean
   userId?: number
+  firstStoryId?: number
 }
 
 export function ProfileAvatar({
@@ -18,6 +19,7 @@ export function ProfileAvatar({
   hasStory = false,
   hasUnseenStory = false,
   userId,
+  firstStoryId,
 }: ProfileAvatarProps) {
   const avatarContent = avatarUrl ? (
     <img
@@ -41,7 +43,7 @@ export function ProfileAvatar({
     <div className="relative flex cursor-pointer items-center justify-center">
       <div
         className={cn(
-          'absolute size-[164px] rounded-full p-[3px]',
+          'absolute size-[166px] rounded-full p-[2px]',
           ringClassName
         )}
       >
@@ -51,9 +53,15 @@ export function ProfileAvatar({
     </div>
   )
 
-  if (userId) {
+  if (userId && firstStoryId) {
     return (
-      <Link to="/stories/$user_id" params={{ user_id: String(userId) }}>
+      <Link
+        to="/stories/$profile_name/$story_id"
+        params={{
+          profile_name: String(userId),
+          story_id: String(firstStoryId),
+        }}
+      >
         {content}
       </Link>
     )
