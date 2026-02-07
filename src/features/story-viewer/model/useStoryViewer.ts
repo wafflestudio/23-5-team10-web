@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import type { StoryFeedItem } from '@/entities/story/model/types'
 
@@ -16,27 +16,34 @@ export function useStoryViewer(
     )
   }, [storiesData, initialUserId])
 
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
+  const [state, setState] = useState(() => ({
+    userId: initialUserId,
+    storyIndex: 0,
+    progress: 0,
+    isPaused: false,
+  }))
 
-  const [prevUserId, setPrevUserId] = useState(initialUserId)
-
-  if (prevUserId !== initialUserId) {
-    setPrevUserId(initialUserId)
-    setCurrentStoryIndex(0)
-    setProgress(0)
-    setIsPaused(false)
+  if (state.userId !== initialUserId) {
+    setState({
+      userId: initialUserId,
+      storyIndex: 0,
+      progress: 0,
+      isPaused: false,
+    })
   }
 
   const currentUser = storiesData[currentUserIndex]
-  const currentStory = currentUser?.stories?.[currentStoryIndex]
+  const currentStory = currentUser?.stories?.[state.storyIndex]
 
   const handleNext = useCallback(() => {
     if (!currentUser) return
-    if (currentStoryIndex < currentUser.stories.length - 1) {
-      setCurrentStoryIndex((prev) => prev + 1)
-      setProgress(0)
+
+    if (state.storyIndex < currentUser.stories.length - 1) {
+      setState((prev) => ({
+        ...prev,
+        storyIndex: prev.storyIndex + 1,
+        progress: 0,
+      }))
     } else if (currentUserIndex < storiesData.length - 1) {
       const nextUser = storiesData[currentUserIndex + 1]
       navigate({
@@ -46,13 +53,17 @@ export function useStoryViewer(
     } else {
       navigate({ to: '/', search: { page: 1 } })
     }
-  }, [currentUser, currentStoryIndex, currentUserIndex, storiesData, navigate])
+  }, [currentUser, state.storyIndex, currentUserIndex, storiesData, navigate])
 
   const handlePrev = useCallback(() => {
     if (!currentUser) return
-    if (currentStoryIndex > 0) {
-      setCurrentStoryIndex((prev) => prev - 1)
-      setProgress(0)
+
+    if (state.storyIndex > 0) {
+      setState((prev) => ({
+        ...prev,
+        storyIndex: prev.storyIndex - 1,
+        progress: 0,
+      }))
     } else if (currentUserIndex > 0) {
       const prevUser = storiesData[currentUserIndex - 1]
       navigate({
@@ -60,36 +71,42 @@ export function useStoryViewer(
         params: { user_id: String(prevUser.userId) },
       })
     }
-  }, [currentUser, currentStoryIndex, currentUserIndex, storiesData, navigate])
+  }, [currentUser, state.storyIndex, currentUserIndex, storiesData, navigate])
 
   const togglePause = useCallback(() => {
-    setIsPaused((prev) => !prev)
+    setState((prev) => ({
+      ...prev,
+      isPaused: !prev.isPaused,
+    }))
   }, [])
 
   useEffect(() => {
-    if (isPaused || !currentStory) return
+    if (state.isPaused || !currentStory) return
 
     const step = (INTERVAL_MS / STORY_DURATION) * 100
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
+      setState((prev) => {
+        if (prev.progress >= 100) {
           handleNext()
-          return 100
+          return prev
         }
-        return prev + step
+        return {
+          ...prev,
+          progress: prev.progress + step,
+        }
       })
     }, INTERVAL_MS)
 
     return () => clearInterval(timer)
-  }, [isPaused, currentStoryIndex, handleNext, currentStory])
+  }, [state.isPaused, currentStory, handleNext])
 
   return {
     currentUser,
     currentStory,
-    currentStoryIndex,
+    currentStoryIndex: state.storyIndex,
     currentUserIndex,
-    progress,
-    isPaused,
+    progress: state.progress,
+    isPaused: state.isPaused,
     handleNext,
     handlePrev,
     togglePause,
