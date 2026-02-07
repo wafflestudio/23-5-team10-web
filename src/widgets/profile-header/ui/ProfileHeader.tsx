@@ -85,7 +85,7 @@ export function ProfileHeader({
               nickname={nickname}
               hasStory={hasStory}
               hasUnseenStory={userStoriesData?.hasUnseenStory}
-              firstStoryId={userStoriesData?.stories[0]?.id}
+              userId={userId}
             />
           </div>
 

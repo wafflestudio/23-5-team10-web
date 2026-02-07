@@ -9,7 +9,7 @@ type ProfileAvatarProps = {
   nickname: string
   hasStory?: boolean
   hasUnseenStory?: boolean
-  firstStoryId?: number
+  userId?: number
 }
 
 export function ProfileAvatar({
@@ -17,7 +17,7 @@ export function ProfileAvatar({
   nickname,
   hasStory = false,
   hasUnseenStory = false,
-  firstStoryId,
+  userId,
 }: ProfileAvatarProps) {
   const avatarContent = avatarUrl ? (
     <img
@@ -51,12 +51,9 @@ export function ProfileAvatar({
     </div>
   )
 
-  if (firstStoryId) {
+  if (userId) {
     return (
-      <Link
-        to="/stories/$profile_name/$story_id"
-        params={{ profile_name: nickname, story_id: String(firstStoryId) }}
-      >
+      <Link to="/stories/$user_id" params={{ user_id: String(userId) }}>
         {content}
       </Link>
     )
