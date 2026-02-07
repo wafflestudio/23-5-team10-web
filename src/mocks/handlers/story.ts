@@ -116,29 +116,41 @@ export const storyHandlers = [
   http.get('*/api/v1/stories/user/:userId', ({ params }) => {
     const { userId: userIdParam } = params
     const userId = Number(userIdParam)
-    const userStories = stories.filter((story) => story.userId === userId)
-    const isMyStory = userId === MOCK_USER_ID
 
-    const StoryItemSchema = z.object({
-      storyId: z.number(),
-      imageUrl: z.string(),
-      createdAt: z.string(),
-      viewCount: z.number().nullable(),
+    const user = users.find((u) => u.userId === userId)
+    if (!user) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '사용자를 찾을 수 없습니다.',
+          isSuccess: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    const userStories = stories
+      .filter((story) => story.userId === userId)
+      .map((s) => ({
+        id: s.storyId,
+        userId: String(s.userId),
+        imageUrl: s.imageUrl,
+        createdAt: s.createdAt,
+        viewCount: s.viewCount,
+      }))
+
+    const responseData = StoryFeedItemSchema.parse({
+      userId: String(user.userId),
+      nickname: user.nickname,
+      profileImageUrl: user.profileImageUrl,
+      hasUnseenStory: false,
+      stories: userStories,
     })
 
-    const storyItems = userStories.map((story) =>
-      StoryItemSchema.parse({
-        storyId: story.storyId,
-        imageUrl: story.imageUrl,
-        createdAt: story.createdAt,
-        viewCount: isMyStory ? story.viewCount : null,
-      })
-    )
-
-    const responseBody = ApiResponseSchema(StoryItemSchema.array()).parse({
+    const responseBody = ApiResponseSchema(StoryFeedItemSchema).parse({
       code: '200',
       message: '요청에 성공하였습니다.',
-      data: storyItems,
+      data: responseData,
       isSuccess: true,
     })
 
