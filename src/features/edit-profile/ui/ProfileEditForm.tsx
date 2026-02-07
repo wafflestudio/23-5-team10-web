@@ -5,22 +5,27 @@ import {
   useCurrentUser,
   useInvalidateCurrentUser,
 } from '@/shared/auth/useCurrentUser'
+import { useAuth } from '@/shared/auth/useAuth'
 import { cn } from '@/shared/lib/utils'
 import { uploadImages } from '@/features/create-post/api/uploadImages'
 import { updateProfile } from '../api/updateProfile'
+import { deleteAccount } from '../api/deleteAccount'
 import { ProfileEditCard } from './ProfileEditCard'
 import { WebsiteField } from './WebsiteField'
 import { BioTextarea } from './BioTextarea'
 import { ChangePhotoModal } from './ChangePhotoModal'
+import { DeleteAccountModal } from './DeleteAccountModal'
 
 export function ProfileEditForm() {
   const { data: currentUser } = useCurrentUser()
   const invalidateCurrentUser = useInvalidateCurrentUser()
+  const { logout } = useAuth()
   const [bio, setBio] = useState(currentUser?.bio ?? '')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     currentUser?.profileImageUrl ?? null
   )
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const originalBio = currentUser?.bio ?? ''
@@ -42,6 +47,17 @@ export function ProfileEditForm() {
     },
     onError: () => {
       toast.error('프로필 저장에 실패했습니다.')
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      toast.success('회원 탈퇴가 완료되었습니다.')
+      logout()
+    },
+    onError: () => {
+      toast.error('회원 탈퇴에 실패했습니다.')
     },
   })
 
@@ -89,6 +105,12 @@ export function ProfileEditForm() {
         onDelete={handleDeletePhoto}
       />
 
+      <DeleteAccountModal
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        onConfirm={() => deleteMutation.mutate()}
+      />
+
       <ProfileEditCard
         avatarUrl={avatarUrl}
         nickname={currentUser.nickname}
@@ -126,6 +148,16 @@ export function ProfileEditForm() {
           )}
         >
           제출
+        </button>
+      </div>
+
+      <div className="mt-8 border-t border-gray-200 pt-8">
+        <button
+          type="button"
+          className="cursor-pointer text-sm font-medium text-red-500 hover:text-red-600 hover:underline"
+          onClick={() => setIsDeleteModalOpen(true)}
+        >
+          회원 탈퇴
         </button>
       </div>
     </div>
