@@ -17,7 +17,12 @@ import type { ProfilePostGridItem } from '@/features/profile-posts/ui/ProfilePos
 
 export const Route = createFileRoute('/_app/$userId/albums')({
   validateSearch: z.object({
-    albumId: z.coerce.number().int().positive().optional().catch(undefined),
+    albumId: z.coerce
+      .number()
+      .int()
+      .refine((n) => n === -1 || n > 0)
+      .optional()
+      .catch(undefined),
   }),
   component: RouteComponent,
 })
