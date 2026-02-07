@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 
+import { useCurrentUser } from '@/shared/auth/useCurrentUser'
 import { Dialog, DialogContent } from '@/shared/ui/dialog'
 import { Dropzone } from '@/shared/ui/dropzone'
 import { toast } from 'sonner'
@@ -32,6 +33,8 @@ export function CreateModal({ open, onOpenChange }: CreateModalProps) {
 function CreateModalInner({
   onOpenChange,
 }: Pick<CreateModalProps, 'onOpenChange'>) {
+  const { data: currentUser } = useCurrentUser()
+
   const {
     files,
     step,
@@ -176,7 +179,8 @@ function CreateModalInner({
 
                 <div className="min-h-0 flex-1 sm:w-[340px] sm:shrink-0">
                   <PostDetailsPane
-                    profileName="user1"
+                    profileName={currentUser?.nickname ?? ''}
+                    profileImageUrl={currentUser?.profileImageUrl ?? undefined}
                     caption={caption}
                     onCaptionChange={setCaption}
                     selectedAlbumId={selectedAlbumId}
