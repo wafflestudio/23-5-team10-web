@@ -63,7 +63,8 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
 
   const isMine =
     me?.userId !== undefined &&
-    String(currentUser?.userId) === String(me.userId)
+    currentUser?.userId !== undefined &&
+    String(currentUser.userId) === String(me.userId)
 
   useEffect(() => {
     if (imageError && !isPaused) {
@@ -178,7 +179,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
           <div className={STORY_VIEWER_UI.STYLES.HEADER}>
             <Link
               to="/$userId"
-              params={{ userId: currentUser.userId }}
+              params={{ userId: String(currentUser.userId) }}
               className={STORY_VIEWER_UI.STYLES.USER_SECTION}
             >
               <img
@@ -273,7 +274,7 @@ export function StoryViewer({ feed, userId }: StoryViewerProps) {
       <StoryOptionsModal
         isOpen={isOptionsOpen}
         onClose={handleCloseOptions}
-        isMine={isMine}
+        userId={currentUser.userId}
         onReport={handleOpenReport}
         onAccountInfo={handleOpenAccountInfo}
         onDelete={handleOpenDeleteConfirm}
