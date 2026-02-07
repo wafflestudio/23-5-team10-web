@@ -237,6 +237,48 @@ export const userHandlers = [
     })
   }),
 
+  http.delete('*/api/v1/users/me', ({ request }) => {
+    const userId = getUserIdFromToken(request)
+    if (!userId) {
+      return HttpResponse.json(
+        {
+          code: 'AUTH_401',
+          message: '인증이 필요합니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 401 }
+      )
+    }
+
+    const authUserIndex = authDb.findIndex((u) => u.userId === userId)
+    const profileUserIndex = users.findIndex((u) => u.userId === userId)
+
+    if (authUserIndex === -1) {
+      return HttpResponse.json(
+        {
+          code: '404',
+          message: '사용자를 찾을 수 없습니다.',
+          data: null,
+          isSuccess: false,
+        },
+        { status: 404 }
+      )
+    }
+
+    authDb.splice(authUserIndex, 1)
+    if (profileUserIndex !== -1) {
+      users.splice(profileUserIndex, 1)
+    }
+
+    return HttpResponse.json({
+      code: 'COMMON_200',
+      message: '요청에 성공하였습니다.',
+      data: 'Account deleted successfully',
+      isSuccess: true,
+    })
+  }),
+
   http.get('*/api/v1/users/:userId/posts', ({ params }) => {
     const userId = Number(params.userId)
 
