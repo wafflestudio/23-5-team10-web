@@ -1,18 +1,34 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { StoryViewer } from '@/features/story-viewer/ui/StoryViewer'
 import { useQuery } from '@tanstack/react-query'
 import { getStoryDetail } from '@/entities/story/api/getStoryDetail'
 import { useProfile } from '@/entities/user/model/hooks/useProfile'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { StoryFeedItem } from '@/entities/story/model/types'
+import { z } from 'zod'
+
+const searchSchema = z.object({
+  returnTo: z.string().optional(),
+})
 
 export const Route = createFileRoute('/stories/$profile_name/$story_id')({
   component: RouteComponent,
+  validateSearch: searchSchema,
 })
 
 function RouteComponent() {
   const { profile_name: userId } = Route.useParams()
+  const { returnTo } = Route.useSearch()
+  const navigate = useNavigate()
   const { data: profileData } = useProfile(Number(userId))
+
+  const handleClose = useCallback(() => {
+    if (returnTo) {
+      navigate({ to: returnTo })
+    } else {
+      navigate({ to: '/$userId', params: { userId } })
+    }
+  }, [navigate, returnTo, userId])
 
   const { data: detailData, isLoading: isDetailLoading } = useQuery({
     queryKey: ['stories', 'user', userId],
@@ -51,6 +67,7 @@ function RouteComponent() {
         userId={userId}
         detailUser={userStoryFeedItem}
         isDetailLoading={isDetailLoading}
+        onClose={handleClose}
       />
     </div>
   )

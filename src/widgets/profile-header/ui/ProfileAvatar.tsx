@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { cn } from '@/shared/lib/utils'
 import { DefaultProfileImage } from '@/shared/ui/default-profile-image'
 
@@ -21,6 +21,7 @@ export function ProfileAvatar({
   userId,
   firstStoryId,
 }: ProfileAvatarProps) {
+  const location = useLocation()
   const avatarContent = avatarUrl ? (
     <img
       src={avatarUrl}
@@ -61,6 +62,7 @@ export function ProfileAvatar({
           profile_name: String(userId),
           story_id: String(firstStoryId),
         }}
+        search={{ returnTo: location.pathname }}
       >
         {content}
       </Link>

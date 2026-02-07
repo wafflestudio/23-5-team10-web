@@ -24,6 +24,7 @@ interface StoryViewerProps {
   userId: string
   detailUser?: StoryFeedItem
   isDetailLoading?: boolean
+  onClose?: () => void
 }
 
 const formatRelativeTime = (createdAt: string) => {
@@ -43,8 +44,17 @@ export function StoryViewer({
   userId,
   detailUser,
   isDetailLoading,
+  onClose,
 }: StoryViewerProps) {
   const navigate = useNavigate()
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose()
+    } else {
+      navigate({ to: '/', search: { page: 1 } })
+    }
+  }
   const queryClient = useQueryClient()
   const { data: me, isLoading: isMeLoading } = useCurrentUser()
 
@@ -64,7 +74,7 @@ export function StoryViewer({
     handleNext,
     handlePrev,
     togglePause,
-  } = useStoryViewer(feed, userId)
+  } = useStoryViewer(feed, userId, { onComplete: onClose })
 
   const viewerUser =
     detailUser && String(detailUser.userId) === String(userId)
@@ -125,7 +135,7 @@ export function StoryViewer({
       if (response.isSuccess) {
         queryClient.invalidateQueries({ queryKey: ['stories', 'feed'] })
         queryClient.invalidateQueries({ queryKey: ['stories', 'user', userId] })
-        navigate({ to: '/', search: { page: 1 } })
+        handleClose()
       }
     } catch (error) {
       console.error('스토리 삭제 실패:', error)
@@ -145,7 +155,7 @@ export function StoryViewer({
       </div>
 
       <button
-        onClick={() => navigate({ to: '/', search: { page: 1 } })}
+        onClick={handleClose}
         className="absolute top-4 right-4 z-50 p-2 text-white transition-opacity hover:opacity-70"
       >
         <X className="h-9 w-9" strokeWidth={1.5} />
